@@ -89,6 +89,9 @@ startup
 
 	// classic%
 	settings.Add("classic", true, "Don't Split during Blitz Play", "misc");
+
+	// misc category auto starter
+	settings.Add("misctimer", false, "Start the timer after Prologue ends", "misc");
 }
 
 init
@@ -113,6 +116,8 @@ init
 		return diff == 1;
 	};
 	vars.shouldSplit = shouldSplit;
+
+	vars.miscFlag = false;
 }
 
 update
@@ -124,7 +129,29 @@ update
 
 start
 {
-	return current.c != old.c && current.c == "pro_mcs_1";
+	if (settings["misctimer"]) {
+		if (current.c == "armenian_1_int") {
+			// Keep track on vars so we only start once. Needed for loading check
+			if (current.c != old.c) {
+				vars.miscFlag = true;
+			}
+
+			if (!vars.miscFlag) {
+				return false;
+			}
+
+			// Finished loading, start auto splitter
+			if (current.loading == 0 && current.loading != old.loading) {
+				vars.miscFlag = false;
+				return true;
+			}
+		} else {
+			vars.miscFlag = false;
+			return false;
+		}
+	} else {
+		return current.c != old.c && current.c == "pro_mcs_1";	
+	}
 }
 
 split
