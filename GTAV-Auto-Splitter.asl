@@ -38,6 +38,9 @@ state("GTA5", "Steam")
 
 	// spaceship parts
 	int sp: 0x2A0D388, 0xAB0, 0x110, 0x158, 0xB0, 0x170;
+
+	// current golf hole
+	int gh: 0x1DDC004;
 }
 
 // Social Club
@@ -75,6 +78,9 @@ state("GTA5", "SocialClub")
 
 	// spaceship parts counter
 	int sp: 0x02A07D48, 0xAB0, 0x280, 0x18, 0x220, 0x170;
+
+	// current golf hole
+	int gh: 0x1DE3970;
 }
 
 startup
@@ -123,6 +129,9 @@ startup
 
 	// Save Warping
 	settings.Add("savewarp", true, "Don't Split when save warping (experimental)", "misc");
+
+	// Golf autosplitter
+	settings.Add("golf", false, "Split on every Golf hole", "misc");
 }
 
 init
@@ -166,6 +175,7 @@ init
 	vars.justSplit = false;
 	vars.phase = timer.CurrentPhase;
 	vars.loadHistory = new HashSet<string>();
+	vars.currentHole = 1;
 }
 
 update
@@ -251,8 +261,15 @@ split
 	// just picked up a spaceship part?
 	bool spaceshipCheck = vars.shouldSplit("spaceship", current.sp - old.sp);
 
+	// Golf hole split. Checks > 1 so we don't split on golf start.
+	bool golfCheck = current.gh > 1 && current.gh != old.gh && vars.shouldSplit("golf", current.gh - vars.currentHole);
+	// golf hole value changes to 0 inbetween holes, (walking to shot/scoreboard after hole)
+	if (current.gh > 0) {
+		vars.currentHole = current.gh;
+	}
+
 	// Return true if any of the above flags are true.
-	vars.justSplit = missionCheck || sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || lettersCheck || spaceshipCheck;
+	vars.justSplit = missionCheck || sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || lettersCheck || spaceshipCheck || golfCheck;
 
 	return vars.justSplit;
 }
