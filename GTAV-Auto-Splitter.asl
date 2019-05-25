@@ -14,10 +14,10 @@ state("GTA5")
 	int b: 0x2A0D4B0, 0x30318;
 	
 	// random event counter
-    int r: 0x2A0D4B0, 0xBDA28;
+	int r: 0x2A0D4B0, 0xBDA28;
 	
 	// hobbies and pasttimes
-    int h: 0x2A0D4B0, 0xBDA10;
+	int h: 0x2A0D4B0, 0xBDA10;
 }
 
 startup
@@ -43,64 +43,64 @@ startup
 	settings.Add("prologue", false, "Don't Split on Prologue", "misc");
 	
 	// split on Random Events
-    settings.Add("randomevent", false, "Random Event", "collectibles");
+	settings.Add("randomevent", false, "Random Event", "collectibles");
 	
 	// split on Hobbies and Pasttimes
-    settings.Add("hobbies", false, "Hobbies and Pasttimes", "collectibles");
+	settings.Add("hobbies", false, "Hobbies and Pasttimes", "collectibles");
 	
 	// classic%
-    settings.Add("classic", true, "Don't Split during Blitz Play", "misc");
+	settings.Add("classic", true, "Don't Split during Blitz Play", "misc");
 }
 
 split
 {
 	// check if mission counter increased
-    if (settings["missions"])
-    {
-        if (settings["classic"])
-        {
-            if (current.m < 27 || current.m > 33)
-            {
-                // prologue setting is enabled, don't skip on prologue
-                if (settings["prologue"])
-                {
-                    if (current.m != 1)
-                    {
-                        if (current.m > old.m)
-                        {
-                            return true;
-                        }
-                    }
-                }
-                else
-                {
-                    if (current.m > old.m)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        else
-        // prologue setting is enabled, don't skip on prologue
-            if (settings["prologue"])
-            {
-                if (current.m != 1)
-                {
-                    if (current.m > old.m)
-                    {
-                        return true;
-                    }
-                }
-            }
-            else
-            {
-                if (current.m > old.m)
-                {
-                    return true;
-                }
-            }
-    }
+	if (settings["missions"])
+	{
+		if (settings["classic"])
+		{
+			if (current.m < 27 || current.m > 33)
+			{
+				// prologue setting is enabled, don't skip on prologue
+				if (settings["prologue"])
+				{
+					if (current.m != 1)
+					{
+						if (current.m > old.m)
+						{
+							return true;
+						}
+					}
+				}
+				else
+				{
+					if (current.m > old.m)
+					{
+						return true;
+					}
+				}
+			}
+		}
+		else
+		// prologue setting is enabled, don't skip on prologue
+			if (settings["prologue"])
+			{
+				if (current.m != 1)
+				{
+					if (current.m > old.m)
+					{
+						return true;
+					}
+				}
+			}
+			else
+			{
+				if (current.m > old.m)
+				{
+					return true;
+				}
+			}
+	}
 
 	// check if strangers and freaks counter increased
 	if (settings["sf"])
@@ -130,22 +130,22 @@ split
 	}
 	
 	// check if random event increased
-    if (settings["randomevent"])
-    {
-        if (current.r > old.r)
-        {
-            return true;
-        }
-    }
+	if (settings["randomevent"])
+	{
+		if (current.r > old.r)
+		{
+			return true;
+		}
+	}
 	
 	// check if hobbies and pastimes increased
-    if (settings["hobbies"])
-    {
-        if (current.h > old.h)
-        {
-            return true;
-        }
-    }
+	if (settings["hobbies"])
+	{
+		if (current.h > old.h)
+		{
+			return true;
+		}
+	}
 	
 	
 }
