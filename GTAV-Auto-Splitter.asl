@@ -92,6 +92,9 @@ startup
 
 	// misc category auto starter
 	settings.Add("misctimer", false, "Start the timer after Prologue ends", "misc");
+
+	// Save Warping
+	settings.Add("savewarp", true, "Don't Split when save warping (experimental)", "misc");
 }
 
 init
@@ -113,11 +116,28 @@ init
 			return false;
 		}
 
+		// Experimental save warping
+		if (settings["savewarp"]) {
+			if (diff == 1 && vars.loadHistory.Contains(name)) {
+				vars.loadHistory.Remove(name);
+				return false;
+			}
+
+			if (diff == -1) {
+				vars.loadHistory.Add(name);
+				return false;
+			}
+		}
+
 		return diff == 1;
 	};
 	vars.shouldSplit = shouldSplit;
 
 	vars.miscFlag = false;
+	vars.justStarted = false;
+	vars.justSplit = false;
+	vars.phase = timer.CurrentPhase;
+	vars.loadHistory = new HashSet<string>();
 }
 
 update
@@ -125,6 +145,18 @@ update
 	if (version == "") {
 		return false;
 	}
+
+	var oldPhase = vars.phase;
+	vars.phase = timer.CurrentPhase;
+	bool hasChangedPhase = oldPhase != vars.phase;
+
+	if (vars.justStarted || vars.justSplit || hasChangedPhase) {
+		vars.loadHistory.Clear();
+		vars.miscFlag = false;
+	}
+
+	vars.justStarted = false;
+	vars.justSplit = false;
 }
 
 start
@@ -136,22 +168,19 @@ start
 				vars.miscFlag = true;
 			}
 
-			if (!vars.miscFlag) {
-				return false;
-			}
-
-			// Finished loading, start auto splitter
-			if (current.loading == 0 && current.loading != old.loading) {
+			// Finished loading for first time, start auto splitter
+			if (vars.miscFlag && current.loading == 0 && current.loading != old.loading) {
 				vars.miscFlag = false;
-				return true;
+				vars.justStarted = true;
 			}
 		} else {
 			vars.miscFlag = false;
-			return false;
 		}
 	} else {
-		return current.c != old.c && current.c == "pro_mcs_1";	
+		vars.justStarted = current.c != old.c && current.c == "pro_mcs_1";	
 	}
+
+	return vars.justStarted;
 }
 
 split
@@ -186,9 +215,9 @@ split
 	bool hobbyCheck = vars.shouldSplit("hobbies", current.h - old.h);
 
 	// Return true if any of the above flags are true.
-	bool splitNow = missionCheck || sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck;
+	vars.justSplit = missionCheck || sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck;
 
-	return splitNow;
+	return vars.justSplit;
 }
 
 isLoading
