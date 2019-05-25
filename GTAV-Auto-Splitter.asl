@@ -21,6 +21,9 @@ state("GTA5")
 
 	// next cutscene
 	string255 c: 0x01CB8530, 0xB70;
+
+	// loading check
+	int loading : 0x2157FA0;
 }
 
 startup
@@ -111,3 +114,7 @@ split
 	return splitNow;
 }
 
+isLoading
+{
+	return current.loading > 0;
+}
