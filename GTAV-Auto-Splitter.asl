@@ -35,6 +35,9 @@ state("GTA5", "Steam")
 
 	// letters counter
 	int l: 0x2A0D388, 0xAB0, 0x110, 0xB8, 0xB0, 0x180;
+
+	// spaceship parts
+	int sp: 0x2A0D388, 0xAB0, 0x110, 0x158, 0xB0, 0x170;
 }
 
 // Social Club
@@ -69,6 +72,9 @@ state("GTA5", "SocialClub")
 
 	// letters counter
 	int l: 0x02A07D48, 0xAB0, 0x280, 0x18, 0xB0, 0x180;
+
+	// spaceship parts counter
+	int sp: 0x02A07D48, 0xAB0, 0x280, 0x18, 0x220, 0x170;
 }
 
 startup
@@ -102,6 +108,9 @@ startup
 
 	// split on Letter Scrap pickup
 	settings.Add("letter", false, "Letter Scraps", "collectibles");
+
+	// split on Spaceship Part pickup
+	settings.Add("spaceship", false, "Spaceship Parts", "collectibles");	
 
 	// Split on Prologue
 	settings.Add("prologue", false, "Don't Split on Prologue", "misc");
@@ -239,8 +248,11 @@ split
 	//  Did they just pickup a Letter scrap?
 	bool lettersCheck = vars.shouldSplit("letter", current.l - old.l);
 
+	// just picked up a spaceship part?
+	bool spaceshipCheck = vars.shouldSplit("spaceship", current.sp - old.sp);
+
 	// Return true if any of the above flags are true.
-	vars.justSplit = missionCheck || sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || lettersCheck;
+	vars.justSplit = missionCheck || sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || lettersCheck || spaceshipCheck;
 
 	return vars.justSplit;
 }
