@@ -29,6 +29,9 @@ state("GTA5", "Steam")
 
 	// loading check
 	int loading : 0x2157FA0;
+
+	// percentage counter
+	float percent: 0x0218FAD8, 0x18068;
 }
 
 // Social Club
@@ -57,6 +60,9 @@ state("GTA5", "SocialClub")
 	
 	// loading check
 	int loading: 0x2153C30;
+
+	// percentage counter
+	float percent: 0x0218FAD8, 0x18068;
 }
 
 startup
@@ -71,6 +77,10 @@ startup
 
 	// split on Strangers and Freaks
 	settings.Add("sf", true, "Strangers and Freaks (includes Pulling Favours)", "main");
+
+	// split on 100% completion
+	settings.Add("100", false, "100% Completion", "main");
+	settings.SetToolTip("100", "Split when the percentage counter reaches 100%."); 
 
 	// split on stunt jumps
 	settings.Add("stuntjumps", false, "Stunt Jumps", "collectibles");
@@ -214,8 +224,11 @@ split
 	// check if hobbies and pastimes increased
 	bool hobbyCheck = vars.shouldSplit("hobbies", current.h - old.h);
 
+	// check if they just reached 100% completion
+	bool hundoCheck = settings["100"] && current.percent == 100 && current.percent != old.percent;
+
 	// Return true if any of the above flags are true.
-	vars.justSplit = missionCheck || sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck;
+	vars.justSplit = missionCheck || sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck;
 
 	return vars.justSplit;
 }
