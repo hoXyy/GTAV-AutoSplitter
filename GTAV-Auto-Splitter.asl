@@ -52,101 +52,54 @@ startup
 	settings.Add("classic", true, "Don't Split during Blitz Play", "misc");
 }
 
+init
+{
+	// Checks if name is enabled in settings and returns true if the diff is exactly one
+	Func<string, int, bool> shouldSplit = (name, diff) => {
+		// Check if anything changed and if this type of split is enabled
+		if (diff == 0 || !settings[name]) {
+			return false;
+		}
+
+		return diff == 1;
+	};
+	vars.shouldSplit = shouldSplit;
+}
+
 split
 {
 	// check if mission counter increased
-	if (settings["missions"])
-	{
-		if (settings["classic"])
-		{
-			if (current.m < 27 || current.m > 33)
-			{
-				// prologue setting is enabled, don't skip on prologue
-				if (settings["prologue"])
-				{
-					if (current.m != 1)
-					{
-						if (current.m > old.m)
-						{
-							return true;
-						}
-					}
-				}
-				else
-				{
-					if (current.m > old.m)
-					{
-						return true;
-					}
-				}
-			}
+	bool missionCheck = vars.shouldSplit("missions", current.m - old.m);
+	if (missionCheck) {
+		// Guard clause to prevent splits on prologue
+		if (settings["prologue"] && current.m == 1) {
+			missionCheck = false;
 		}
-		else
-		// prologue setting is enabled, don't skip on prologue
-			if (settings["prologue"])
-			{
-				if (current.m != 1)
-				{
-					if (current.m > old.m)
-					{
-						return true;
-					}
-				}
-			}
-			else
-			{
-				if (current.m > old.m)
-				{
-					return true;
-				}
-			}
+
+		// Guard clause to prevent splits during Blitz play
+		if (settings["classic"] && (current.m >= 27 && current.m <= 33)) {
+			missionCheck = false;
+		}
 	}
 
 	// check if strangers and freaks counter increased
-	if (settings["sf"])
-	{
-		if (current.s > old.s)
-		{
-			return true;
-		}
-	}
+	bool sfCheck = vars.shouldSplit("sf", current.s - old.s);
 
 	// check if stunt jumps counter increased
-	if (settings["stuntjumps"])
-	{
-		if (current.u > old.u)
-		{
-			return true;
-		}
-	}
-	
+	bool stuntCheck = vars.shouldSplit("stuntjumps", current.u - old.u);
+
 	// check if bridges counter changed
-	if (settings["bridges"])
-	{
-		if (current.b != old.b)
-		{
-			return true;
-		}
-	}
-	
+	bool bridgeCheck = vars.shouldSplit("bridges", current.b - old.b);
+
 	// check if random event increased
-	if (settings["randomevent"])
-	{
-		if (current.r > old.r)
-		{
-			return true;
-		}
-	}
-	
+	bool eventCheck = vars.shouldSplit("randomevent", current.r - old.r);
+
 	// check if hobbies and pastimes increased
-	if (settings["hobbies"])
-	{
-		if (current.h > old.h)
-		{
-			return true;
-		}
-	}
-	
-	
+	bool hobbyCheck = vars.shouldSplit("hobbies", current.h - old.h);
+
+	// Return true if any of the above flags are true.
+	bool splitNow = missionCheck || sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck;
+
+	return splitNow;
 }
 
