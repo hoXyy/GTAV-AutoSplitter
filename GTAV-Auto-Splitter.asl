@@ -41,15 +41,15 @@ startup
 	
 	// split on under the bridge
 	settings.Add("bridges", false, "Under The Bridge", "collectibles");
-
-	// Split on Prologue
-	settings.Add("prologue", false, "Don't Split on Prologue", "misc");
 	
 	// split on Random Events
 	settings.Add("randomevent", false, "Random Event", "collectibles");
 	
 	// split on Hobbies and Pasttimes
 	settings.Add("hobbies", false, "Hobbies and Pasttimes", "collectibles");
+
+	// Split on Prologue
+	settings.Add("prologue", false, "Don't Split on Prologue", "misc");
 	
 	// classic%
 	settings.Add("classic", true, "Don't Split during Blitz Play", "misc");
