@@ -132,6 +132,9 @@ startup
 
 	// Golf autosplitter
 	settings.Add("golf", false, "Split on every Golf hole", "misc");
+
+	// Golf timer start
+	settings.Add("golftimer", false, "Start the timer on the first hole in Golf", "misc");
 }
 
 init
@@ -214,6 +217,8 @@ start
 		} else {
 			vars.miscFlag = false;
 		}
+	} else if (settings["golftimer"]) {
+		vars.justStarted = current.gh == 1 && current.gh != old.gh;
 	} else {
 		vars.justStarted = current.c != old.c && current.c == "pro_mcs_1";	
 	}
