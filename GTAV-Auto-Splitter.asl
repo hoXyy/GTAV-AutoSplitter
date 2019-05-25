@@ -18,6 +18,9 @@ state("GTA5")
 	
 	// hobbies and pasttimes
 	int h: 0x2A0D4B0, 0xBDA10;
+
+	// next cutscene
+	string255 c: 0x01CB8530, 0xB70;
 }
 
 startup
@@ -64,6 +67,11 @@ init
 		return diff == 1;
 	};
 	vars.shouldSplit = shouldSplit;
+}
+
+start
+{
+	return current.c != old.c && current.c == "pro_mcs_1";
 }
 
 split
