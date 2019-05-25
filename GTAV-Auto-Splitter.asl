@@ -32,6 +32,9 @@ state("GTA5", "Steam")
 
 	// percentage counter
 	float percent: 0x0218FAD8, 0x18068;
+
+	// letters counter
+	int l: 0x2A0D388, 0xAB0, 0x110, 0xB8, 0xB0, 0x180;
 }
 
 // Social Club
@@ -63,6 +66,9 @@ state("GTA5", "SocialClub")
 
 	// percentage counter
 	float percent: 0x0218FAD8, 0x18068;
+
+	// letters counter
+	int l: 0x02A07D48, 0xAB0, 0x280, 0x18, 0xB0, 0x180;
 }
 
 startup
@@ -93,6 +99,9 @@ startup
 	
 	// split on Hobbies and Pasttimes
 	settings.Add("hobbies", false, "Hobbies and Pasttimes", "collectibles");
+
+	// split on Letter Scrap pickup
+	settings.Add("letter", false, "Letter Scraps", "collectibles");
 
 	// Split on Prologue
 	settings.Add("prologue", false, "Don't Split on Prologue", "misc");
@@ -227,8 +236,11 @@ split
 	// check if they just reached 100% completion
 	bool hundoCheck = settings["100"] && current.percent == 100 && current.percent != old.percent;
 
+	//  Did they just pickup a Letter scrap?
+	bool lettersCheck = vars.shouldSplit("letter", current.l - old.l);
+
 	// Return true if any of the above flags are true.
-	vars.justSplit = missionCheck || sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck;
+	vars.justSplit = missionCheck || sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || lettersCheck;
 
 	return vars.justSplit;
 }
