@@ -1,6 +1,11 @@
 // 1.27
 state("GTA5")
 {
+	// unsupport version
+}
+
+state("GTA5", "Steam")
+{
 	// mission counter
 	int m: 0x2A0D4B0, 0xBDA08;
 
@@ -24,6 +29,34 @@ state("GTA5")
 
 	// loading check
 	int loading : 0x2157FA0;
+}
+
+// Social Club
+state("GTA5", "SocialClub")
+{
+	// mission counter
+	int m: 0x2A07E70, 0xBDA08;
+
+	// strangers and freaks counter
+	int s: 0x2A07E70, 0xBDA20;
+
+	// usj counter
+	int u: 0x2A07E70, 0xCE5C0;
+
+	// bridge counter
+	int b: 0x2A07EC8, 0x40318;
+
+	// random event counter
+	int r: 0x2A07E70, 0xBDA28;
+
+	// hobbies and pasttimes
+	int h: 0x2A07E70, 0xBDA10;
+
+	// current cutscene
+	string255 c: 0x01CB44A0, 0xB70;
+	
+	// loading check
+	int loading: 0x2153C30;
 }
 
 startup
@@ -53,13 +86,23 @@ startup
 
 	// Split on Prologue
 	settings.Add("prologue", false, "Don't Split on Prologue", "misc");
-	
+
 	// classic%
 	settings.Add("classic", true, "Don't Split during Blitz Play", "misc");
 }
 
 init
 {
+	switch (modules.First().ModuleMemorySize)
+	{
+		case 70718464:
+			version = "SocialClub";
+			break;
+		case 70635008:
+			version = "Steam";
+			break;
+	}
+
 	// Checks if name is enabled in settings and returns true if the diff is exactly one
 	Func<string, int, bool> shouldSplit = (name, diff) => {
 		// Check if anything changed and if this type of split is enabled
@@ -74,11 +117,19 @@ init
 
 start
 {
+	if (version == "") {
+		return false;
+	}
+
 	return current.c != old.c && current.c == "pro_mcs_1";
 }
 
 split
 {
+	if (version == "") {
+		return false;
+	}
+
 	// check if mission counter increased
 	bool missionCheck = vars.shouldSplit("missions", current.m - old.m);
 	if (missionCheck) {
@@ -116,5 +167,9 @@ split
 
 isLoading
 {
+	if (version == "") {
+		return false;
+	}
+	
 	return current.loading > 0;
 }
