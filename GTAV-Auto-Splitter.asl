@@ -115,21 +115,20 @@ init
 	vars.shouldSplit = shouldSplit;
 }
 
-start
+update
 {
 	if (version == "") {
 		return false;
 	}
+}
 
+start
+{
 	return current.c != old.c && current.c == "pro_mcs_1";
 }
 
 split
 {
-	if (version == "") {
-		return false;
-	}
-
 	// check if mission counter increased
 	bool missionCheck = vars.shouldSplit("missions", current.m - old.m);
 	if (missionCheck) {
@@ -167,9 +166,5 @@ split
 
 isLoading
 {
-	if (version == "") {
-		return false;
-	}
-	
 	return current.loading > 0;
 }
