@@ -89,6 +89,7 @@ startup
 	settings.Add("main", true, "Main");
 	settings.Add("collectibles", false, "Collectibles");
 	settings.Add("misc", false, "Miscellaneous");
+	settings.Add("starters", true, "Auto Starters");
 
 	// split on Missions
 	settings.Add("missions", true, "Missions", "main");
@@ -124,17 +125,20 @@ startup
 	// classic%
 	settings.Add("classic", true, "Don't Split during Blitz Play", "misc");
 
-	// misc category auto starter
-	settings.Add("misctimer", false, "Start the timer after Prologue ends", "misc");
-
 	// Save Warping
 	settings.Add("savewarp", true, "Don't Split when save warping (experimental)", "misc");
 
 	// Golf autosplitter
 	settings.Add("golf", false, "Split on every Golf hole", "misc");
 
+	// Prologue timer start
+	settings.Add("prologuetimer", false, "Start the timer on the Prologue start", "starters");
+
+	// misc category auto starter
+	settings.Add("misctimer", false, "Start the timer after Prologue ends", "starters");
+
 	// Golf timer start
-	settings.Add("golftimer", false, "Start the timer on the first hole in Golf", "misc");
+	settings.Add("golftimer", false, "Start the timer on the first hole in Golf", "starters");
 }
 
 init
@@ -217,9 +221,12 @@ start
 		} else {
 			vars.miscFlag = false;
 		}
-	} else if (settings["golftimer"]) {
+	}
+	if (settings["golftimer"]) {
 		vars.justStarted = current.gh == 1 && current.gh != old.gh;
-	} else {
+	}
+
+	if (settings["prologuetimer"]) {
 		vars.justStarted = current.c != old.c && current.c == "pro_mcs_1";	
 	}
 
