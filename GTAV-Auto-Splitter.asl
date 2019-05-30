@@ -33,12 +33,6 @@ state("GTA5", "Steam")
 	// percentage counter
 	float percent: 0x0218FAD8, 0x18068;
 
-	// letters counter
-	int l: 0x2A0D388, 0xAB0, 0x110, 0xB8, 0xB0, 0x180;
-
-	// spaceship parts
-	int sp: 0x2A0D388, 0xAB0, 0x110, 0x158, 0xB0, 0x170;
-
 	// current golf hole
 	int gh: 0x1DDC004;
 }
@@ -73,12 +67,6 @@ state("GTA5", "SocialClub")
 	// percentage counter
 	float percent: 0x0218FAD8, 0x18068;
 
-	// letters counter
-	int l: 0x02A07D48, 0xAB0, 0x280, 0x18, 0xB0, 0x180;
-
-	// spaceship parts counter
-	int sp: 0x02A07D48, 0xAB0, 0x280, 0x18, 0x220, 0x170;
-
 	// current golf hole
 	int gh: 0x1DE3970;
 }
@@ -112,12 +100,6 @@ startup
 	
 	// split on Hobbies and Pasttimes
 	settings.Add("hobbies", false, "Hobbies and Pasttimes", "collectibles");
-
-	// split on Letter Scrap pickup
-	settings.Add("letter", false, "Letter Scraps", "collectibles");
-
-	// split on Spaceship Part pickup
-	settings.Add("spaceship", false, "Spaceship Parts", "collectibles");	
 
 	// Split on Prologue
 	settings.Add("prologue", false, "Don't Split on Prologue", "misc");
@@ -267,12 +249,6 @@ split
 	// check if they just reached 100% completion
 	bool hundoCheck = settings["100"] && current.percent == 100 && current.percent != old.percent;
 
-	//  Did they just pickup a Letter scrap?
-	bool lettersCheck = vars.shouldSplit("letter", current.l - old.l);
-
-	// just picked up a spaceship part?
-	bool spaceshipCheck = vars.shouldSplit("spaceship", current.sp - old.sp);
-
 	// Golf hole split. Checks > 1 so we don't split on golf start.
 	bool golfCheck = current.gh > 1 && current.gh != old.gh && vars.shouldSplit("golf", current.gh - vars.currentHole);
 	// golf hole value changes to 0 inbetween holes, (walking to shot/scoreboard after hole)
@@ -281,7 +257,7 @@ split
 	}
 
 	// Return true if any of the above flags are true.
-	vars.justSplit = missionCheck || sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || lettersCheck || spaceshipCheck || golfCheck;
+	vars.justSplit = missionCheck || sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || golfCheck;
 
 	return vars.justSplit;
 }
