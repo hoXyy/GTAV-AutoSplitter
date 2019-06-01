@@ -106,6 +106,7 @@ startup
 
 	// classic%
 	settings.Add("classic", true, "Don't Split during Blitz Play", "misc");
+	settings.Add("safari", true, "Don't Split on Hood Safari end (only works with Classic% mission order)", "misc");
 
 	// Save Warping
 	settings.Add("savewarp", true, "Don't Split when save warping (experimental)", "misc");
@@ -227,6 +228,11 @@ split
 
 		// Guard clause to prevent splits during Blitz play
 		if (settings["classic"] && (current.m >= 27 && current.m <= 33)) {
+			missionCheck = false;
+		}
+
+		// Guard clause to prevent split on Hood Safari end
+		if (settings["safari"] && (current.m == 23)) {
 			missionCheck = false;
 		}
 	}
