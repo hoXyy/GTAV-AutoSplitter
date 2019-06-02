@@ -38,7 +38,7 @@ state("GTA5", "Steam")
 }
 
 // Social Club
-state("GTA5", "SocialClub")
+state("GTA5", "Social Club")
 {
 	// mission counter
 	int m: 0x2A07E70, 0xBDA08;
@@ -129,7 +129,7 @@ init
 	switch (modules.First().ModuleMemorySize)
 	{
 		case 70718464:
-			version = "SocialClub";
+			version = "Social Club";
 			break;
 		case 70635008:
 			version = "Steam";
