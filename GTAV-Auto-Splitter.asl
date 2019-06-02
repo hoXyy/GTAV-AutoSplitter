@@ -189,6 +189,7 @@ update
 
 start
 {
+	bool startFlag = false;
 	if (settings["misctimer"]) {
 		if (current.c == "armenian_1_int") {
 			// Keep track on vars so we only start once. Needed for loading check
@@ -199,19 +200,18 @@ start
 			// Finished loading for first time, start auto splitter
 			if (vars.miscFlag && current.loading == 0 && current.loading != old.loading) {
 				vars.miscFlag = false;
-				vars.justStarted = true;
+				startFlag = true;
 			}
 		} else {
 			vars.miscFlag = false;
 		}
 	}
-	if (settings["golftimer"]) {
-		vars.justStarted = current.gh == 1 && current.gh != old.gh;
-	}
 
-	if (settings["prologuetimer"]) {
-		vars.justStarted = current.c != old.c && current.c == "pro_mcs_1";	
-	}
+	bool golfFlag = settings["golftimer"] && current.gh == 1 && current.gh != old.gh;
+	
+	bool prologueFlag = settings["prologuetimer"] && current.c != old.c && current.c == "pro_mcs_1";
+
+	vars.justStarted = startFlag || golfFlag || prologueFlag;
 
 	return vars.justStarted;
 }
