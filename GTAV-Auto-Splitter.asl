@@ -211,13 +211,6 @@ startup
 	// split on Hobbies and Pasttimes
 	settings.Add("hobbies", false, "Hobbies and Pasttimes", "collectibles");
 
-	// Split on Prologue
-	settings.Add("prologue", false, "Don't Split on Prologue", "misc");
-
-	// classic%
-	settings.Add("classic", true, "Don't Split during Blitz Play", "misc");
-	settings.Add("safari", true, "Don't Split on Hood Safari end (only works with Classic% mission order)", "misc");
-
 	// Save Warping
 	settings.Add("savewarp", true, "Don't Split when save warping (experimental)", "misc");
 
