@@ -270,8 +270,6 @@ init
 	vars.phase = timer.CurrentPhase;
 	vars.loadHistory = new HashSet<string>();
 	vars.currentHole = 1;
-	vars.missionCheck = false;
-	vars.sfCheck = false;
 
 	//empty list of done splits
 	vars.splits = new List<string>();	
@@ -335,11 +333,11 @@ split
 
 	// check if mission counter increased
 	bool mCounterCheck = vars.shouldSplit("missions", current.m - old.m);
-	vars.missionCheck = scriptNameCheck && mCounterCheck;
+	bool missionCheck = scriptNameCheck && mCounterCheck;
 
 	// check if strangers and freaks counter increased
 	bool sfCounterCheck = vars.shouldSplit("sf", current.s - old.s);
-	vars.sfCheck = scriptNameCheck && sfCounterCheck;
+	bool sfCheck = scriptNameCheck && sfCounterCheck;
 
 	// check if stunt jumps counter increased
 	bool stuntCheck = vars.shouldSplit("stuntjumps", current.u - old.u);
@@ -364,7 +362,7 @@ split
 	}
 
 	// Return true if any of the above flags are true.
-	vars.justSplit = vars.missionCheck || vars.sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || golfCheck;
+	vars.justSplit = missionCheck || sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || golfCheck;
 
 	return vars.justSplit;
 }
