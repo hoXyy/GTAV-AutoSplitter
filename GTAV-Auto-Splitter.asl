@@ -271,8 +271,8 @@ init
 	vars.loadHistory = new HashSet<string>();
 	vars.currentHole = 1;
 
-	//empty list of done splits
-	vars.splits = new List<string>();	
+	// Stores completed splits script names (current.sc)
+	vars.splits = new HashSet<string>();	
 }
 
 update
@@ -338,6 +338,10 @@ split
 	// check if strangers and freaks counter increased
 	bool sfCounterCheck = vars.shouldSplit("sf", current.s - old.s);
 	bool sfCheck = scriptNameCheck && sfCounterCheck;
+
+	if (missionCheck || sfCheck) {
+		vars.splits.Add(current.sc);
+	}
 
 	// check if stunt jumps counter increased
 	bool stuntCheck = vars.shouldSplit("stuntjumps", current.u - old.u);
