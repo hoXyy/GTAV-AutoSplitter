@@ -353,7 +353,12 @@ split
 	bool eventCheck = vars.shouldSplit("randomevent", current.r - old.r);
 
 	// check if hobbies and pastimes increased
-	bool hobbyCheck = vars.shouldSplit("hobbies", current.h - old.h);
+	bool hobbyCounterCheck = vars.shouldSplit("hobbies", current.h - old.h);
+
+	// If hobbies and S&F Shift Work are enabled don't split for race if current script is hao1
+	bool shiftWorkCheck = !(settings["hao1"] && settings["hobbies"] && current.sc == "hao1");
+	
+	bool hobbyCheck = hobbyCounterCheck && shiftWorkCheck;
 
 	// check if they just reached 100% completion
 	bool hundoCheck = settings["100"] && current.percent == 100 && current.percent != old.percent;
