@@ -331,7 +331,7 @@ start
 split
 {
 	// Should we split on this Mission/Stranger and Freaks script name?
-	bool scriptNameCheck = settings[current.sc] && !vars.splits.Contains(current.sc);
+	bool scriptNameCheck = settings.ContainsKey(current.sc) && settings[current.sc] && !vars.splits.Contains(current.sc);
 
 	// check if mission counter increased
 	bool mCounterCheck = vars.shouldSplit("missions", current.m - old.m);
