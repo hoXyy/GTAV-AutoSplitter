@@ -145,7 +145,12 @@ startup
 		{"finale_heist_prepc", "Gauntlet"},
 		{"finale_heist_prepa", "Stingers"},
 		{"finale_heist2a", "The Big One (A)"},
-		{"finale_heist2b", "The Big One (B)"}
+		{"finale_heist2b", "The Big One (B)"},
+		{"assassin_valet", "The Hotel Assassination"},		
+		{"assassin_multi", "The Multi-Target Assassination"},		
+		{"assassin_hooker", "The Vice Assassination"},
+		{"assassin_bus", "The Bus Assassination"},
+		{"assassin_construction", "The Construction Assassination"}		
 	};
 
 	vars.freaksScripts = new Dictionary<string,string> {		
