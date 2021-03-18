@@ -371,8 +371,3 @@ split
 
 	return vars.justSplit;
 }
-
-isLoading
-{
-	return current.loading > 0;
-}
