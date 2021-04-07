@@ -207,7 +207,7 @@ startup
 	settings.Add("other_collectibles", false, "Spaceship Parts/Letters/Monkey Mosaics/Peyotes", "collectibles");
 
 	// Save Warping
-	settings.Add("savewarp", true, "Don't Split when save warping (experimental)", "misc");
+	settings.Add("savewarp", true, "Don't Split when save warping", "misc");
 
 	// Golf autosplitter
 	settings.Add("golf", false, "Split on every Golf hole", "misc");
