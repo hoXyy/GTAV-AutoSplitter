@@ -232,7 +232,7 @@ startup
 	};
 
 	// Prologue timer start
-	settings.Add("prologuetimer", false, "Start the timer on the Prologue start", "starters");
+	settings.Add("prologuetimer", true, "Start the timer on the Prologue start", "starters");
 
 	// misc category auto starter
 	settings.Add("misctimer", false, "Start the timer after Prologue ends", "starters");
@@ -307,11 +307,6 @@ init
 
 update
 {
-	if (version == "") {
-		return false;
-	}
-
-
 
 	var oldPhase = vars.phase;
 	vars.phase = timer.CurrentPhase;
