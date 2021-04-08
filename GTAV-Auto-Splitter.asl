@@ -59,7 +59,7 @@ state("GTA5")
 
 startup
 {
-	vars.missionScripts = new Dictionary<string,string> {
+	vars.missionScripts = new Dictionary<string,string> { //TODO: Add support for driller and sidetracked
 		{"prologue1", "Prologue"},
 		{"armenian1", "Franklin & Lamar"},
 		{"armenian2", "Repossesion"},
@@ -133,7 +133,7 @@ startup
 		{"assassin_construction", "The Construction Assassination"}		
 	};
 
-	vars.freaksScripts = new Dictionary<string,string> {		
+	vars.freaksScriptsFranklin = new Dictionary<string,string> {		
 		{"tonya1", "Pulling Favours"},
 		{"tonya2", "Pulling Another Favour"},
 		{"tonya3", "Pulling Favours Again"},
@@ -143,23 +143,75 @@ startup
 		{"paparazzo1", "Paparazzo"},
 		{"paparazzo2", "Paparazzo - The Sex Tape"},
 		{"paparazzo3a", "Paparazzo - The Meltdown"},
+		{"paparazzo3b", "Paparazzo - The Highness"},
 		{"paparazzo4", "Paparazzo - Reality Check"},
 		{"omega1", "Far Out"},
 		{"omega2", "The Final Frontier"},
 		{"barry3a", "Grass Roots - The Pickup"},
+		{"barry3c", "Grass Roots - The Drag"},
 		{"barry4", "Grass Roots - The Smoke-in"},
 		{"extreme1", "Risk Assesstment"},
 		{"extreme2", "Liqudity Risk"},
 		{"extreme3", "Targeted Risk"},
 		{"extreme4", "Uncalculated Risk"},
 		{"fanatic3", "Exercising Demons - Franklin"},
-		{"dreyfuss1", "A Starlet in Vinewood"}
-	};	
+		{"dreyfuss1", "A Starlet in Vinewood"},
+		{"thelastone", "The Last One"}
+
+	};
+
+	vars.freaksScriptsMichael = new Dictionary<string,string> {
+		{"barry1", "Grass Roots - Michael"},
+		{"fanatic1", "Exercising Demons - Michael"},
+		{"epsilon1", "Seeking the Truth"},
+		{"epsilon2", "Accepting the Truth"}, //Weird behavior for exiting in_m
+		{"epsilon3", "Assuming the Truth"}, //Collecting a car does not load a mission but delivering it sets collectible to 1
+		{"epsilon4", "Chasing the Truth"},
+		{"epsilon5", "Bearing the Truth"},
+		{"epsilon6", "Delivering the Truth"},
+		{"epsilon7", "Exercising the Truth"}, //Doesn't have mission passed screen, might not have in_mission behavior (splits after cutscene), TODO: Find a way to split after pilgramage completes
+		{"epsilon8", "Unknowing the Truth"},
+		{"abigail1", "Death At Sea"},
+		{"abigail2", "What Lies Beneath"} //Lazy guess
+	};
+
+	vars.freaksScriptsTrevor = new Dictionary<string,string> {
+		{"barry2", "Grass Roots - Trevor"},
+		{"fanatic2", "Exercising Demons - Trevor"},
+		{"rampage1", "Rampage 1"},
+		{"rampage3", "Rampage 2"},
+		{"rampage4", "Rampage 3"},
+		{"rampage5", "Rampage 4"},
+		{"rampage2", "Rampage 5"},
+		{"hunting1", "Target Practice"},
+		{"hunting2", "Fair Game"},
+		{"minute1", "The Civil Border Patrol"},
+		{"minute2", "An American Welcome"},
+		{"minute3", "Minute Man Blues"},
+		{"maude1", "Special Bonds"},
+		{"nigel1", "Nigel and Mrs. Thornhill"},
+		{"nigel1a", "Vinewood Souvenirs - Willie"},
+		{"nigel1b", "Vinewood Souvenirs - Tyler"},
+		{"nigel1c", "Vinewood Souvenirs - Kerry"},
+		{"nigel1d", "Vinewood Souvenirs - Mark"},
+		{"nigel2", "Vinewood Souvenirs - Al Di Napoli"},
+		{"nigel3", "Vinewood Souvenirs - The Last Act"},
+		{"josh1", "Extra Commission"},
+		{"josh2", "Closing the Deal"},
+		{"josh3", "Surreal Estate"},
+		{"josh4", "Breach of Contract"},
+		{"mrsphillips1", "Mrs. Phillips"},
+		{"mrsphillips2", "Damaged Goods"}
+	};
 
 	vars.endings = new Dictionary<string,string> {
 		{"fin_a_ext", "Something Sensible (Kill Trevor)"},
 		{"fin_b_ext", "The Time's Come (Kill Michael)"},
 		{"fin_ext_p2", "The Third Way (Deathwish)"}
+	};
+
+	vars.cutscenes = new Dictionary<string,string> { //TODO: Consider an alternate structure
+		{"string", "string"}
 	};
 
 	// add settings groups
@@ -169,48 +221,53 @@ startup
 	settings.Add("starters", true, "Auto Starters");
 	settings.Add("timerend", true, "Auto Finishers");
 
-	// split on Missions
-	settings.Add("missions", true, "Missions", "main");
 
 	// Add missions to setting list
+	settings.Add("missions", true, "Missions", "main");
 	foreach (var script in vars.missionScripts) {
 		settings.Add(script.Key, true, script.Value, "missions");
-	}		
-
+	}
 	settings.SetToolTip("finale_heist_prepc", "Only splits for the first Gauntlet.");
 
-	// split on Strangers and Freaks
-	settings.Add("sf", false, "Strangers and Freaks", "main");
 
 	// Add strangers and freaks to setting list
-	foreach (var Script in vars.freaksScripts) {
-		settings.Add(Script.Key, true, Script.Value, "sf");
-	}	
+	settings.Add("sf", false, "Strangers and Freaks", "main");
+	settings.Add("sfFranklin", false, "Franklin", "sf");
+	settings.Add("sfMichael", false, "Michael", "sf");
+	settings.Add("sfTrevor", false, "Trevor", "sf");
+
+	foreach (var Script in vars.freaksScriptsFranklin) {
+		settings.Add(Script.Key, true, Script.Value, "sfFranklin");
+	}
+	foreach (var Script in vars.freaksScriptsMichael) {
+		settings.Add(Script.Key, true, Script.Value, "sfMichael");
+	}
+	foreach (var Script in vars.freaksScriptsTrevor) {
+		settings.Add(Script.Key, true, Script.Value, "sfTrevor");
+	}
+
 
 	// split on 100% completion
 	settings.Add("100", false, "100% Completion", "main");
-	settings.SetToolTip("100", "Split when the percentage counter reaches 100%."); 
-
+	settings.SetToolTip("100", "Split when the percentage counter reaches 100%.");
 	// split on stunt jumps
 	settings.Add("stuntjumps", false, "Stunt Jumps", "collectibles");
-	
 	// split on under the bridge
 	settings.Add("bridges", false, "Under The Bridge", "collectibles");
-	
 	// split on Random Events
 	settings.Add("randomevent", false, "Random Event", "collectibles");
-	
 	// split on Hobbies and Pasttimes
 	settings.Add("hobbies", false, "Hobbies and Pasttimes", "collectibles");
-
 	// split on other collectibles
-	settings.Add("other_collectibles", false, "Spaceship Parts/Letters/Monkey Mosaics/Peyotes", "collectibles");
-
+	settings.Add("other_collectibles", false, "Spaceship Parts/Letters/Monkey Mosaics/Peyotes/Signs", "collectibles");
 	// Save Warping
 	settings.Add("savewarp", true, "Don't Split when save warping", "misc");
-
 	// Golf autosplitter
 	settings.Add("golf", false, "Split on every Golf hole", "misc");
+
+	// Option to increase refresh rate
+	settings.Add("highRefreshRate", false, "Increase script refresh rate (higher cpu load)", "misc");
+	settings.SetToolTip("highRefreshRate", "Checks to determine whether to split more often. Enabling this setting will use more processing power because code is running more often.");
 
 	vars.segmentsStart = new Dictionary<string,string> {
 		{"countryside", "Countryside"},
@@ -236,7 +293,6 @@ startup
 
 	// misc category auto starter
 	settings.Add("misctimer", false, "Start the timer after Prologue ends", "starters");
-	settings.SetToolTip("misctimer", "Used for misc. categories");
 
 	// Golf timer start
 	settings.Add("golftimer", false, "Start the timer on the first hole in Golf", "starters");
@@ -256,14 +312,15 @@ startup
 	vars.segmentsEnd = new Dictionary<string,string> {
 		{"trevis", "Trevor%"},
 		{"country_end", "Countryside"},
-		{"blitz_end", "Blitz Play"},
 		{"deep", "Deep Inside"},
 		{"paleto_end", "Paleto Score"},
 		{"fresh_meat_end", "Fresh Meat"},
-		{"bureau_end", "Bureau Raid"}
+		{"bureau_end", "Bureau Raid"},
+		{"epsilon_end", "Epsilon Program"},
+		{"asf_end", "All Strangers and Freaks"}
 	};
 
-	// Add actual segments
+	// Add segment ends to settings list
 	foreach(var Segment in vars.segmentsEnd) {
 		settings.Add(Segment.Key, true, Segment.Value, "segments_end");
 	};
@@ -274,7 +331,7 @@ init
 {
 	// Checks if name is enabled in settings and returns true if the diff is exactly one
 	Func<string, int, bool> shouldSplit = (name, diff) => {
-		// Check if anything changed and if this type of split is enabled
+		// Check if anything changed and if this type of split is enabled, probably can get removed
 		if (diff == 0 || !settings[name]) {
 			return false;
 		}
@@ -304,7 +361,7 @@ init
 	vars.currentHole = 1;
 
 	//empty list of done splits
-	vars.splits = new List<string>();	
+	vars.splits = new List<string>();
 }
 
 update
@@ -324,15 +381,33 @@ update
 
 	vars.justStarted = false;
 	vars.justSplit = false;
+
+	if (settings["highRefreshRate"]) {
+    	refreshRate = 120;
+		}
+	else {
+    	refreshRate = 60;
+		}
 }
 
 start
 {
 	bool startFlag = false;
 	if (settings["misctimer"]) {
-		if (current.c == "armenian_1_int" && current.in_c == 1 && current.in_c != old.in_c) {
-			startFlag = true;
-		}	
+		if (current.c == "armenian_1_int") {
+			// Keep track on vars so we only start once. Needed for loading check
+			if (current.c != old.c) {
+				vars.miscFlag = true;
+			}
+
+			// Finished loading for first time, start auto splitter
+			if (vars.miscFlag && current.loading == 0 && current.loading != old.loading) {
+				vars.miscFlag = false;
+				startFlag = true;
+			}
+		} else {
+			vars.miscFlag = false;
+		}
 	}
 
 
@@ -369,7 +444,7 @@ start
 split
 {
 	// Should we split on this Mission/Stranger and Freaks script name?
-	bool scriptNameCheck = settings.ContainsKey(current.sc) && settings[current.sc] && !vars.splits.Contains(current.sc);
+	bool scriptNameCheck = settings.ContainsKey(current.sc) && settings[current.sc] && !vars.splits.Contains(current.sc); //Checks if the current script is turned on in settings and the splits don't contain the
 
 	// check if mission counter increased
 	bool mCounterCheck = vars.shouldSplit("missions", current.m - old.m);
@@ -378,6 +453,10 @@ split
 	// check if strangers and freaks counter increased
 	bool sfCounterCheck = vars.shouldSplit("sf", current.s - old.s);
 	bool sfCheck = scriptNameCheck && sfCounterCheck;
+
+	// check if in_mission changed from true to false
+	bool missionScriptEnd = current.in_m == 0 && old.in_m == 1;
+	bool altSfCheck = scriptNameCheck && missionScriptEnd;
 
 	// check if stunt jumps counter increased
 	bool stuntCheck = vars.shouldSplit("stuntjumps", current.u - old.u);
@@ -416,9 +495,6 @@ split
 
 	// Countryside
 	bool countryCheck = settings["country_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "trevor3";
-
-	// Blitz Play
-	bool blitzCheck = settings["blitz_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "fbi4";
 	
 	// Deep Inside
 	bool deepCheck = settings["deep"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "carsteal3";
@@ -427,13 +503,19 @@ split
 	bool paletoCheck = settings["paleto_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "rural_bank_heist"; 
 
 	// Fresh Meat
-	bool freshCheck = settings["fresh_meat_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "michael2"; 
+	bool freshCheck = settings["fresh_meat_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "michael2";
 
 	// Bureau Raid
-	bool raidCheck = settings["bureau_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc.StartsWith("agency_heist3"); 
+	bool raidCheck = settings["bureau_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc.StartsWith("agency_heist3");
+
+	// Epsilon Program
+	bool epsilonCheck = settings["epsilon_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "epsilon8";
+
+	// All Strangers and Freaks
+	bool asfCheck = settings["asf_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "fanatic1";
 
 	// Return true if any of the above flags are true.
-	vars.justSplit = missionCheck || sfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || golfCheck || endingCheck || endingACheck || trevisCheck || countryCheck || blitzCheck || deepCheck || paletoCheck || freshCheck || raidCheck || collectibleCheck;
+	vars.justSplit = missionCheck || sfCheck || altSfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || golfCheck || endingCheck || endingACheck || trevisCheck || countryCheck || deepCheck || paletoCheck || freshCheck || raidCheck || collectibleCheck || epsilonCheck || asfCheck;
 
 	return vars.justSplit;
 }
