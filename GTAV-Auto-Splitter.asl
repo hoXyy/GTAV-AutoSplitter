@@ -236,6 +236,7 @@ startup
 
 	// misc category auto starter
 	settings.Add("misctimer", false, "Start the timer after Prologue ends", "starters");
+	settings.SetToolTip("misctimer", "Used for misc. categories");
 
 	// Golf timer start
 	settings.Add("golftimer", false, "Start the timer on the first hole in Golf", "starters");
@@ -329,20 +330,9 @@ start
 {
 	bool startFlag = false;
 	if (settings["misctimer"]) {
-		if (current.c == "armenian_1_int") {
-			// Keep track on vars so we only start once. Needed for loading check
-			if (current.c != old.c) {
-				vars.miscFlag = true;
-			}
-
-			// Finished loading for first time, start auto splitter
-			if (vars.miscFlag && current.loading == 0 && current.loading != old.loading) {
-				vars.miscFlag = false;
-				startFlag = true;
-			}
-		} else {
-			vars.miscFlag = false;
-		}
+		if (current.c == "armenian_1_int" && current.in_c == 1 && current.in_c != old.in_c) {
+			startFlag = true;
+		}	
 	}
 
 
