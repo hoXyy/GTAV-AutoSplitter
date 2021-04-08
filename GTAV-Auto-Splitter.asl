@@ -15,7 +15,7 @@ state("GTA5")
 	int u: 0x2A07E70, 0xCE5C0;
 
 	// bridge counter
-	int b: 0x2A07EC8, 0x40318;
+	int b: 0x2A07E70, 0x30318;
 
 	// random event counter
 	int r: 0x2A07E70, 0xBDA28;
@@ -394,20 +394,9 @@ start
 {
 	bool startFlag = false;
 	if (settings["misctimer"]) {
-		if (current.c == "armenian_1_int") {
-			// Keep track on vars so we only start once. Needed for loading check
-			if (current.c != old.c) {
-				vars.miscFlag = true;
-			}
-
-			// Finished loading for first time, start auto splitter
-			if (vars.miscFlag && current.loading == 0 && current.loading != old.loading) {
-				vars.miscFlag = false;
-				startFlag = true;
-			}
-		} else {
-			vars.miscFlag = false;
-		}
+		if (current.c == "armenian_1_int" && current.in_c == 1 && current.in_c != old.in_c) {
+			startFlag = true;
+		}	
 	}
 
 
