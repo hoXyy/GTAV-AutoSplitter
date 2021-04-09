@@ -30,7 +30,7 @@ state("GTA5")
 	string255 sc: 0x1CB4340;
 	
 	// loading check
-	int loading: 0x2153C30;
+	int loading: 0x2AC7CF4;
 
 	// percentage counter
 	float percent: 0x0218FAD8, 0x18068;
