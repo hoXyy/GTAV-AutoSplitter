@@ -433,7 +433,7 @@ start
 split
 {
 	// Should we split on this Mission/Stranger and Freaks script name?
-	bool scriptNameCheck = settings.ContainsKey(current.sc) && settings[current.sc] && !vars.splits.Contains(current.sc); //Checks if the current script is turned on in settings and the splits don't contain the
+	bool scriptNameCheck = settings.ContainsKey(current.sc) && settings[current.sc] && !vars.splits.Contains(current.sc) && !vars.freaksScriptsMichael.Contains(current.sc) && !vars.freaksScriptsTrevor.contains(current.sc); //Checks if the current script is turned on in settings and the splits don't contain the
 
 	// check if mission counter increased
 	bool mCounterCheck = vars.shouldSplit("missions", current.m - old.m);
@@ -444,8 +444,9 @@ split
 	bool sfCheck = scriptNameCheck && sfCounterCheck;
 
 	// check if in_mission changed from true to false
+	bool altScriptNameCheck = settings.ContainsKey(current.sc) && settings[current.sc] && !vars.splits.Contains(current.sc) && vars.freaksScriptsMichael.Contains(current.sc) || vars.freaksScriptsTrevor.contains(current.sc);
 	bool missionScriptEnd = current.in_m == 0 && old.in_m == 1;
-	bool altSfCheck = scriptNameCheck && missionScriptEnd;
+	bool altSfCheck = altScriptNameCheck && missionScriptEnd;
 
 	// check if stunt jumps counter increased
 	bool stuntCheck = vars.shouldSplit("stuntjumps", current.u - old.u);
