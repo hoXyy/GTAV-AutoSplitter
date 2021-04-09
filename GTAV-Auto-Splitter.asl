@@ -231,8 +231,8 @@ startup
 
 
 	// Add strangers and freaks to setting list
-	settings.Add("sf", false, "Strangers and Freaks", "main");
-	settings.Add("sfFranklin", false, "Franklin", "sf");
+	settings.Add("sf", true, "Strangers and Freaks", "main");
+	settings.Add("sfFranklin", true, "Franklin", "sf");
 	settings.Add("sfMichael", false, "Michael", "sf");
 	settings.Add("sfTrevor", false, "Trevor", "sf");
 
@@ -445,7 +445,7 @@ split
 
 	// check if in_mission changed from true to false
 	bool altScriptNameCheck = settings.ContainsKey(current.sc) && settings[current.sc] && !vars.splits.Contains(current.sc) && vars.freaksScriptsMichael.ContainsKey(current.sc) || vars.freaksScriptsTrevor.ContainsKey(current.sc); 
-	bool missionScriptEnd = current.in_m == 0 && old.in_m == 1;
+	bool missionScriptEnd = current.in_m == 0 && old.in_m == 1 && current.noControl == 0;
 	bool altSfCheck = altScriptNameCheck && missionScriptEnd;
 
 	// check if stunt jumps counter increased
