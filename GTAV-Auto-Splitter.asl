@@ -445,6 +445,7 @@ split
 
 	// check if in_mission changed from true to false
 	bool missionScriptEnd = current.in_m == 0 && old.in_m == 1 && current.noControl == 0;
+	bool altScriptNameCheck = settings.ContainsKey(current.sc) && settings[current.sc] && !vars.splits.Contains(current.sc) && vars.freaksScriptsMichael.Contains(current.sc) || vars.freaksScriptsTrevor.Contains(current.sc) || vars.freaksScriptsFranklin.Contains(current.sc);
 	bool altSfCheck = scriptNameCheck && missionScriptEnd;
 
 	// check if stunt jumps counter increased
