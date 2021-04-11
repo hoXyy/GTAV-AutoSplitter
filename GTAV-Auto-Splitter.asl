@@ -42,7 +42,7 @@ state("GTA5")
 	byte in_c: 0x1CB4472;
 
 	// in mission
-	byte in_m: 0x22959C3;
+	byte in_m: 0x1DD6CB9;
 
 	// no player control? - used in ending A splitting and countryside
 	byte noControl: 0x1DD034D;
@@ -444,9 +444,8 @@ split
 	bool sfCheck = scriptNameCheck && sfCounterCheck;
 
 	// check if in_mission changed from true to false
-	bool altScriptNameCheck = settings.ContainsKey(current.sc) && settings[current.sc] && !vars.splits.Contains(current.sc) && vars.freaksScriptsMichael.ContainsKey(current.sc) || vars.freaksScriptsTrevor.ContainsKey(current.sc); 
 	bool missionScriptEnd = current.in_m == 0 && old.in_m == 1 && current.noControl == 0;
-	bool altSfCheck = altScriptNameCheck && missionScriptEnd;
+	bool altSfCheck = ScriptNameCheck && missionScriptEnd;
 
 	// check if stunt jumps counter increased
 	bool stuntCheck = vars.shouldSplit("stuntjumps", current.u - old.u);
