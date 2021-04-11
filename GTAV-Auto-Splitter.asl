@@ -259,7 +259,7 @@ startup
 	// split on Hobbies and Pasttimes
 	settings.Add("hobbies", false, "Hobbies and Pasttimes", "collectibles");
 	// split on other collectibles
-	settings.Add("other_collectibles", false, "Spaceship Parts/Letters/Monkey Mosaics/Peyotes/Signs", "collectibles");
+	settings.Add("other_collectibles", false, "Spaceship Parts/Letters/Monkey Mosaics/Peyotes/Signs/Property Purchases", "collectibles");
 	// Save Warping
 	settings.Add("savewarp", true, "Don't Split when save warping", "misc");
 	// Golf autosplitter
