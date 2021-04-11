@@ -445,7 +445,7 @@ split
 
 	// check if in_mission changed from true to false
 	bool missionScriptEnd = current.in_m == 0 && old.in_m == 1 && current.noControl == 0;
-	bool altSfCheck = ScriptNameCheck && missionScriptEnd;
+	bool altSfCheck = scriptNameCheck && missionScriptEnd;
 
 	// check if stunt jumps counter increased
 	bool stuntCheck = vars.shouldSplit("stuntjumps", current.u - old.u);
