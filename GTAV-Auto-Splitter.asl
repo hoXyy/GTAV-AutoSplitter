@@ -440,8 +440,8 @@ split
 	bool missionCheck = scriptNameCheck && mCounterCheck;
 
 	// check if strangers and freaks counter increased
-	bool sfCounterCheck = vars.shouldSplit("sf", current.s - old.s);
-	bool sfCheck = scriptNameCheck && sfCounterCheck;
+	/* bool sfCounterCheck = vars.shouldSplit("sf", current.s - old.s);
+	bool sfCheck = scriptNameCheck && sfCounterCheck; */
 
 	// check if in_mission changed from true to false
 	bool missionScriptEnd = current.in_m == 0 && old.in_m == 1 && current.noControl == 0;
@@ -505,7 +505,7 @@ split
 	bool asfCheck = settings["asf_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "fanatic1";
 
 	// Return true if any of the above flags are true.
-	vars.justSplit = missionCheck || sfCheck || altSfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || golfCheck || endingCheck || endingACheck || trevisCheck || countryCheck || deepCheck || paletoCheck || freshCheck || raidCheck || collectibleCheck || epsilonCheck || asfCheck;
+	vars.justSplit = missionCheck || /* sfCheck || */ altSfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || golfCheck || endingCheck || endingACheck || trevisCheck || countryCheck || deepCheck || paletoCheck || freshCheck || raidCheck || collectibleCheck || epsilonCheck || asfCheck;
 
 	return vars.justSplit;
 }
