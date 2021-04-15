@@ -167,11 +167,11 @@ startup
 		{"fanatic1", "Exercising Demons - Michael"},
 		{"epsilon1", "Seeking the Truth"},
 		{"epsilon2", "Accepting the Truth"}, //Weird behavior for exiting in_m
-		{"epsilon3", "Assuming the Truth"}, //Collecting a car does not load a mission but delivering it sets collectible to 1
+		{"epsilon3", "Assuming the Truth Intro"}, //Collecting a car does not load a mission but delivering it sets collectible to 1
 		{"epsilon4", "Chasing the Truth"},
-		{"epsilon5", "Bearing the Truth"},
+		{"epsilon5", "Bearing the Truth Intro"},
 		{"epsilon6", "Delivering the Truth"},
-		{"epsilon7", "Exercising the Truth"}, //Doesn't have mission passed screen, might not have in_mission behavior (splits after cutscene), TODO: Find a way to split after pilgramage completes
+		{"epsilon7", "Exercising the Truth Intro"}, //Doesn't have mission passed screen, might not have in_mission behavior (splits after cutscene), TODO: Find a way to split after pilgramage completes
 		{"epsilon8", "Unknowing the Truth"},
 		{"abigail1", "Death At Sea"},
 		{"abigail2", "What Lies Beneath"} //Lazy guess
