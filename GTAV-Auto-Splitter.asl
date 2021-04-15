@@ -262,15 +262,7 @@ startup
 	settings.Add("hobbies", false, "Hobbies and Pasttimes", "collectibles");
 	
 	// split on other collectibles
-	vars.customCollectableBehaviorScripts = new Dictionary<string,string> {
-		{"franklin1", "Don't split on Hood Safari"},
-		{"epsilon3", "Don't split on Assuming the Truth"}
-	};
-	settings.Add("other_collectibles", false, "Spaceship Parts/Letters/Monkey Mosaics/Peyotes/Signs", "collectibles");
-	foreach (var Script in vars.customCollectableBehaviorScripts) {
-		settings.Add("customCollect" + Script.key, false, Script.Value, "other_collectables");
-	};
-
+	settings.Add("other_collectibles", false, "Spaceship Parts/Letters/Monkey Mosaics/Peyotes/Signs/Property Purchases", "collectibles");
 	// Save Warping
 	settings.Add("savewarp", true, "Don't Split when save warping", "misc");
 	// Golf autosplitter
@@ -451,12 +443,13 @@ split
 	bool missionCheck = scriptNameCheck && mCounterCheck;
 
 	// check if strangers and freaks counter increased
-	bool sfCounterCheck = vars.shouldSplit("sf", current.s - old.s);
-	bool sfCheck = scriptNameCheck && sfCounterCheck;
+	/* bool sfCounterCheck = vars.shouldSplit("sf", current.s - old.s);
+	bool sfCheck = scriptNameCheck && sfCounterCheck; */
 
 	// check if in_mission changed from true to false
 	bool missionScriptEnd = current.in_m == 0 && old.in_m == 1 && current.noControl == 0;
-	bool altSfCheck = ScriptNameCheck && missionScriptEnd;
+	bool altScriptNameCheck = settings.ContainsKey(current.sc) && settings[current.sc] && !vars.splits.Contains(current.sc) && vars.freaksScriptsMichael.ContainsKey(current.sc) || vars.freaksScriptsTrevor.ContainsKey(current.sc) || vars.freaksScriptsFranklin.ContainsKey(current.sc);
+	bool altSfCheck = altScriptNameCheck && missionScriptEnd;
 
 	// check if stunt jumps counter increased
 	bool stuntCheck = vars.shouldSplit("stuntjumps", current.u - old.u);
@@ -515,7 +508,7 @@ split
 	bool asfCheck = settings["asf_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "fanatic1";
 
 	// Return true if any of the above flags are true.
-	vars.justSplit = missionCheck || sfCheck || altSfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || golfCheck || endingCheck || endingACheck || trevisCheck || countryCheck || deepCheck || paletoCheck || freshCheck || raidCheck || collectibleCheck || epsilonCheck || asfCheck;
+	vars.justSplit = missionCheck || /* sfCheck || */ altSfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || golfCheck || endingCheck || endingACheck || trevisCheck || countryCheck || deepCheck || paletoCheck || freshCheck || raidCheck || collectibleCheck || epsilonCheck || asfCheck;
 
 	return vars.justSplit;
 }
