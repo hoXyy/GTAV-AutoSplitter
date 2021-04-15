@@ -124,6 +124,8 @@ startup
 		{"finale_heist2_intro", "Big Score Intro"},
 		{"finale_heist_prepc", "Gauntlet"},
 		{"finale_heist_prepa", "Stingers"},
+		//{"driller_placeholder", "Driller"},//Script does not exist for this mission, instead uses custom logic
+		{"finale_heist_prepd", "Sidetracked"},
 		{"finale_heist2a", "The Big One (A)"},
 		{"finale_heist2b", "The Big One (B)"},
 		{"assassin_valet", "The Hotel Assassination"},		
@@ -167,7 +169,7 @@ startup
 		{"epsilon2", "Accepting the Truth"}, //Weird behavior for exiting in_m
 		{"epsilon3", "Assuming the Truth Intro"}, //Collecting a car does not load a mission but delivering it sets collectible to 1
 		{"epsilon4", "Chasing the Truth"},
-		{"epsilon5", "Bearing the Truth Intro"}, //TODO: Find way to split after wearing suit for required time
+		{"epsilon5", "Bearing the Truth Intro"},
 		{"epsilon6", "Delivering the Truth"},
 		{"epsilon7", "Exercising the Truth Intro"}, //Doesn't have mission passed screen, might not have in_mission behavior (splits after cutscene), TODO: Find a way to split after pilgramage completes
 		{"epsilon8", "Unknowing the Truth"},
@@ -258,6 +260,7 @@ startup
 	settings.Add("randomevent", false, "Random Event", "collectibles");
 	// split on Hobbies and Pasttimes
 	settings.Add("hobbies", false, "Hobbies and Pasttimes", "collectibles");
+	
 	// split on other collectibles
 	settings.Add("other_collectibles", false, "Spaceship Parts/Letters/Monkey Mosaics/Peyotes/Signs/Property Purchases", "collectibles");
 	// Save Warping
@@ -477,7 +480,7 @@ split
 	}
 
 	// check if collectible is picked and if under the bridges wasn't increased
-	bool collectibleCheck = settings["other_collectibles"] && current.collectible == 1 && current.collectible != old.collectible && current.b == old.b;
+	bool collectibleCheck = settings["other_collectibles"] && current.collectible == 1 && current.collectible != old.collectible && current.b == old.b && !settings["customCollect" + current.sc];
 
 	// Segment end splits
 	// Trevor%
