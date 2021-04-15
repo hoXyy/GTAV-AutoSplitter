@@ -124,6 +124,8 @@ startup
 		{"finale_heist2_intro", "Big Score Intro"},
 		{"finale_heist_prepc", "Gauntlet"},
 		{"finale_heist_prepa", "Stingers"},
+		//{"driller_placeholder", "Driller"},//Script does not exist for this mission, instead uses custom logic
+		{"finale_heist_prepd", "Sidetracked"},
 		{"finale_heist2a", "The Big One (A)"},
 		{"finale_heist2b", "The Big One (B)"},
 		{"assassin_valet", "The Hotel Assassination"},		
@@ -165,11 +167,11 @@ startup
 		{"fanatic1", "Exercising Demons - Michael"},
 		{"epsilon1", "Seeking the Truth"},
 		{"epsilon2", "Accepting the Truth"}, //Weird behavior for exiting in_m
-		{"epsilon3", "Assuming the Truth Intro"}, //Collecting a car does not load a mission but delivering it sets collectible to 1
+		{"epsilon3", "Assuming the Truth"}, //Collecting a car does not load a mission but delivering it sets collectible to 1
 		{"epsilon4", "Chasing the Truth"},
-		{"epsilon5", "Bearing the Truth Intro"}, //TODO: Find way to split after wearing suit for required time
+		{"epsilon5", "Bearing the Truth"},
 		{"epsilon6", "Delivering the Truth"},
-		{"epsilon7", "Exercising the Truth Intro"}, //Doesn't have mission passed screen, might not have in_mission behavior (splits after cutscene), TODO: Find a way to split after pilgramage completes
+		{"epsilon7", "Exercising the Truth"}, //Doesn't have mission passed screen, might not have in_mission behavior (splits after cutscene), TODO: Find a way to split after pilgramage completes
 		{"epsilon8", "Unknowing the Truth"},
 		{"abigail1", "Death At Sea"},
 		{"abigail2", "What Lies Beneath"} //Lazy guess
@@ -258,8 +260,17 @@ startup
 	settings.Add("randomevent", false, "Random Event", "collectibles");
 	// split on Hobbies and Pasttimes
 	settings.Add("hobbies", false, "Hobbies and Pasttimes", "collectibles");
+	
 	// split on other collectibles
+	vars.customCollectableBehaviorScripts = new Dictionary<string,string> {
+		{"franklin1", "Don't split on Hood Safari"},
+		{"epsilon3", "Don't split on Assuming the Truth"}
+	};
 	settings.Add("other_collectibles", false, "Spaceship Parts/Letters/Monkey Mosaics/Peyotes/Signs", "collectibles");
+	foreach (var Script in vars.customCollectableBehaviorScripts) {
+		settings.Add("customCollect" + Script.key, false, Script.Value, "other_collectables");
+	};
+
 	// Save Warping
 	settings.Add("savewarp", true, "Don't Split when save warping", "misc");
 	// Golf autosplitter
@@ -445,7 +456,7 @@ split
 
 	// check if in_mission changed from true to false
 	bool missionScriptEnd = current.in_m == 0 && old.in_m == 1 && current.noControl == 0;
-	bool altSfCheck = scriptNameCheck && missionScriptEnd;
+	bool altSfCheck = ScriptNameCheck && missionScriptEnd;
 
 	// check if stunt jumps counter increased
 	bool stuntCheck = vars.shouldSplit("stuntjumps", current.u - old.u);
@@ -476,7 +487,7 @@ split
 	}
 
 	// check if collectible is picked and if under the bridges wasn't increased
-	bool collectibleCheck = settings["other_collectibles"] && current.collectible == 1 && current.collectible != old.collectible && current.b == old.b;
+	bool collectibleCheck = settings["other_collectibles"] && current.collectible == 1 && current.collectible != old.collectible && current.b == old.b && !settings["customCollect" + current.sc];
 
 	// Segment end splits
 	// Trevor%
