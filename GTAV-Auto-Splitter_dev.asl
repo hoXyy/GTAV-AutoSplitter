@@ -364,8 +364,6 @@ startup
 		settings.Add(collectible.Value, false, collectible.Value, "collectibles");
 	}
 	
-	// split on other collectibles
-	settings.Add("other_collectibles", false, "Spaceship Parts/Letters/Monkey Mosaics/Peyotes/Signs/Property Purchases", "collectibles");
 	// Golf autosplitter
 	settings.Add("golf", false, "Split on every Golf hole", "misc");
 
@@ -576,11 +574,6 @@ split
 		if (current.gh > 0) {
 			vars.currentHole = current.gh;
 		}
-
-		// check if collectible is picked and if under the bridges wasn't increased
-		if (settings["other_collectibles"] && current.collectible == 1 && current.collectible != old.collectible && current.b == old.b && !settings["customCollect" + current.sc]) {
-			vars.justSplit = true;
-		};
 
 		// Segment end splits
 		// Trevor%
