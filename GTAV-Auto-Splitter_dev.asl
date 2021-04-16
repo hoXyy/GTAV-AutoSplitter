@@ -158,6 +158,13 @@ startup
 			{84, "Big Score (Subtle)"},
 			{85, "Big Score (Obvious)"}
 		}},
+		{"Lester's Assassinations", new Dictionary<int, string> {
+			{3, "The Hotel Assassination"},
+			{4, "The Multi-Target Assassination"},
+			{5, "The Vice Assassination"},
+			{6, "The Bus Assassination"},
+			{7, "The Construction Assassination"}
+		}},
 	};
 
 	// Add mission memory watchers
@@ -340,7 +347,7 @@ startup
 	addMissionHeader("Fresh Meat", true, "Fresh Meat");
 	addMissionHeader("Bureau Raid", true, "Bureau Raid");
 	addMissionHeader("Third Way", true, "Third Way");
-
+	addMissionHeader("Lester's Assassinations", true, "Lester's Assassinations");
 
 	// Add strangers and freaks to setting list
 	settings.Add("sf", true, "Strangers and Freaks", "main");
