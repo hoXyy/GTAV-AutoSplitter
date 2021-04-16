@@ -353,10 +353,6 @@ startup
 		settings.Add(mission.Key, true, mission.Value, "Michael segment");
 	}
 
-
-	// split on 100% completion
-	settings.Add("100", false, "100% Completion", "main");
-	settings.SetToolTip("100", "Split when the percentage counter reaches 100%.");
 	// split on stunt jumps
 	settings.Add("stuntjumps", false, "Stunt Jumps", "collectibles");
 	// split on Random Events
@@ -559,11 +555,6 @@ split
 
 		// check if hobbies and pastimes increased
 		if (vars.shouldSplit("hobbies", current.h - old.h)) {
-			vars.justSplit = true;
-		};
-
-		// check if they just reached 100% completion
-		if (settings["100"] && current.percent == 100 && current.percent != old.percent) {
 			vars.justSplit = true;
 		};
 		
