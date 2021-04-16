@@ -54,6 +54,7 @@ startup
 	vars.freaksList = new List<string>();
 
 	vars.memoryWatchers = new MemoryWatcherList();
+	vars.freaksWatchers = new MemoryWatcherList(); // needed to not eat up CPU
 
 	// mission ids taken from here https://github.com/Sainan/GTA-V-Decompiled-Scripts/blob/245d1611c36454ccce2e1c047026f817f7f29f33/decompiled_scripts/standard_global_init.c#L1653
 	vars.missions = new Dictionary<string, Dictionary<int, string>> {
@@ -156,6 +157,9 @@ startup
 
 	// Add last passed mission memory watcher
 	vars.memoryWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x2A07E70, 0x85CE8)) { Name = "lastMission" });
+
+	// GXT label
+	vars.memoryWatchers.Add(new StringWatcher(new DeepPointer("GTA5.exe", 0x2A07E70, 0xAAC68), 64) { Name = "GXTLabel"});
 
 	// Inserts split into settings and adds the mission to our separate list.
 	Action<string, bool> addMissionChain = (missions, defaultValue) => {
@@ -264,9 +268,12 @@ startup
 	// Add mission memory watchers
 	foreach (var address in vars.freaks) {
 		foreach (var m in address.Value) {
-			vars.memoryWatchers.Add(new MemoryWatcher<byte>(new DeepPointer("GTA5.exe", 0x2A07E70, 0xDF030 + (48 * m.Key))) { Name = m.Value });
+			vars.freaksWatchers.Add(new MemoryWatcher<byte>(new DeepPointer("GTA5.exe", 0x2A07E70, 0xDF030 + (48 * m.Key))) { Name = m.Value });
 		}
 	}
+
+	vars.memoryWatchers.Add(new MemoryWatcher<ulong>(new DeepPointer("GTA5.exe", 0x22B54E0 + 8, 0x4213 * 16 + 8)) { Name = "s&f_address"});
+	vars.memoryWatchers.Add(new MemoryWatcher<ulong>(new DeepPointer("GTA5.exe", 0x22B54E0 + 8, 0x4213 * 16 + 8, 0x10)) { Name = "s&f_value"});
 
 	vars.michaelEpsilonMissions = new Dictionary<string,string> {
 		{"donated500", "Seeking the Truth (donated 500$)"},
@@ -341,7 +348,6 @@ startup
 
 	foreach (var mission in vars.michaelEpsilonMissions) {
 		settings.Add(mission.Key, true, mission.Value, "Michael segment");
-		vars.freaksList.Add(mission.Value);
 	}
 
 
@@ -367,8 +373,11 @@ startup
 	settings.Add("golf", false, "Split on every Golf hole", "misc");
 
 	// Option to increase refresh rate
-	settings.Add("highRefreshRate", false, "Increase script refresh rate (higher cpu load)", "misc");
+	settings.Add("refreshRate", false, "Refresh Rate Settings", "misc");
+	settings.Add("highRefreshRate", false, "Increase script refresh rate (higher cpu load)", "refreshRate");
 	settings.SetToolTip("highRefreshRate", "Checks to determine whether to increase splitting accuracy. Enabling this setting will use more processing power because code is running more often.");
+	settings.Add("lowRefreshRate", false, "Decrease script refresh rate (lower cpu load)", "refreshRate");
+	settings.SetToolTip("lowRefreshRate", "Checks to determine whether to decrease splitting accuracy. Enabling this setting will make LiveSplit use a bit less CPU.");
 
 	vars.segmentsStart = new Dictionary<string,string> {
 		{"countryside", "Countryside"},
@@ -473,6 +482,10 @@ update
 	bool hasChangedPhase = oldPhase != vars.phase;
 
 	vars.memoryWatchers.UpdateAll(game);
+	if (vars.memoryWatchers["GXTLabel"].Current != vars.memoryWatchers["GXTLabel"].Old)
+	{
+		vars.freaksWatchers.UpdateAll(game);
+	}
 
 	if (vars.justStarted || vars.justSplit || hasChangedPhase) {
 		vars.loadHistory.Clear();
@@ -488,10 +501,13 @@ update
 	if (settings["highRefreshRate"]) {
     	refreshRate = 120;
 	}
+	if (settings["lowRefreshRate"]) {
+    	refreshRate = 30;
+	}
 	else {
     	refreshRate = 60;
 	}
-		
+
 }
 
 start
@@ -621,16 +637,14 @@ split
 
 	}
 
-/* 	foreach (var freaks in vars.freaksList) {
-		vars.currentValue = (vars.memoryWatchers[freaks].Current >> 3) & 1;
-		vars.oldValue = (vars.memoryWatchers[freaks].Old >> 3) & 1;
-		if (vars.currentValue > vars.oldValue) {
+	foreach (var freaks in vars.freaksList) {
+		if ((((vars.freaksWatchers[freaks].Current >> 3) & 1) > ((vars.freaksWatchers[freaks].Old >> 3) & 1))) {
 			if (settings.ContainsKey(freaks) && settings[freaks] && !vars.splits.Contains(freaks)) {
 				vars.justSplit = true;
 				vars.splits.Add(freaks);
 			}
 		}
-	} */
+	}
 
 	return vars.justSplit;
 }
