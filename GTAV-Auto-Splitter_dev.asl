@@ -52,9 +52,6 @@ startup
 {
 	vars.missionList = new Dictionary<int, string> {};
 	vars.freaksList = new List<string>();
-	vars.freaksStatus = new Dictionary<string, int> {};
-
-
 
 	vars.memoryWatchers = new MemoryWatcherList();
 	vars.freaksWatchers = new MemoryWatcherList(); // needed to not eat up CPU
@@ -192,7 +189,6 @@ startup
 		foreach (var address in vars.freaks[missions]) {
 			settings.Add(address.Value, defaultValue, address.Value, parent + " segment");
 			vars.freaksList.Add(address.Value);
-			vars.freaksStatus[address.Value] = 0;
 		}
 	};
 	
