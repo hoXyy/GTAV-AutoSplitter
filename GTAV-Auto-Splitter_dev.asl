@@ -578,7 +578,7 @@ split
 		}
 
 		// check if collectible is picked and if under the bridges wasn't increased
-		if (settings["other_collectibles"] && current.collectible == 1 && current.collectible != old.collectible && current.b == old.b && !settings["customCollect" + current.sc]) {
+		if (settings["other_collectibles"] && current.collectible == 1 && current.collectible != old.collectible && current.b == old.b) {
 			vars.justSplit = true;
 		};
 
