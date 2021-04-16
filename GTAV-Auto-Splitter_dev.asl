@@ -5,17 +5,8 @@
 // Social Club
 state("GTA5")
 {
-/* 	// mission counter
-	int m: 0x2A07E70, 0xBDA08;
-
-	// strangers and freaks counter
-	int s: 0x2A07E70, 0xBDA20; */
-
 	// usj counter
 	int u: 0x2A07E70, 0xCE5C0;
-
-/* 	// bridge counter
-	int b: 0x2A07E70, 0x30318; */
 
 	// random event counter
 	int r: 0x2A07E70, 0xBDA28;
@@ -59,14 +50,10 @@ state("GTA5")
 
 startup
 {
-	vars.missionList = new List<string>();
+	vars.missionList = new Dictionary<int, string> {};
 	vars.freaksList = new List<string>();
 
-	vars.missionWatchers = new MemoryWatcherList();
-	vars.freaksWatchers = new MemoryWatcherList();
-	vars.flagsWatchers = new MemoryWatcherList();
-	vars.collectibleAddressWatchers = new MemoryWatcherList();
-	vars.collectibleValueWatchers = new MemoryWatcherList();
+	vars.memoryWatchers = new MemoryWatcherList();
 
 	// mission ids taken from here https://github.com/Sainan/GTA-V-Decompiled-Scripts/blob/245d1611c36454ccce2e1c047026f817f7f29f33/decompiled_scripts/standard_global_init.c#L1653
 	vars.missions = new Dictionary<string, Dictionary<int, string>> {
@@ -167,20 +154,15 @@ startup
 		}},
 	};
 
-	// Add mission memory watchers
-	foreach (var address in vars.missions) {
-		foreach (var m in address.Value) {
-			vars.missionWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x2A07E70, (0xCD1F8 + (48 * m.Key)))) { Name = m.Value });
-		}
-	}
-
+	// Add last passed mission memory watcher
+	vars.memoryWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x2A07E70, 0x85CE8)) { Name = "lastMission" });
 
 	// Inserts split into settings and adds the mission to our separate list.
 	Action<string, bool> addMissionChain = (missions, defaultValue) => {
 		var parent = missions;
 		foreach (var address in vars.missions[missions]) {
 			settings.Add(address.Value, defaultValue, address.Value, parent + " segment");
-			vars.missionList.Add(address.Value);
+			vars.missionList[address.Key] = address.Value;
 		}
 	};
 	
@@ -282,7 +264,7 @@ startup
 	// Add mission memory watchers
 	foreach (var address in vars.freaks) {
 		foreach (var m in address.Value) {
-			vars.freaksWatchers.Add(new MemoryWatcher<byte>(new DeepPointer("GTA5.exe", 0x2A07E70, 0xDF030 + (48 * m.Key))) { Name = m.Value });
+			vars.memoryWatchers.Add(new MemoryWatcher<byte>(new DeepPointer("GTA5.exe", 0x2A07E70, 0xDF030 + (48 * m.Key))) { Name = m.Value });
 		}
 	}
 
@@ -305,7 +287,7 @@ startup
 	};
 
 	foreach(var flag in vars.epsilonFlags) {
-		vars.flagsWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x2A07E70, 0xCCCA0 + (flag.Key * 8))) { Name = flag.Value });
+		vars.memoryWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x2A07E70, 0xCCCA0 + (flag.Key * 8))) { Name = flag.Value });
 	}
 
 
@@ -323,8 +305,8 @@ startup
 	};
 
 	foreach(var collectible in vars.collectibleIDs) {
-		vars.collectibleAddressWatchers.Add(new MemoryWatcher<ulong>(new DeepPointer("GTA5.exe", 0x22B54E0 + 8, collectible.Key * 16 + 8)) { Name = collectible.Value });
-		vars.collectibleValueWatchers.Add(new MemoryWatcher<ulong>(new DeepPointer("GTA5.exe", 0x22B54E0 + 8, collectible.Key * 16 + 8, 0x10)) { Name = collectible.Value });
+		vars.memoryWatchers.Add(new MemoryWatcher<ulong>(new DeepPointer("GTA5.exe", 0x22B54E0 + 8, collectible.Key * 16 + 8)) { Name = collectible.Value + " address" });
+		vars.memoryWatchers.Add(new MemoryWatcher<ulong>(new DeepPointer("GTA5.exe", 0x22B54E0 + 8, collectible.Key * 16 + 8, 0x10)) { Name = collectible.Value + " value" });
 	}
 
 
@@ -490,11 +472,7 @@ update
 	vars.phase = timer.CurrentPhase;
 	bool hasChangedPhase = oldPhase != vars.phase;
 
-	vars.collectibleAddressWatchers.UpdateAll(game);
-	vars.collectibleValueWatchers.UpdateAll(game);
-	vars.flagsWatchers.UpdateAll(game);
-	vars.missionWatchers.UpdateAll(game);
-	vars.freaksWatchers.UpdateAll(game);
+	vars.memoryWatchers.UpdateAll(game);
 
 	if (vars.justStarted || vars.justSplit || hasChangedPhase) {
 		vars.loadHistory.Clear();
@@ -509,11 +487,10 @@ update
 
 	if (settings["highRefreshRate"]) {
     	refreshRate = 120;
-		}
+	}
 	else {
     	refreshRate = 60;
-		}
-
+	}
 		
 }
 
@@ -559,27 +536,8 @@ start
 
 split
 {
-	// Should we split on this Mission/Stranger and Freaks script name?
-	bool scriptNameCheck = settings.ContainsKey(current.sc) && settings[current.sc] && !vars.splits.Contains(current.sc); //Checks if the current script is turned on in settings and the splits don't contain the
-
-/* 	// check if mission counter increased
-	bool mCounterCheck = vars.shouldSplit("missions", current.m - old.m);
-	bool missionCheck = scriptNameCheck && mCounterCheck;
-
-	// check if strangers and freaks counter increased
-	/* bool sfCounterCheck = vars.shouldSplit("sf", current.s - old.s);
-	bool sfCheck = scriptNameCheck && sfCounterCheck; */
-
-	// check if in_mission changed from true to false
-/* 	bool missionScriptEnd = current.in_m == 0 && old.in_m == 1 && current.noControl == 0;
-	bool altScriptNameCheck = settings.ContainsKey(current.sc) && settings[current.sc] && !vars.splits.Contains(current.sc) && vars.freaksScriptsMichael.ContainsKey(current.sc) || vars.freaksScriptsTrevor.ContainsKey(current.sc) || vars.freaksScriptsFranklin.ContainsKey(current.sc);
-	bool altSfCheck = altScriptNameCheck && missionScriptEnd; */
-
 	// check if stunt jumps counter increased
 	bool stuntCheck = vars.shouldSplit("stuntjumps", current.u - old.u);
-
-/* 	// check if bridges counter changed
-	bool bridgeCheck = vars.shouldSplit("bridges", current.b - old.b); */
 
 	// check if random event increased
 	bool eventCheck = vars.shouldSplit("randomevent", current.r - old.r);
@@ -635,34 +593,44 @@ split
 	vars.justSplit = /* missionCheck  || /* sfCheck ||  altSfCheck || */ stuntCheck /* || bridgeCheck */ || eventCheck || hobbyCheck || hundoCheck || golfCheck || endingCheck || endingACheck || trevisCheck || countryCheck || deepCheck || paletoCheck || freshCheck || raidCheck || collectibleCheck || epsilonCheck || asfCheck;
 
 	foreach (var collectible in vars.collectibleIDs) {
-		vars.currentValue = (vars.collectibleAddressWatchers[collectible.Value].Current + 0x10 & 0xFFFFFFFF) ^ vars.collectibleValueWatchers[collectible.Value].Current;
-		vars.oldValue = (vars.collectibleAddressWatchers[collectible.Value].Old + 0x10 & 0xFFFFFFFF) ^ vars.collectibleValueWatchers[collectible.Value].Old;
-		if (settings[collectible.Value] && (vars.currentValue > vars.oldValue))
+		vars.currentValue = (vars.memoryWatchers[collectible.Value + " address"].Current + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Current;
+		vars.oldValue = (vars.memoryWatchers[collectible.Value + " address"].Old + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Old;
+		if ((vars.currentValue > vars.oldValue) && settings[collectible.Value])
 		{
 			vars.justSplit = true;
 		}
 	};
 
+
 	foreach (var flag in vars.epsilonFlags) {
-		if (settings[flag.Value] && (vars.flagsWatchers[flag.Value].Current > vars.flagsWatchers[flag.Value].Old) && !vars.splits.Contains(flag.Value)) {
-			vars.justSplit = true;
-			vars.splits.Add(flag.Value);
+		if (vars.memoryWatchers[flag.Value].Current > vars.memoryWatchers[flag.Value].Old) {
+			if (settings[flag.Value] && !vars.splits.Contains(flag.Value)) {
+				vars.justSplit = true;
+				vars.splits.Add(flag.Value);
+			}
 		}
 	}
 
 	foreach (var mission in vars.missionList) {
-		if (settings[mission] && (vars.missionWatchers[mission].Current > vars.missionWatchers[mission].Old) && !vars.splits.Contains(mission)) {
-			vars.justSplit = true;
-			vars.splits.Add(mission);
+		if (vars.memoryWatchers["lastMission"].Current == mission.Key && vars.memoryWatchers["lastMission"].Current != vars.memoryWatchers["lastMission"].Old) {
+			if (settings[mission.Value] && !vars.splits.Contains(mission.Value)) {
+				vars.justSplit = true;
+				vars.splits.Add(mission.Value);
+			}
 		}
+
 	}
 
-	foreach (var freaks in vars.freaksList) {
-		if (settings.ContainsKey(freaks) && settings[freaks] && (((vars.freaksWatchers[freaks].Current >> 3) & 1) > ((vars.freaksWatchers[freaks].Old >> 3) & 1)) && !vars.splits.Contains(freaks)) {
-			vars.justSplit = true;
-			vars.splits.Add(freaks);
+/* 	foreach (var freaks in vars.freaksList) {
+		vars.currentValue = (vars.memoryWatchers[freaks].Current >> 3) & 1;
+		vars.oldValue = (vars.memoryWatchers[freaks].Old >> 3) & 1;
+		if (vars.currentValue > vars.oldValue) {
+			if (settings.ContainsKey(freaks) && settings[freaks] && !vars.splits.Contains(freaks)) {
+				vars.justSplit = true;
+				vars.splits.Add(freaks);
+			}
 		}
-	}
+	} */
 
 	return vars.justSplit;
 }
