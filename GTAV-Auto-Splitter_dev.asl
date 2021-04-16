@@ -52,6 +52,9 @@ startup
 {
 	vars.missionList = new Dictionary<int, string> {};
 	vars.freaksList = new List<string>();
+	vars.freaksStatus = new Dictionary<string, int> {};
+
+
 
 	vars.memoryWatchers = new MemoryWatcherList();
 	vars.freaksWatchers = new MemoryWatcherList(); // needed to not eat up CPU
@@ -161,6 +164,12 @@ startup
 	// GXT label
 	vars.memoryWatchers.Add(new StringWatcher(new DeepPointer("GTA5.exe", 0x2A07E70, 0xAAC68), 64) { Name = "GXTLabel"});
 
+	// Game state
+	vars.memoryWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x14167 + 0x1ca0317 + 0xA)) { Name = "GameState"});
+
+	// Loading state
+	vars.memoryWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x1E59F4 + 0x01bea3b0 + 0xc)) { Name = "LoadState"});
+
 	// Inserts split into settings and adds the mission to our separate list.
 	Action<string, bool> addMissionChain = (missions, defaultValue) => {
 		var parent = missions;
@@ -183,6 +192,7 @@ startup
 		foreach (var address in vars.freaks[missions]) {
 			settings.Add(address.Value, defaultValue, address.Value, parent + " segment");
 			vars.freaksList.Add(address.Value);
+			vars.freaksStatus[address.Value] = 0;
 		}
 	};
 	
@@ -271,9 +281,6 @@ startup
 			vars.freaksWatchers.Add(new MemoryWatcher<byte>(new DeepPointer("GTA5.exe", 0x2A07E70, 0xDF030 + (48 * m.Key))) { Name = m.Value });
 		}
 	}
-
-	vars.memoryWatchers.Add(new MemoryWatcher<ulong>(new DeepPointer("GTA5.exe", 0x22B54E0 + 8, 0x4213 * 16 + 8)) { Name = "s&f_address"});
-	vars.memoryWatchers.Add(new MemoryWatcher<ulong>(new DeepPointer("GTA5.exe", 0x22B54E0 + 8, 0x4213 * 16 + 8, 0x10)) { Name = "s&f_value"});
 
 	vars.michaelEpsilonMissions = new Dictionary<string,string> {
 		{"donated500", "Seeking the Truth (donated 500$)"},
@@ -446,19 +453,6 @@ init
 			return false;
 		}
 
-		// Experimental save warping
-		if (settings["savewarp"]) {
-			if (diff == 1 && vars.loadHistory.Contains(name)) {
-				vars.loadHistory.Remove(name);
-				return false;
-			}
-
-			if (diff == -1) {
-				vars.loadHistory.Add(name);
-				return false;
-			}
-		}
-
 		return diff == 1;
 	};
 	vars.shouldSplit = shouldSplit;
@@ -470,19 +464,22 @@ init
 	vars.loadHistory = new HashSet<string>();
 	vars.currentHole = 1;
 
-	//empty list of done splits
 	vars.splits = new List<string>();
 }
 
 update
 {
-
 	var oldPhase = vars.phase;
 	vars.phase = timer.CurrentPhase;
 	bool hasChangedPhase = oldPhase != vars.phase;
 
 	vars.memoryWatchers.UpdateAll(game);
 	if (vars.memoryWatchers["GXTLabel"].Current != vars.memoryWatchers["GXTLabel"].Old)
+	{
+		vars.freaksWatchers.UpdateAll(game);
+	}
+
+	if (vars.memoryWatchers["GameState"].Current != vars.memoryWatchers["GameState"].Old)
 	{
 		vars.freaksWatchers.UpdateAll(game);
 	}
@@ -507,6 +504,7 @@ update
 	else {
     	refreshRate = 60;
 	}
+	
 
 }
 
@@ -552,96 +550,130 @@ start
 
 split
 {
-	// check if stunt jumps counter increased
-	bool stuntCheck = vars.shouldSplit("stuntjumps", current.u - old.u);
-
-	// check if random event increased
-	bool eventCheck = vars.shouldSplit("randomevent", current.r - old.r);
-
-	// check if hobbies and pastimes increased
-	bool hobbyCheck = vars.shouldSplit("hobbies", current.h - old.h);
-
-	// check if they just reached 100% completion
-	bool hundoCheck = settings["100"] && current.percent == 100 && current.percent != old.percent;
-	
-	// check if split on this ending
-	bool endingCheck = settings.ContainsKey(current.c) && settings[current.c] && current.in_c == 1 && current.in_c != old.in_c && current.in_m == 1;
-
-	// ending A check
-	bool endingACheck = settings["fin_a_ext"] && current.c == "fin_a_ext" && current.noControl == 1 && current.noControl != old.noControl && current.in_m == 1;
-
-	// Golf hole split. Checks > 1 so we don't split on golf start.
-	bool golfCheck = current.gh > 1 && current.gh != old.gh && vars.shouldSplit("golf", current.gh - vars.currentHole);
-	// golf hole value changes to 0 inbetween holes, (walking to shot/scoreboard after hole)
-	if (current.gh > 0) {
-		vars.currentHole = current.gh;
-	}
-
-	// check if collectible is picked and if under the bridges wasn't increased
-	bool collectibleCheck = settings["other_collectibles"] && current.collectible == 1 && current.collectible != old.collectible && current.b == old.b && !settings["customCollect" + current.sc];
-
-	// Segment end splits
-	// Trevor%
-	bool trevisCheck = settings["trevis"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "jewelry_heist";
-
-	// Countryside
-	bool countryCheck = settings["country_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "trevor3";
-	
-	// Deep Inside
-	bool deepCheck = settings["deep"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "carsteal3";
-
-	// Paleto Score
-	bool paletoCheck = settings["paleto_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "rural_bank_heist"; 
-
-	// Fresh Meat
-	bool freshCheck = settings["fresh_meat_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "michael2";
-
-	// Bureau Raid
-	bool raidCheck = settings["bureau_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc.StartsWith("agency_heist3");
-
-	// Epsilon Program
-	bool epsilonCheck = settings["epsilon_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "epsilon8";
-
-	// All Strangers and Freaks
-	bool asfCheck = settings["asf_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "fanatic1";
-
-	// Return true if any of the above flags are true.
-	vars.justSplit = /* missionCheck  || /* sfCheck ||  altSfCheck || */ stuntCheck /* || bridgeCheck */ || eventCheck || hobbyCheck || hundoCheck || golfCheck || endingCheck || endingACheck || trevisCheck || countryCheck || deepCheck || paletoCheck || freshCheck || raidCheck || collectibleCheck || epsilonCheck || asfCheck;
-
-	foreach (var collectible in vars.collectibleIDs) {
-		vars.currentValue = (vars.memoryWatchers[collectible.Value + " address"].Current + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Current;
-		vars.oldValue = (vars.memoryWatchers[collectible.Value + " address"].Old + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Old;
-		if ((vars.currentValue > vars.oldValue) && settings[collectible.Value])
-		{
+	// Don't split if a load is going on
+	if (vars.memoryWatchers["LoadState"].Current == 0 && settings["savewarp"]) {
+		// splitting stuff
+		// check if stunt jumps counter increased
+		if (vars.shouldSplit("stuntjumps", current.u - old.u)) {
 			vars.justSplit = true;
+		};
+
+		// check if random event increased
+		if (vars.shouldSplit("randomevent", current.r - old.r)) {
+			vars.justSplit = true;
+		};
+
+		// check if hobbies and pastimes increased
+		if (vars.shouldSplit("hobbies", current.h - old.h)) {
+			vars.justSplit = true;
+		};
+
+		// check if they just reached 100% completion
+		if (settings["100"] && current.percent == 100 && current.percent != old.percent) {
+			vars.justSplit = true;
+		};
+		
+		// check if split on this ending
+		if (settings.ContainsKey(current.c) && settings[current.c] && current.in_c == 1 && current.in_c != old.in_c && current.in_m == 1) {
+			vars.justSplit = true;
+		};
+
+		// ending A check
+		if (settings["fin_a_ext"] && current.c == "fin_a_ext" && current.noControl == 1 && current.noControl != old.noControl && current.in_m == 1) {
+			vars.justSplit = true;
+		};
+
+		// Golf hole split. Checks > 1 so we don't split on golf start.
+		if (current.gh > 1 && current.gh != old.gh && vars.shouldSplit("golf", current.gh - vars.currentHole)) {
+			vars.justSplit = true;
+		};
+		// golf hole value changes to 0 inbetween holes, (walking to shot/scoreboard after hole)
+		if (current.gh > 0) {
+			vars.currentHole = current.gh;
 		}
-	};
 
+		// check if collectible is picked and if under the bridges wasn't increased
+		if (settings["other_collectibles"] && current.collectible == 1 && current.collectible != old.collectible && current.b == old.b && !settings["customCollect" + current.sc]) {
+			vars.justSplit = true;
+		};
 
-	foreach (var flag in vars.epsilonFlags) {
-		if (vars.memoryWatchers[flag.Value].Current > vars.memoryWatchers[flag.Value].Old) {
-			if (settings[flag.Value] && !vars.splits.Contains(flag.Value)) {
+		// Segment end splits
+		// Trevor%
+		if (settings["trevis"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "jewelry_heist") {
+			vars.justSplit = true;
+		};
+
+		// Countryside
+		if (settings["country_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "trevor3") {
+			vars.justSplit = true;
+		};
+		
+		// Deep Inside
+		if (settings["deep"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "carsteal3") {
+			vars.justSplit = true;
+		};
+
+		// Paleto Score
+		if (settings["paleto_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "rural_bank_heist") {
+			vars.justSplit = true;
+		}; 
+
+		// Fresh Meat
+		if (settings["fresh_meat_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "michael2") {
+			vars.justSplit = true;
+		};
+
+		// Bureau Raid
+		if (settings["bureau_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc.StartsWith("agency_heist3")) {
+			vars.justSplit = true;
+		};
+
+		// Epsilon Program
+		if (settings["epsilon_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "epsilon8") {
+			vars.justSplit = true;
+		};
+
+		// All Strangers and Freaks
+		if (settings["asf_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "fanatic1") {
+			vars.justSplit = true;
+		};
+
+		foreach (var collectible in vars.collectibleIDs) {
+			vars.currentValue = (vars.memoryWatchers[collectible.Value + " address"].Current + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Current;
+			vars.oldValue = (vars.memoryWatchers[collectible.Value + " address"].Old + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Old;
+			if ((vars.currentValue > vars.oldValue) && settings[collectible.Value])
+			{
 				vars.justSplit = true;
-				vars.splits.Add(flag.Value);
 			}
-		}
-	}
+		};
 
-	foreach (var mission in vars.missionList) {
-		if (vars.memoryWatchers["lastMission"].Current == mission.Key && vars.memoryWatchers["lastMission"].Current != vars.memoryWatchers["lastMission"].Old) {
-			if (settings[mission.Value] && !vars.splits.Contains(mission.Value)) {
-				vars.justSplit = true;
-				vars.splits.Add(mission.Value);
+
+		foreach (var flag in vars.epsilonFlags) {
+			if (vars.memoryWatchers[flag.Value].Current > vars.memoryWatchers[flag.Value].Old) {
+				if (settings[flag.Value] && !vars.splits.Contains(flag.Value)) {
+					vars.justSplit = true;
+					vars.splits.Add(flag.Value);
+				}
 			}
-		}
+		};
 
-	}
+		foreach (var mission in vars.missionList) {
+			if (vars.memoryWatchers["lastMission"].Current == mission.Key && vars.memoryWatchers["lastMission"].Current != vars.memoryWatchers["lastMission"].Old) {
+				if (settings[mission.Value] && !vars.splits.Contains(mission.Value)) {
+					vars.justSplit = true;
+					vars.splits.Add(mission.Value);
+				}
+			}
+		};
 
-	foreach (var freaks in vars.freaksList) {
-		if ((((vars.freaksWatchers[freaks].Current >> 3) & 1) > ((vars.freaksWatchers[freaks].Old >> 3) & 1))) {
-			if (settings.ContainsKey(freaks) && settings[freaks] && !vars.splits.Contains(freaks)) {
-				vars.justSplit = true;
-				vars.splits.Add(freaks);
+		foreach (var freaks in vars.freaksList) {
+			bool curVal = Convert.ToBoolean((vars.freaksWatchers[freaks].Current >> 3) & 1);
+			bool oldVal = Convert.ToBoolean((vars.freaksWatchers[freaks].Old >> 3) & 1);
+			if (curVal && !oldVal) {
+				if (settings.ContainsKey(freaks) && settings[freaks] && !vars.splits.Contains(freaks)) {
+					vars.justSplit = true;
+					vars.splits.Add(freaks);
+				}
 			}
 		}
 	}
