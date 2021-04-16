@@ -5,17 +5,17 @@
 // Social Club
 state("GTA5")
 {
-	// mission counter
+/* 	// mission counter
 	int m: 0x2A07E70, 0xBDA08;
 
 	// strangers and freaks counter
-	int s: 0x2A07E70, 0xBDA20;
+	int s: 0x2A07E70, 0xBDA20; */
 
 	// usj counter
 	int u: 0x2A07E70, 0xCE5C0;
 
-	// bridge counter
-	int b: 0x2A07E70, 0x30318;
+/* 	// bridge counter
+	int b: 0x2A07E70, 0x30318; */
 
 	// random event counter
 	int r: 0x2A07E70, 0xBDA28;
@@ -316,6 +316,7 @@ startup
 	};
 
 	vars.collectibleIDs = new Dictionary<int, string> {
+		{0x4FD4, "Under the Bridges"},
 		{0x2B6C, "Letter Scraps"},
 		{0x1A1, "Spaceship Parts"},
 		{0x4B59, "Nuclear Waste"}
@@ -367,8 +368,6 @@ startup
 	settings.SetToolTip("100", "Split when the percentage counter reaches 100%.");
 	// split on stunt jumps
 	settings.Add("stuntjumps", false, "Stunt Jumps", "collectibles");
-	// split on under the bridge
-	settings.Add("bridges", false, "Under The Bridge", "collectibles");
 	// split on Random Events
 	settings.Add("randomevent", false, "Random Event", "collectibles");
 	// split on Hobbies and Pasttimes
@@ -579,8 +578,8 @@ split
 	// check if stunt jumps counter increased
 	bool stuntCheck = vars.shouldSplit("stuntjumps", current.u - old.u);
 
-	// check if bridges counter changed
-	bool bridgeCheck = vars.shouldSplit("bridges", current.b - old.b);
+/* 	// check if bridges counter changed
+	bool bridgeCheck = vars.shouldSplit("bridges", current.b - old.b); */
 
 	// check if random event increased
 	bool eventCheck = vars.shouldSplit("randomevent", current.r - old.r);
@@ -633,7 +632,7 @@ split
 	bool asfCheck = settings["asf_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "fanatic1";
 
 	// Return true if any of the above flags are true.
-	vars.justSplit = /* missionCheck  || /* sfCheck ||  altSfCheck || */ stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || golfCheck || endingCheck || endingACheck || trevisCheck || countryCheck || deepCheck || paletoCheck || freshCheck || raidCheck || collectibleCheck || epsilonCheck || asfCheck;
+	vars.justSplit = /* missionCheck  || /* sfCheck ||  altSfCheck || */ stuntCheck /* || bridgeCheck */ || eventCheck || hobbyCheck || hundoCheck || golfCheck || endingCheck || endingACheck || trevisCheck || countryCheck || deepCheck || paletoCheck || freshCheck || raidCheck || collectibleCheck || epsilonCheck || asfCheck;
 
 	foreach (var collectible in vars.collectibleIDs) {
 		vars.currentValue = (vars.collectibleAddressWatchers[collectible.Value].Current + 0x10 & 0xFFFFFFFF) ^ vars.collectibleValueWatchers[collectible.Value].Current;
