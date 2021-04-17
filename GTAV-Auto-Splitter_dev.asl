@@ -281,8 +281,8 @@ startup
 	vars.michaelEpsilonMissions = new Dictionary<string,string> {
 		{"donated500", "Seeking the Truth (donated 500$)"},
 		{"donated5k", "Accepting the Truth (donated 5000$)"},
-		{"donated10k", "Assuming the Truth (all cars collected)"},
-		{"carsdelivered", "Chasing the Truth (donated 10000$)"},
+		{"carsdelivered", "Assuming the Truth (all cars collected)"},
+		{"donated10k", "Chasing the Truth (donated 10000$)"},
 		{"robe10days", "Bearing the Truth (10 days with robe passed)"},
 		{"desertdone", "Exercising the Truth (after pilgrimage done)"},
 	};
