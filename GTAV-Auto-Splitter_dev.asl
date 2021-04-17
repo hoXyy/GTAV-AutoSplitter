@@ -14,7 +14,7 @@ state("GTA5")
 	// hobbies and pasttimes
 	int h: 0x2A07E70, 0xBDA10;
 
-	// current cutscene
+	// current loaded cutscene
 	string255 c: 0x01CB44A0, 0xB70;
 
 	// current script
@@ -307,6 +307,35 @@ startup
 		{"fin_ext_p2", "The Third Way (Deathwish)"}
 	};
 
+	// used to add to settings, second string is the cutscene's name
+	vars.cutsceneNames = new Dictionary<string,string> {
+		{"pro_mcs_5", "Getting in getaway vehicle"},
+		{"pro_mcs_6", "The Train"},
+		// no cutscene id for post drive in F&L, can be circumvented by checking for cutscene = armenian_1_int and counting the number of times player loses control
+		{"arm_2_mcs_4", "Repo: Confronted by Vagos"},
+		{"fra_0_mcs_1", "Confront D in Alley"},
+		// fatherson: getting franklin on boat sets noControl to 1
+		{"fam_1_mcs_2", "Arrive at LSC"},
+		{"fam_3_mcs_1", "Pull down house"},
+		{"lester_1_int", "Arrive at Lester's house"},
+		{"les_1a_mcs_0", "Clothes Store"},
+		{"les_1a_mcs_1", "Enter Lifeinvader"},
+		{"les_1a_mcs_3", "Finish popups"}
+	};
+	// second string is cutscene's parent in settings, currently unused
+	vars.cutsceneParents = new Dictionary<string,string> {
+		{"pro_mcs_5", "Prologue"},
+		{"pro_mcs_6", "Prologue"},
+		{"arm_2_mcs_4", "Reposession"},
+		{"fra_0_mcs_1", "Chop"},
+		{"fam_1_mcs_2", "Father/Son"},
+		{"fam_3_mcs_1", "Marriage Counseling"},
+		{"lester_1_int", "Friend Request"},
+		{"les_1a_mcs_0", "Friend Request"},
+		{"les_1a_mcs_1", "Friend Request"},
+		{"les_1a_mcs_3", "Friend Request"}
+	};
+
 	vars.collectibleIDs = new Dictionary<int, string> {
 		{0x4FD4, "Under the Bridges"},
 		{0x2B6C, "Letter Scraps"},
@@ -327,6 +356,7 @@ startup
 	settings.Add("misc", false, "Miscellaneous");
 	settings.Add("starters", true, "Auto Starters");
 	settings.Add("timerend", true, "Auto Finishers");
+	settings.Add("cutscene", false, "Cutscenes");
 
 
 	// Add missions to setting list
@@ -341,6 +371,11 @@ startup
 	addMissionHeader("Bureau Raid", true, "Bureau Raid");
 	addMissionHeader("Third Way", true, "Third Way");
 	addMissionHeader("Lester's Assassinations", true, "Lester's Assassinations");
+
+	// Add cutscenes to setting list
+	foreach (var cutscene in vars.cutsceneNames) {
+		settings.Add(cutscene.Key, false, cutscene.Value, "cutscene");
+	};
 
 	// Add strangers and freaks to setting list
 	settings.Add("sf", true, "Strangers and Freaks", "main");
@@ -556,7 +591,7 @@ split
 			vars.justSplit = true;
 		};
 		
-		// check if split on this ending
+		// check if split on this ending/cutscene
 		if (settings.ContainsKey(current.c) && settings[current.c] && current.in_c == 1 && current.in_c != old.in_c && current.in_m == 1) {
 			vars.justSplit = true;
 		};
