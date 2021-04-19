@@ -320,7 +320,18 @@ startup
 		{"lester_1_int", "Arrive at Lester's house"},
 		{"les_1a_mcs_0", "Clothes Store"},
 		{"les_1a_mcs_1", "Enter Lifeinvader"},
-		{"les_1a_mcs_3", "Finish popups"}
+		{"les_1a_mcs_3", "Finish popups"},
+		{"jh_1_ig_3", "Inside Jewel Store Casing"},
+		{"jh_2b_mcs_1", "Arrive at Store (heist)"},
+		{"lam_1_mcs_1_concat", "Meet D (Long Stretch)"},
+		{"mic_3_int", "Meet Dave (Wrap Up)"},
+		{"bs_2a_mcs_1", "Hijack security trucks"},
+		{"bs_2a_mcs_8_p3", "Finish shootout"},
+		{"bs_2a_mcs_11", "Finish Drive Sequence"},
+		{"fin_c_int", "Visit Lester"},
+		{"fin_c_mcs_1", "Start Foundry Shootout"},
+		{"fin_c_ext", "Finish Foundry Shootout"}, // noControl indicates character switch after this?
+		{"fin_c2_mcs_5", "Kidnap Devin"}
 	};
 	// second string is cutscene's parent in settings, currently unused
 	vars.cutsceneParents = new Dictionary<string,string> {
