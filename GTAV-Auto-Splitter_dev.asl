@@ -308,6 +308,7 @@ startup
 	};
 
 	// used to add to settings, second string is the cutscene's name
+	// TODO: Add mission name to beginning of each name
 	vars.cutsceneNames = new Dictionary<string,string> {
 		{"pro_mcs_5", "Getting in getaway vehicle"},
 		{"pro_mcs_6", "The Train"},
@@ -360,11 +361,11 @@ startup
 	};
 	// second string is cutscene's parent in settings, currently unused
 	vars.cutsceneParents = new Dictionary<string,string> {
-		{"pro_mcs_5", "Prologue"},
-		{"pro_mcs_6", "Prologue"},
-		{"arm_2_mcs_4", "Reposession"},
-		{"fra_0_mcs_1", "Chop"},
-		{"fam_1_mcs_2", "Father/Son"},
+		{"pro_mcs_5", "Trevor%"},
+		{"pro_mcs_6", "Trevor%"},
+		{"arm_2_mcs_4", "Trevor%"},
+		{"fra_0_mcs_1", "Trevor%"},
+		{"fam_1_mcs_2", "Trevor%"},
 		{"fam_3_mcs_1", "Marriage Counseling"},
 		{"lester_1_int", "Friend Request"},
 		{"les_1a_mcs_0", "Friend Request"},
@@ -408,10 +409,6 @@ startup
 	addMissionHeader("Third Way", true, "Third Way");
 	addMissionHeader("Lester's Assassinations", true, "Lester's Assassinations");
 
-	// Add cutscenes to setting list
-	foreach (var cutscene in vars.cutsceneNames) {
-		settings.Add(cutscene.Key, false, cutscene.Value, "cutscene");
-	};
 
 	// Add strangers and freaks to setting list
 	settings.Add("sf", true, "Strangers and Freaks", "main");
@@ -458,10 +455,17 @@ startup
 	// Add segments to autostart
 	settings.Add("segments_start", false, "Segments", "starters");
 	settings.SetToolTip("segments_start", "For Trevor% segment, use the Start the timer on the Prologue start option.");
+	settings.Add("segments_split", false, "Split at the beginning of segments", "cutscene");
 
-	// Add actual segments
+	// Add actual segments to starter, cutscene splits
 	foreach(var Segment in vars.segmentsStart) {
 		settings.Add(Segment.Key, true, Segment.Value, "segments_start");
+		settings.Add(Segment.Key + "split", false, Segment.Value, "segments_split");
+	};
+
+	// Add cutscenes to setting list
+	foreach (var cutscene in vars.cutsceneNames) {
+		settings.Add(cutscene.Key, false, cutscene.Value, "cutscene");
 	};
 
 	// Prologue timer start
@@ -637,6 +641,28 @@ split
 		if (settings["fin_a_ext"] && current.c == "fin_a_ext" && current.noControl == 1 && current.noControl != old.noControl && current.in_m == 1) {
 			vars.justSplit = true;
 		};
+	
+
+		// generic segment timer split
+		if (settings.ContainsKey(current.c + "split") && settings[current.c + "split"]) {
+			if (current.in_c == 0 && current.in_c != old.in_c && current.in_m == 1) {
+				vars.justSplit = true;
+			}
+		}
+
+		// exception for countryside
+		if (settings["countrysidesplit"]) {
+			if (current.c == "trevor_1_int" && current.in_m == 1 && current.in_c == 0 && current.loading == 0 && current.loading != old.loading && current.noControl == 0) {
+				vars.justSplit = true;
+			}
+		}
+
+		// exception for paleto score
+		if (settings["paleto_scoresplit"]) {
+			if (current.sc == "exile1" && current.loading == 0 && current.loading != old.loading && current.in_m == 1) {
+				vars.justSplit = true;
+			}
+		}
 
 		// Golf hole split. Checks > 1 so we don't split on golf start.
 		if (current.gh > 1 && current.gh != old.gh && vars.shouldSplit("golf", current.gh - vars.currentHole)) {
