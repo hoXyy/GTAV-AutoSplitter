@@ -488,6 +488,7 @@ startup
 	vars.segmentsEnd = new Dictionary<string,string> {
 		{"trevis", "Trevor%"},
 		{"country_end", "Countryside"},
+		{"blitz_end", "Blitz Play"},
 		{"deep", "Deep Inside"},
 		{"paleto_end", "Paleto Score"},
 		{"fresh_meat_end", "Fresh Meat"},
@@ -654,6 +655,11 @@ split
 
 		// Countryside
 		if (settings["country_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "trevor3") {
+			vars.justSplit = true;
+		};
+
+		// Blitz Play
+		if (settings["blitz_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "fbi4") {
 			vars.justSplit = true;
 		};
 		

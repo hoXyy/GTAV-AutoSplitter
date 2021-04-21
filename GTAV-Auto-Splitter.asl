@@ -1,21 +1,12 @@
 // GTA V Autosplitter for version 1.27
-// Contributors: hoxi, TheStonedTurtle, Crab1k, Gogsi123, FriendlyBaron, burhac, Rake Jyals and other community members
+// Contributors: hoxi, TheStonedTurtle, Parik, Crab1k, Gogsi123, FriendlyBaron, burhac, Rake Jyals and other community members
 // For any questions, ask in the GTA V Speedrunning Discord: https://discord.gg/3qjGGBM
 
 // Social Club
 state("GTA5")
 {
-	// mission counter
-	int m: 0x2A07E70, 0xBDA08;
-
-	// strangers and freaks counter
-	int s: 0x2A07E70, 0xBDA20;
-
 	// usj counter
 	int u: 0x2A07E70, 0xCE5C0;
-
-	// bridge counter
-	int b: 0x2A07E70, 0x30318;
 
 	// random event counter
 	int r: 0x2A07E70, 0xBDA28;
@@ -23,7 +14,7 @@ state("GTA5")
 	// hobbies and pasttimes
 	int h: 0x2A07E70, 0xBDA10;
 
-	// current cutscene
+	// current loaded cutscene
 	string255 c: 0x01CB44A0, 0xB70;
 
 	// current script
@@ -59,152 +50,256 @@ state("GTA5")
 
 startup
 {
-	vars.missionScripts = new Dictionary<string,string> { //TODO: Add support for driller and sidetracked
-		{"prologue1", "Prologue"},
-		{"armenian1", "Franklin & Lamar"},
-		{"armenian2", "Repossesion"},
-		{"franklin0", "Chop"},
-		{"armenian3", "Complications"},
-		{"family1", "Father/Son"},
-		{"family3", "Marriage Counseling"},
-		{"lester1", "Friend Request"},
-		{"family2", "Daddy's Little Girl"},
-		{"jewelry_setup1", "Casing the Jewel Store"},
-		{"jewelry_prep1b", "Carbine Rifles"},
-		{"jewelry_heist", "The Jewel Store Job"},
-		{"lamar1", "The Long Stretch"},
-		{"trevor1", "Mr. Philips"},
-		{"chinese1", "Trevor Philips Industries"},
-		{"trevor2", "Nervous Ron"},
-		{"chinese2", "Crystal Maze"},
-		{"trevor3", "Friends Reunited"},
-		{"family4", "Fame or Shame"},
-		{"fbi1", "Dead Man Walking"},
-		{"fbi2", "Three's Company"},
-		{"franklin1", "Hood Safari"},
-		{"docks_setup", "Scouting the Port"},
-		{"family5", "Did Somebody Say Yoga?"},
-		{"fbi3", "By The Book"},
-		{"docks_prep1", "Minisub"},
-		{"fbi4_intro", "Blitz Play Intro"},
-		{"fbi4_prep1", "Garbage Truck"},
-		{"fbi4_prep2", "Tow Truck"},
-		{"fbi4_prep4", "Masks"},
-		{"fbi4_prep5", "Boiler Suits"},
-		{"docks_heista", "Merryweather Heist (A)"},
-		{"docks_heistb", "Merryweather Heist (B)"},
-		{"fbi4", "Blitz Play"},
-		{"carsteal1", "I Fought The Law"},
-		{"carsteal2", "Eye in the Sky"},
-		{"solomon1", "Mr. Richards"},
-		{"martin1", "Caida Libre"},
-		{"carsteal3", "Deep Inside"},
-		{"exile1", "Minor Turbulence"},
-		{"rural_bank_setup", "Paleto Score Setup"},
-		{"exile2", "Predator"},
-		{"rural_bank_prep1", "Military Hardware"},
-		{"rural_bank_heist", "Paleto Score"},
-		{"exile3", "Derailed"},
-		{"fbi5a", "Monkey Business"},
-		{"trevor4", "Hang Ten"},
-		{"finale_heist1", "Surveying the Score"},
-		{"michael1", "Bury the Hatchet"},
-		{"carsteal4", "Pack Man"},
-		{"michael2", "Fresh Meat"},
-		{"solomon2", "Ballad of Rocco"},
-		{"agency_heist1", "Cleaning out the Bureau"},
-		{"family6", "Reuniting the Family"},
-		{"agency_heist2", "Architect's Plans"},
-		{"agency_heist3a", "Bureau Raid (A)"},
-		{"agency_heist3b", "Bureau Raid (B)"},
-		{"solomon3", "Legal Trouble"},
-		{"michael3", "The Wrap Up"},
-		{"franklin2", "Lamar Down"},
-		{"michael4", "Meltdown"},
-		{"finale_heist2_intro", "Big Score Intro"},
-		{"finale_heist_prepc", "Gauntlet"},
-		{"finale_heist_prepa", "Stingers"},
-		//{"driller_placeholder", "Driller"},//Script does not exist for this mission, instead uses custom logic
-		{"finale_heist_prepd", "Sidetracked"},
-		{"finale_heist2a", "The Big One (A)"},
-		{"finale_heist2b", "The Big One (B)"},
-		{"assassin_valet", "The Hotel Assassination"},		
-		{"assassin_multi", "The Multi-Target Assassination"},		
-		{"assassin_hooker", "The Vice Assassination"},
-		{"assassin_bus", "The Bus Assassination"},
-		{"assassin_construction", "The Construction Assassination"}		
+	vars.missionList = new Dictionary<int, string> {};
+	vars.freaksList = new List<string>();
+
+	vars.memoryWatchers = new MemoryWatcherList();
+	vars.freaksWatchers = new MemoryWatcherList(); // needed to not eat up CPU
+
+	// mission ids taken from here https://github.com/Sainan/GTA-V-Decompiled-Scripts/blob/245d1611c36454ccce2e1c047026f817f7f29f33/decompiled_scripts/standard_global_init.c#L1653
+	vars.missions = new Dictionary<string, Dictionary<int, string>> {
+		{"Trevor%", new Dictionary<int, string> {
+			{53, "Prologue"},
+			{0, "Franklin & Lamar"},
+			{1, "Repossession"},
+			{40, "Chop"},
+			{2, "Complications"},
+			{17, "Father/Son"},
+			{19, "Marriage Counseling"},
+			{44, "Friend Request"},
+			{18, "Daddy's Little Girl"},
+			{86, "Casing the Jewel Store"},
+			{89, "Carbine Rifles"},
+			{90, "The Jewel Store Job"}
+		}},
+		{"Countryside", new Dictionary<int, string> {
+			{43, "The Long Stretch"},
+			{62, "Mr. Philips"},
+			{12, "Trevor Philips Industries"},
+			{63, "Nervous Ron"},
+			{13, "Crystal Maze"},
+			{64, "Friends Reunited"}
+		}},
+		{"Blitz Play", new Dictionary<int, string> {
+			{20, "Fame or Shame"},
+			{29, "Dead Man Walking"},
+			{30, "Three's Company"},
+			{41, "Hood Safari"},
+			{71, "Scouting the Port"},
+			{21, "Did Somebody Say Yoga?"},
+			{31, "By The Book"},
+			{72, "Minisub"},
+			{32, "Blitz Play Intro"},
+			{33, "Garbage Truck"},
+			{34, "Tow Truck"},
+			{36, "Masks"},
+			{37, "Boiler Suits"},
+			{73, "Cargobob (Merryweather Heist)"},
+			{74, "Merryweather Heist (Freighter)"},
+			{75, "Merryweather Heist (Offshore)"},
+			{38, "Blitz Play Finale"}
+		}},
+		{"Deep Inside", new Dictionary<int, string> {
+			{8, "I Fought The Law"},
+			{9, "Eye in the Sky"},
+			{59, "Mr. Richards"},
+			{45, "Caida Libre"},
+			{10, "Deep Inside"}
+		}},
+		{"Paleto Score", new Dictionary<int, string> {
+			{14, "Minor Turbulence"},
+			{91, "Paleto Score Setup"},
+			{15, "Predator"},
+			{92, "Military Hardware"},
+			{93, "Paleto Score"}
+		}},
+		{"Fresh Meat", new Dictionary<int, string> {
+			{16, "Derailed"},
+			{39, "Monkey Business"},
+			{65, "Hang Ten"},
+			{76, "Surveying the Score"},
+			{46, "Bury the Hatchet"},
+			{11, "Pack Man"},
+			{47, "Fresh Meat"}
+		}},
+		{"Bureau Raid", new Dictionary<int, string> {
+			{60, "Ballad of Rocco"},
+			{66, "Cleaning out the Bureau"},
+			{22, "Reuniting the Family"},
+			{67, "Architect's Plans"},
+			{68, "Fire Truck (Bureau Raid)"},
+			{69, "Bureau Raid (Covert)"},
+			{70, "Bureau Raid (Roof)"}
+		}},
+		{"Third Way", new Dictionary<int, string> {
+			{61, "Legal Trouble"},
+			{48, "The Wrap Up"},
+			{42, "Lamar Down"},
+			{49, "Meltdown"},
+			{77, "Big Score Intro"},
+			{80, "Gauntlet A"},
+			{81, "Gauntlet B"},
+			{82, "Gauntlet C"},
+			{78, "Stingers"},
+			{79, "Driller"},
+			{83, "Sidetracked"},
+			{84, "Big Score (Subtle)"},
+			{85, "Big Score (Obvious)"}
+		}},
+		{"Lester's Assassinations", new Dictionary<int, string> {
+			{3, "The Hotel Assassination"},
+			{4, "The Multi-Target Assassination"},
+			{5, "The Vice Assassination"},
+			{6, "The Bus Assassination"},
+			{7, "The Construction Assassination"}
+		}},
 	};
 
-	vars.freaksScriptsFranklin = new Dictionary<string,string> {		
-		{"tonya1", "Pulling Favours"},
-		{"tonya2", "Pulling Another Favour"},
-		{"tonya3", "Pulling Favours Again"},
-		{"tonya4", "Still Pulling Favours"},
-		{"tonya5", "Pulling One Last Favour"},
-		{"hao1", "Shift Work"},
-		{"paparazzo1", "Paparazzo"},
-		{"paparazzo2", "Paparazzo - The Sex Tape"},
-		{"paparazzo3a", "Paparazzo - The Meltdown"},
-		{"paparazzo3b", "Paparazzo - The Highness"},
-		{"paparazzo4", "Paparazzo - Reality Check"},
-		{"omega1", "Far Out"},
-		{"omega2", "The Final Frontier"},
-		{"barry3a", "Grass Roots - The Pickup"},
-		{"barry3c", "Grass Roots - The Drag"},
-		{"barry4", "Grass Roots - The Smoke-in"},
-		{"extreme1", "Risk Assesstment"},
-		{"extreme2", "Liqudity Risk"},
-		{"extreme3", "Targeted Risk"},
-		{"extreme4", "Uncalculated Risk"},
-		{"fanatic3", "Exercising Demons - Franklin"},
-		{"dreyfuss1", "A Starlet in Vinewood"},
-		{"thelastone", "The Last One"}
+	// Add last passed mission memory watcher
+	vars.memoryWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x2A07E70, 0x85CE8)) { Name = "lastMission" });
 
+	// GXT label
+	vars.memoryWatchers.Add(new StringWatcher(new DeepPointer("GTA5.exe", 0x2A07E70, 0xAAC68), 64) { Name = "GXTLabel"});
+
+	// Game state
+	vars.memoryWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x14167 + 0x1ca0317 + 0xA)) { Name = "GameState"});
+
+	// Loading state
+	vars.memoryWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x1E59F4 + 0x01bea3b0 + 0xc)) { Name = "LoadState"});
+
+	// Inserts split into settings and adds the mission to our separate list.
+	Action<string, bool> addMissionChain = (missions, defaultValue) => {
+		var parent = missions;
+		foreach (var address in vars.missions[missions]) {
+			settings.Add(address.Value, defaultValue, address.Value, parent + " segment");
+			vars.missionList[address.Key] = address.Value;
+		}
+	};
+	
+	// Inserts header (i.e. mission giver) into settings.
+	Action<string, bool, string> addMissionHeader = (missions, defaultValue, header) => {
+		var parent = missions;
+		settings.Add(parent + " segment", defaultValue, header);
+		addMissionChain(missions, defaultValue);
 	};
 
-	vars.freaksScriptsMichael = new Dictionary<string,string> {
-		{"barry1", "Grass Roots - Michael"},
-		{"fanatic1", "Exercising Demons - Michael"},
-		{"epsilon1", "Seeking the Truth"},
-		{"epsilon2", "Accepting the Truth"}, //Weird behavior for exiting in_m
-		{"epsilon3", "Assuming the Truth Intro"}, //Collecting a car does not load a mission but delivering it sets collectible to 1
-		{"epsilon4", "Chasing the Truth"},
-		{"epsilon5", "Bearing the Truth Intro"},
-		{"epsilon6", "Delivering the Truth"},
-		{"epsilon7", "Exercising the Truth Intro"}, //Doesn't have mission passed screen, might not have in_mission behavior (splits after cutscene), TODO: Find a way to split after pilgramage completes
-		{"epsilon8", "Unknowing the Truth"},
-		{"abigail1", "Death At Sea"},
-		{"abigail2", "What Lies Beneath"} //Lazy guess
+
+	Action<string, bool> addFreaksChain = (missions, defaultValue) => {
+		var parent = missions;
+		foreach (var address in vars.freaks[missions]) {
+			settings.Add(address.Value, defaultValue, address.Value, parent + " segment");
+			vars.freaksList.Add(address.Value);
+		}
+	};
+	
+
+	Action<string, bool, string> addFreaksHeader = (missions, defaultValue, header) => {
+		var parent = missions;
+		settings.Add(parent + " segment", defaultValue, header);
+		addFreaksChain(missions, defaultValue);
 	};
 
-	vars.freaksScriptsTrevor = new Dictionary<string,string> {
-		{"barry2", "Grass Roots - Trevor"},
-		{"fanatic2", "Exercising Demons - Trevor"},
-		{"rampage1", "Rampage 1"},
-		{"rampage3", "Rampage 2"},
-		{"rampage4", "Rampage 3"},
-		{"rampage5", "Rampage 4"},
-		{"rampage2", "Rampage 5"},
-		{"hunting1", "Target Practice"},
-		{"hunting2", "Fair Game"},
-		{"minute1", "The Civil Border Patrol"},
-		{"minute2", "An American Welcome"},
-		{"minute3", "Minute Man Blues"},
-		{"maude1", "Special Bonds"},
-		{"nigel1", "Nigel and Mrs. Thornhill"},
-		{"nigel1a", "Vinewood Souvenirs - Willie"},
-		{"nigel1b", "Vinewood Souvenirs - Tyler"},
-		{"nigel1c", "Vinewood Souvenirs - Kerry"},
-		{"nigel1d", "Vinewood Souvenirs - Mark"},
-		{"nigel2", "Vinewood Souvenirs - Al Di Napoli"},
-		{"nigel3", "Vinewood Souvenirs - The Last Act"},
-		{"josh1", "Extra Commission"},
-		{"josh2", "Closing the Deal"},
-		{"josh3", "Surreal Estate"},
-		{"josh4", "Breach of Contract"},
-		{"mrsphillips1", "Mrs. Phillips"},
-		{"mrsphillips2", "Damaged Goods"}
+	vars.freaks = new Dictionary<string, Dictionary<int,string>> {
+		{"Franklin", new Dictionary <int,string> {
+			{58, "Pulling Favours"},
+			{59, "Pulling Another Favour"},
+			{60, "Pulling Favours Again"},
+			{61, "Still Pulling Favours"},
+			{62, "Pulling One Last Favour"},
+			{24, "Shift Work"},
+			{46, "Paparazzo"},
+			{47, "Paparazzo - The Sex Tape"},
+			{49, "Paparazzo - The Meltdown"},
+			{50, "Paparazzo - The Highness"},
+			{51, "Paparazzo - Reality Check"},
+			{44, "Far Out"},
+			{45, "The Final Frontier"},
+			{4, "Grass Roots - Franklin"},
+			{5, "Grass Roots - The Pickup"},
+			{6, "Grass Roots - The Drag"},
+			{7, "Grass Roots - The Smoke-in"},
+			{17, "Risk Assesstment"},
+			{18, "Liqudity Risk"},
+			{19, "Targeted Risk"},
+			{20, "Uncalculated Risk"},
+			{23, "Exercising Demons - Franklin"},
+			{8, "A Starlet in Vinewood"},
+			{57, "The Last One"}
+		}},
+		{"Michael", new Dictionary<int, string> {
+			{2, "Grass Roots - Michael"},
+			{21, "Exercising Demons - Michael"},
+			{0, "Death At Sea"},
+			{1, "What Lies Beneath"},
+			{9, "Seeking the Truth"},
+			{10, "Accepting the Truth"},
+			{11, "Assuming the Truth"},
+			{12, "Chasing the Truth"},
+			{13, "Bearing the Truth"},
+			{14, "Delivering the Truth"},
+			{15, "Exercising the Truth"},
+			{16, "Unknowing the Truth"}
+			// Extra Epsilon splits added later
+		}},
+		{"Trevor", new Dictionary<int, string> {
+			{3, "Grass Roots - Trevor"},
+			{22, "Exercising Demons - Trevor"},
+			{52, "Rampage 1"},
+			{53, "Rampage 2"},
+			{54, "Rampage 3"},
+			{55, "Rampage 4"},
+			{56, "Rampage 5"},
+			{25, "Target Practice"},
+			{26, "Fair Game"},
+			{32, "The Civil Border Patrol"},
+			{33, "An American Welcome"},
+			{34, "Minute Man Blues"},
+			{31, "Special Bonds"},
+			{37, "Nigel and Mrs. Thornhill"},
+			{38, "Vinewood Souvenirs - Willie"},
+			{39, "Vinewood Souvenirs - Tyler"},
+			{40, "Vinewood Souvenirs - Kerry"},
+			{41, "Vinewood Souvenirs - Mark"},
+			{42, "Vinewood Souvenirs - Al Di Napoli"},
+			{43, "Vinewood Souvenirs - The Last Act"},
+			{27, "Extra Commission"},
+			{28, "Closing the Deal"},
+			{29, "Surreal Estate"},
+			{30, "Breach of Contract"},
+			{35, "Mrs. Philips"},
+			{36, "Damaged Goods"}
+		}}
+	};	
+
+	// Add mission memory watchers
+	foreach (var address in vars.freaks) {
+		foreach (var m in address.Value) {
+			vars.freaksWatchers.Add(new MemoryWatcher<byte>(new DeepPointer("GTA5.exe", 0x2A07E70, 0xDF030 + (48 * m.Key))) { Name = m.Value });
+		}
+	}
+
+	vars.michaelEpsilonMissions = new Dictionary<string,string> {
+		{"donated500", "Seeking the Truth (donated 500$)"},
+		{"donated5k", "Accepting the Truth (donated 5000$)"},
+		{"carsdelivered", "Assuming the Truth (all cars collected)"},
+		{"donated10k", "Chasing the Truth (donated 10000$)"},
+		{"robe10days", "Bearing the Truth (10 days with robe passed)"},
+		{"desertdone", "Exercising the Truth (after pilgrimage done)"},
 	};
+
+	vars.epsilonFlags = new Dictionary<int, string> {
+		{87, "donated500"},
+		{88, "donated5k"},
+		{89, "donated10k"},
+		{90, "carsdelivered"},
+		{92, "robe10days"},
+		{94, "desertdone"}
+	};
+
+	foreach(var flag in vars.epsilonFlags) {
+		vars.memoryWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x2A07E70, 0xCCCA0 + (flag.Key * 8))) { Name = flag.Value });
+	}
+
 
 	vars.endings = new Dictionary<string,string> {
 		{"fin_a_ext", "Something Sensible (Kill Trevor)"},
@@ -212,9 +307,84 @@ startup
 		{"fin_ext_p2", "The Third Way (Deathwish)"}
 	};
 
-	vars.cutscenes = new Dictionary<string,string> { //TODO: Consider an alternate structure
-		{"string", "string"}
+	// used to add to settings, second string is the cutscene's name
+	vars.cutsceneNames = new Dictionary<string,string> {
+		{"pro_mcs_5", "Getting in getaway vehicle"},
+		{"pro_mcs_6", "The Train"},
+		// no cutscene id for post drive in F&L, can be circumvented by checking for cutscene = armenian_1_int and counting the number of times player loses control
+		{"armenian_2_int", "Repo: Greet Simeon"},
+		{"arm_2_mcs_4", "Repo: Confronted by Vagos"},
+		{"fra_0_mcs_1", "Confront D in Alley"},
+		{"armenian_3_mcs_8", "Start Simeon Fight"},
+		// fatherson: getting franklin on boat sets noControl to 1
+		{"fam_1_mcs_2", "Arrive at LSC"},
+		{"family_3_int", "Start Marriage Counseling"},
+		{"fam_3_mcs_1", "Pull down house"},
+		{"lester_1_int", "Arrive at Lester's house"},
+		{"les_1a_mcs_0", "Clothes Store"},
+		{"les_1a_mcs_1", "Enter Lifeinvader"},
+		{"les_1a_mcs_3", "Finish popups"},
+		{"family_2_mcs_2", "DLG: Finish Bike Ride"},
+		{"family_2_mcs_3", "DLG: Finish Swimming"},
+		{"jh_1_ig_3", "Inside Jewel Store Casing"},
+		{"jh_2b_mcs_1", "Arrive at Store (heist)"},
+		{"lam_1_mcs_1_concat", "Meet D (Long Stretch)"},
+		{"trv_1_mcs_1_p1", "Mr. Phillips: Finish First Drive"},
+		{"trv_1_mcs_3_concat", "Mr. Phillips: Smash Trailer"},
+		{"trv_2_mcs_4_concat", "Nervous Ron: Shoot Down Chopper"},
+		{"trv_2_mcs_6", "Nervous Ron: Board Plane"},
+		{"family_4_mcs_2", "Fame or Shame: Enter Arena"},
+		{"fbi_1_int", "Start Dead Man Walking"},
+		{"family_5_mcs_3", "Finish Yoga"},
+		//{"", "I Fought the Law: Start Race"},//?
+		//{"", "I Fought the Law: Start Bike Chase"},//?
+		{"", "I Fought the Law: End Bike Chase"},
+		{"sol_1_mcs_2", "Mr. Richards: Confront Rocco"},
+		{"sol_1_mcs_3", "Mr. Richards: Finish Rocco Fight"},
+		{"exl_1_mcs_1_p3_b", "Minor Turbulence: Enter Cargo Jet"},
+		{"rbhs_mcs_1", "Paleto Score Setup: Enter Paleto Bay"},
+		{"ah_3b_mcs_1", "Bureau Raid: Jump out of Heli"},
+		{"ah_3b_mcs_3", "Bureau Raid: Start Hack"},
+		{"ah_3b_mcs_4", "Bureau Raid: Finish Hack"},
+		{"ah_3b_mcs_5", "Bureau Raid: Finish Shootout"},
+		{"ah_3b_mcs_6_p1", "Bureau Raid: Pass Crashed Helicopter"},
+		{"ah_3b_mcs_7", "Bureau Raid: Start Repelling"},
+		{"mic_3_int", "Meet Dave (Wrap Up)"},
+		{"bs_2a_mcs_1", "Hijack security trucks"},
+		{"bs_2a_mcs_8_p3", "Finish shootout"},
+		{"bs_2a_mcs_11", "Finish Drive Sequence"},
+		{"fin_c_int", "Visit Lester"},
+		{"fin_c_mcs_1", "Start Foundry Shootout"},
+		{"fin_c_ext", "Finish Foundry Shootout"}, // noControl indicates character switch after this?
+		{"fin_c2_mcs_5", "Kidnap Devin"}
 	};
+	// second string is cutscene's parent in settings, currently unused
+	vars.cutsceneParents = new Dictionary<string,string> {
+		{"pro_mcs_5", "Prologue"},
+		{"pro_mcs_6", "Prologue"},
+		{"arm_2_mcs_4", "Reposession"},
+		{"fra_0_mcs_1", "Chop"},
+		{"fam_1_mcs_2", "Father/Son"},
+		{"fam_3_mcs_1", "Marriage Counseling"},
+		{"lester_1_int", "Friend Request"},
+		{"les_1a_mcs_0", "Friend Request"},
+		{"les_1a_mcs_1", "Friend Request"},
+		{"les_1a_mcs_3", "Friend Request"}
+	};
+
+	vars.collectibleIDs = new Dictionary<int, string> {
+		{0x4FD4, "Under the Bridges"},
+		{0x2B6C, "Letter Scraps"},
+		{0x1A1, "Spaceship Parts"},
+		{0x4B59, "Nuclear Waste"}
+	};
+
+	foreach(var collectible in vars.collectibleIDs) {
+		vars.memoryWatchers.Add(new MemoryWatcher<ulong>(new DeepPointer("GTA5.exe", 0x22B54E0 + 8, collectible.Key * 16 + 8)) { Name = collectible.Value + " address" });
+		vars.memoryWatchers.Add(new MemoryWatcher<ulong>(new DeepPointer("GTA5.exe", 0x22B54E0 + 8, collectible.Key * 16 + 8, 0x10)) { Name = collectible.Value + " value" });
+	}
+
+
 
 	// add settings groups
 	settings.Add("main", true, "Main");
@@ -222,55 +392,58 @@ startup
 	settings.Add("misc", false, "Miscellaneous");
 	settings.Add("starters", true, "Auto Starters");
 	settings.Add("timerend", true, "Auto Finishers");
+/* 	settings.Add("cutscene", false, "Cutscenes"); */
 
 
 	// Add missions to setting list
 	settings.Add("missions", true, "Missions", "main");
-	foreach (var script in vars.missionScripts) {
-		settings.Add(script.Key, true, script.Value, "missions");
-	}
-	settings.SetToolTip("finale_heist_prepc", "Only splits for the first Gauntlet.");
+	settings.CurrentDefaultParent = "missions";
+	addMissionHeader("Trevor%", true, "Trevor%");
+	addMissionHeader("Countryside", true, "Countryside");
+	addMissionHeader("Blitz Play", true, "Blitz Play");
+	addMissionHeader("Deep Inside", true, "Deep Inside");
+	addMissionHeader("Paleto Score", true, "Paleto Score");
+	addMissionHeader("Fresh Meat", true, "Fresh Meat");
+	addMissionHeader("Bureau Raid", true, "Bureau Raid");
+	addMissionHeader("Third Way", true, "Third Way");
+	addMissionHeader("Lester's Assassinations", true, "Lester's Assassinations");
 
+/* 	// Add cutscenes to setting list
+	foreach (var cutscene in vars.cutsceneNames) {
+		settings.Add(cutscene.Key, false, cutscene.Value, "cutscene");
+	}; */
 
 	// Add strangers and freaks to setting list
 	settings.Add("sf", true, "Strangers and Freaks", "main");
-	settings.Add("sfFranklin", true, "Franklin", "sf");
-	settings.Add("sfMichael", false, "Michael", "sf");
-	settings.Add("sfTrevor", false, "Trevor", "sf");
+	settings.CurrentDefaultParent = "sf";
+	addFreaksHeader("Franklin", true, "Franklin");
+	addFreaksHeader("Michael", true, "Michael");
+	addFreaksHeader("Trevor", true, "Trevor");
 
-	foreach (var Script in vars.freaksScriptsFranklin) {
-		settings.Add(Script.Key, true, Script.Value, "sfFranklin");
-	}
-	foreach (var Script in vars.freaksScriptsMichael) {
-		settings.Add(Script.Key, true, Script.Value, "sfMichael");
-	}
-	foreach (var Script in vars.freaksScriptsTrevor) {
-		settings.Add(Script.Key, true, Script.Value, "sfTrevor");
+	foreach (var mission in vars.michaelEpsilonMissions) {
+		settings.Add(mission.Key, true, mission.Value, "Michael segment");
 	}
 
-
-	// split on 100% completion
-	settings.Add("100", false, "100% Completion", "main");
-	settings.SetToolTip("100", "Split when the percentage counter reaches 100%.");
 	// split on stunt jumps
 	settings.Add("stuntjumps", false, "Stunt Jumps", "collectibles");
-	// split on under the bridge
-	settings.Add("bridges", false, "Under The Bridge", "collectibles");
 	// split on Random Events
 	settings.Add("randomevent", false, "Random Event", "collectibles");
 	// split on Hobbies and Pasttimes
 	settings.Add("hobbies", false, "Hobbies and Pasttimes", "collectibles");
+
+	foreach(var collectible in vars.collectibleIDs) {
+		settings.Add(collectible.Value, false, collectible.Value, "collectibles");
+	}
 	
-	// split on other collectibles
-	settings.Add("other_collectibles", false, "Spaceship Parts/Letters/Monkey Mosaics/Peyotes/Signs/Property Purchases", "collectibles");
-	// Save Warping
-	settings.Add("savewarp", true, "Don't Split when save warping", "misc");
 	// Golf autosplitter
 	settings.Add("golf", false, "Split on every Golf hole", "misc");
 
 	// Option to increase refresh rate
-	settings.Add("highRefreshRate", false, "Increase script refresh rate (higher cpu load)", "misc");
-	settings.SetToolTip("highRefreshRate", "Checks to determine whether to split more often. Enabling this setting will use more processing power because code is running more often.");
+	settings.Add("refreshRate", false, "Refresh Rate Settings", "misc");
+	settings.Add("highRefreshRate", false, "Increase script refresh rate (higher cpu load)", "refreshRate");
+	settings.SetToolTip("highRefreshRate", "Checks to determine whether to increase splitting accuracy. Enabling this setting will use more processing power because code is running more often.");
+	settings.Add("lowRefreshRate", false, "Decrease script refresh rate (lower cpu load)", "refreshRate");
+	settings.SetToolTip("lowRefreshRate", "Checks to determine whether to decrease splitting accuracy. Enabling this setting will make LiveSplit use a bit less CPU.");
 
 	vars.segmentsStart = new Dictionary<string,string> {
 		{"countryside", "Countryside"},
@@ -340,19 +513,6 @@ init
 			return false;
 		}
 
-		// Experimental save warping
-		if (settings["savewarp"]) {
-			if (diff == 1 && vars.loadHistory.Contains(name)) {
-				vars.loadHistory.Remove(name);
-				return false;
-			}
-
-			if (diff == -1) {
-				vars.loadHistory.Add(name);
-				return false;
-			}
-		}
-
 		return diff == 1;
 	};
 	vars.shouldSplit = shouldSplit;
@@ -364,16 +524,25 @@ init
 	vars.loadHistory = new HashSet<string>();
 	vars.currentHole = 1;
 
-	//empty list of done splits
 	vars.splits = new List<string>();
 }
 
 update
 {
-
 	var oldPhase = vars.phase;
 	vars.phase = timer.CurrentPhase;
 	bool hasChangedPhase = oldPhase != vars.phase;
+
+	vars.memoryWatchers.UpdateAll(game);
+	if (vars.memoryWatchers["GXTLabel"].Current != vars.memoryWatchers["GXTLabel"].Old)
+	{
+		vars.freaksWatchers.UpdateAll(game);
+	}
+
+	if (vars.memoryWatchers["GameState"].Current != vars.memoryWatchers["GameState"].Old)
+	{
+		vars.freaksWatchers.UpdateAll(game);
+	}
 
 	if (vars.justStarted || vars.justSplit || hasChangedPhase) {
 		vars.loadHistory.Clear();
@@ -388,10 +557,15 @@ update
 
 	if (settings["highRefreshRate"]) {
     	refreshRate = 120;
-		}
+	}
+	if (settings["lowRefreshRate"]) {
+    	refreshRate = 30;
+	}
 	else {
     	refreshRate = 60;
-		}
+	}
+	
+
 }
 
 start
@@ -436,84 +610,128 @@ start
 
 split
 {
-	// Should we split on this Mission/Stranger and Freaks script name?
-	bool scriptNameCheck = settings.ContainsKey(current.sc) && settings[current.sc] && !vars.splits.Contains(current.sc); //Checks if the current script is turned on in settings and the splits don't contain the
+	// Don't split if a load is going on
+	if (vars.memoryWatchers["LoadState"].Current == 0) {
+		// splitting stuff
+		// check if stunt jumps counter increased
+		if (vars.shouldSplit("stuntjumps", current.u - old.u)) {
+			vars.justSplit = true;
+		};
 
-	// check if mission counter increased
-	bool mCounterCheck = vars.shouldSplit("missions", current.m - old.m);
-	bool missionCheck = scriptNameCheck && mCounterCheck;
+		// check if random event increased
+		if (vars.shouldSplit("randomevent", current.r - old.r)) {
+			vars.justSplit = true;
+		};
 
-	// check if strangers and freaks counter increased
-	/* bool sfCounterCheck = vars.shouldSplit("sf", current.s - old.s);
-	bool sfCheck = scriptNameCheck && sfCounterCheck; */
+		// check if hobbies and pastimes increased
+		if (vars.shouldSplit("hobbies", current.h - old.h)) {
+			vars.justSplit = true;
+		};
+		
+		// check if split on this ending/cutscene
+		if (settings.ContainsKey(current.c) && settings[current.c] && current.in_c == 1 && current.in_c != old.in_c && current.in_m == 1) {
+			vars.justSplit = true;
+		};
 
-	// check if in_mission changed from true to false
-	bool missionScriptEnd = current.in_m == 0 && old.in_m == 1 && current.noControl == 0;
-	bool altScriptNameCheck = settings.ContainsKey(current.sc) && settings[current.sc] && !vars.splits.Contains(current.sc) && vars.freaksScriptsMichael.ContainsKey(current.sc) || vars.freaksScriptsTrevor.ContainsKey(current.sc) || vars.freaksScriptsFranklin.ContainsKey(current.sc);
-	bool altSfCheck = altScriptNameCheck && missionScriptEnd;
+		// ending A check
+		if (settings["fin_a_ext"] && current.c == "fin_a_ext" && current.noControl == 1 && current.noControl != old.noControl && current.in_m == 1) {
+			vars.justSplit = true;
+		};
 
-	// check if stunt jumps counter increased
-	bool stuntCheck = vars.shouldSplit("stuntjumps", current.u - old.u);
+		// Golf hole split. Checks > 1 so we don't split on golf start.
+		if (current.gh > 1 && current.gh != old.gh && vars.shouldSplit("golf", current.gh - vars.currentHole)) {
+			vars.justSplit = true;
+		};
+		// golf hole value changes to 0 inbetween holes, (walking to shot/scoreboard after hole)
+		if (current.gh > 0) {
+			vars.currentHole = current.gh;
+		}
 
-	// check if bridges counter changed
-	bool bridgeCheck = vars.shouldSplit("bridges", current.b - old.b);
+		// Segment end splits
+		// Trevor%
+		if (settings["trevis"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "jewelry_heist") {
+			vars.justSplit = true;
+		};
 
-	// check if random event increased
-	bool eventCheck = vars.shouldSplit("randomevent", current.r - old.r);
+		// Countryside
+		if (settings["country_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "trevor3") {
+			vars.justSplit = true;
+		};
 
-	// check if hobbies and pastimes increased
-	bool hobbyCheck = vars.shouldSplit("hobbies", current.h - old.h);
+		// Blitz Play
+		if (settings["blitz_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "fbi4") {
+			vars.justSplit = true;
+		};
+		
+		// Deep Inside
+		if (settings["deep"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "carsteal3") {
+			vars.justSplit = true;
+		};
 
-	// check if they just reached 100% completion
-	bool hundoCheck = settings["100"] && current.percent == 100 && current.percent != old.percent;
-	
-	// check if split on this ending
-	bool endingCheck = settings.ContainsKey(current.c) && settings[current.c] && current.in_c == 1 && current.in_c != old.in_c && current.in_m == 1;
+		// Paleto Score
+		if (settings["paleto_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "rural_bank_heist") {
+			vars.justSplit = true;
+		}; 
 
-	// ending A check
-	bool endingACheck = settings["fin_a_ext"] && current.c == "fin_a_ext" && current.noControl == 1 && current.noControl != old.noControl && current.in_m == 1;
+		// Fresh Meat
+		if (settings["fresh_meat_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "michael2") {
+			vars.justSplit = true;
+		};
 
-	// Golf hole split. Checks > 1 so we don't split on golf start.
-	bool golfCheck = current.gh > 1 && current.gh != old.gh && vars.shouldSplit("golf", current.gh - vars.currentHole);
-	// golf hole value changes to 0 inbetween holes, (walking to shot/scoreboard after hole)
-	if (current.gh > 0) {
-		vars.currentHole = current.gh;
+		// Bureau Raid
+		if (settings["bureau_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc.StartsWith("agency_heist3")) {
+			vars.justSplit = true;
+		};
+
+		// Epsilon Program
+		if (settings["epsilon_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "epsilon8") {
+			vars.justSplit = true;
+		};
+
+		// All Strangers and Freaks
+		if (settings["asf_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "fanatic1") {
+			vars.justSplit = true;
+		};
+
+		foreach (var collectible in vars.collectibleIDs) {
+			vars.currentValue = (vars.memoryWatchers[collectible.Value + " address"].Current + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Current;
+			vars.oldValue = (vars.memoryWatchers[collectible.Value + " address"].Old + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Old;
+			if ((vars.currentValue > vars.oldValue) && settings[collectible.Value])
+			{
+				vars.justSplit = true;
+			}
+		};
+
+
+		foreach (var flag in vars.epsilonFlags) {
+			if (vars.memoryWatchers[flag.Value].Current > vars.memoryWatchers[flag.Value].Old) {
+				if (settings[flag.Value] && !vars.splits.Contains(flag.Value)) {
+					vars.justSplit = true;
+					vars.splits.Add(flag.Value);
+				}
+			}
+		};
+
+		foreach (var mission in vars.missionList) {
+			if (vars.memoryWatchers["lastMission"].Current == mission.Key && vars.memoryWatchers["lastMission"].Current != vars.memoryWatchers["lastMission"].Old) {
+				if (settings[mission.Value] && !vars.splits.Contains(mission.Value)) {
+					vars.justSplit = true;
+					vars.splits.Add(mission.Value);
+				}
+			}
+		};
+
+		foreach (var freaks in vars.freaksList) {
+			bool curVal = Convert.ToBoolean((vars.freaksWatchers[freaks].Current >> 3) & 1);
+			bool oldVal = Convert.ToBoolean((vars.freaksWatchers[freaks].Old >> 3) & 1);
+			if (curVal && !oldVal) {
+				if (settings.ContainsKey(freaks) && settings[freaks] && !vars.splits.Contains(freaks)) {
+					vars.justSplit = true;
+					vars.splits.Add(freaks);
+				}
+			}
+		}
 	}
-
-	// check if collectible is picked and if under the bridges wasn't increased
-	bool collectibleCheck = settings["other_collectibles"] && current.collectible == 1 && current.collectible != old.collectible && current.b == old.b && !settings["customCollect" + current.sc];
-
-	// Segment end splits
-	// Trevor%
-	bool trevisCheck = settings["trevis"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "jewelry_heist";
-
-	// Countryside
-	bool countryCheck = settings["country_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "trevor3";
-	
-	// Blitz Play
-	bool blitzCheck = settings["blitz_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "fbi4";
-	
-	// Deep Inside
-	bool deepCheck = settings["deep"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "carsteal3";
-
-	// Paleto Score
-	bool paletoCheck = settings["paleto_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "rural_bank_heist"; 
-	
-
-	// Fresh Meat
-	bool freshCheck = settings["fresh_meat_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "michael2";
-
-	// Bureau Raid
-	bool raidCheck = settings["bureau_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc.StartsWith("agency_heist3");
-
-	// Epsilon Program
-	bool epsilonCheck = settings["epsilon_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "epsilon8";
-
-	// All Strangers and Freaks
-	bool asfCheck = settings["asf_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "fanatic1";
-
-	// Return true if any of the above flags are true.
-	vars.justSplit = missionCheck || /* sfCheck || */ altSfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || golfCheck || endingCheck || endingACheck || trevisCheck || countryCheck || blitzCheck || deepCheck || paletoCheck || freshCheck || raidCheck || collectibleCheck || epsilonCheck || asfCheck;
 
 	return vars.justSplit;
 }
