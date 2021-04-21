@@ -315,6 +315,7 @@ startup
 	vars.segmentsEnd = new Dictionary<string,string> {
 		{"trevis", "Trevor%"},
 		{"country_end", "Countryside"},
+		{"blitz_end", "Blitz Play"},
 		{"deep", "Deep Inside"},
 		{"paleto_end", "Paleto Score"},
 		{"fresh_meat_end", "Fresh Meat"},
@@ -489,11 +490,15 @@ split
 	// Countryside
 	bool countryCheck = settings["country_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "trevor3";
 	
+	// Blitz Play
+	bool blitzCheck = settings["blitz_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "fbi4";
+	
 	// Deep Inside
 	bool deepCheck = settings["deep"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "carsteal3";
 
 	// Paleto Score
 	bool paletoCheck = settings["paleto_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "rural_bank_heist"; 
+	
 
 	// Fresh Meat
 	bool freshCheck = settings["fresh_meat_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "michael2";
@@ -508,7 +513,7 @@ split
 	bool asfCheck = settings["asf_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "fanatic1";
 
 	// Return true if any of the above flags are true.
-	vars.justSplit = missionCheck || /* sfCheck || */ altSfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || golfCheck || endingCheck || endingACheck || trevisCheck || countryCheck || deepCheck || paletoCheck || freshCheck || raidCheck || collectibleCheck || epsilonCheck || asfCheck;
+	vars.justSplit = missionCheck || /* sfCheck || */ altSfCheck || stuntCheck || bridgeCheck || eventCheck || hobbyCheck || hundoCheck || golfCheck || endingCheck || endingACheck || trevisCheck || countryCheck || blitzCheck || deepCheck || paletoCheck || freshCheck || raidCheck || collectibleCheck || epsilonCheck || asfCheck;
 
 	return vars.justSplit;
 }
