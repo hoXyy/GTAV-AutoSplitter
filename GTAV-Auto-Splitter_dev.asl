@@ -310,26 +310,26 @@ startup
 	// used to add to settings, second string is the cutscene's name
 	// TODO: Add mission name to beginning of each name
 	vars.cutsceneNames = new Dictionary<string,string> {
-		{"pro_mcs_5", "Getting in getaway vehicle"},
-		{"pro_mcs_6", "The Train"},
+		{"pro_mcs_5", "Prologue: Getting in getaway vehicle"},
+		{"pro_mcs_6", "Prologue: The Train"},
 		// no cutscene id for post drive in F&L, can be circumvented by checking for cutscene = armenian_1_int and counting the number of times player loses control
 		{"armenian_2_int", "Repo: Greet Simeon"},
 		{"arm_2_mcs_4", "Repo: Confronted by Vagos"},
-		{"fra_0_mcs_1", "Confront D in Alley"},
-		{"armenian_3_mcs_8", "Start Simeon Fight"},
+		{"fra_0_mcs_1", "Chop: Confront D in Alley"},
+		{"armenian_3_mcs_8", "Complications: Start Simeon Fight"},
 		// fatherson: getting franklin on boat sets noControl to 1
-		{"fam_1_mcs_2", "Arrive at LSC"},
-		{"family_3_int", "Start Marriage Counseling"},
-		{"fam_3_mcs_1", "Pull down house"},
-		{"lester_1_int", "Arrive at Lester's house"},
-		{"les_1a_mcs_0", "Clothes Store"},
-		{"les_1a_mcs_1", "Enter Lifeinvader"},
-		{"les_1a_mcs_3", "Finish popups"},
+		{"fam_1_mcs_2", "Father/Son Arrive at LSC"},
+		{"family_3_int", "Marriage Counseling: Start"},
+		{"fam_3_mcs_1", "Marriage Counseling: Pull down house"},
+		{"lester_1_int", "Friend Request: Arrive at Lester's house"},
+		{"les_1a_mcs_0", "Friend Request: Clothes Store"},
+		{"les_1a_mcs_1", "Friend Request: Enter Lifeinvader"},
+		{"les_1a_mcs_3", "Friend Request: Finish popups"},
 		{"family_2_mcs_2", "DLG: Finish Bike Ride"},
 		{"family_2_mcs_3", "DLG: Finish Swimming"},
 		{"jh_1_ig_3", "Inside Jewel Store Casing"},
-		{"jh_2b_mcs_1", "Arrive at Store (heist)"},
-		{"lam_1_mcs_1_concat", "Meet D (Long Stretch)"},
+		{"jh2_fina_mcs4_a1a2", "Exit Store (heist)"},
+		{"lam_1_mcs_1_concat", "Long Stretch: Meet D"},
 		{"trv_1_mcs_1_p1", "Mr. Phillips: Finish First Drive"},
 		{"trv_1_mcs_3_concat", "Mr. Phillips: Smash Trailer"},
 		{"trv_2_mcs_4_concat", "Nervous Ron: Shoot Down Chopper"},
@@ -339,10 +339,10 @@ startup
 		{"family_5_mcs_3", "Finish Yoga"},
 		//{"", "I Fought the Law: Start Race"},//?
 		//{"", "I Fought the Law: Start Bike Chase"},//?
-		{"", "I Fought the Law: End Bike Chase"},
+		//{"", "I Fought the Law: End Bike Chase"},
 		{"sol_1_mcs_2", "Mr. Richards: Confront Rocco"},
 		{"sol_1_mcs_3", "Mr. Richards: Finish Rocco Fight"},
-		{"exl_1_mcs_1_p3_b", "Minor Turbulence: Enter Cargo Jet"},
+		{"exl_1_mcs_1_p3_b", "Minor Turbulence: Enter Cargo Jet"}, //Double splits, once at beginning of cutscene, once at end
 		{"rbhs_mcs_1", "Paleto Score Setup: Enter Paleto Bay"},
 		{"ah_3b_mcs_1", "Bureau Raid: Jump out of Heli"},
 		{"ah_3b_mcs_3", "Bureau Raid: Start Hack"},
@@ -459,7 +459,7 @@ startup
 
 	// Add actual segments to starter, cutscene splits
 	foreach(var Segment in vars.segmentsStart) {
-		settings.Add(Segment.Key, true, Segment.Value, "segments_start");
+		settings.Add(Segment.Key + "start", true, Segment.Value, "segments_start");
 		settings.Add(Segment.Key + "split", false, Segment.Value, "segments_split");
 	};
 
@@ -583,21 +583,21 @@ start
 
 
 	// generic segment timer start
-	if (settings.ContainsKey(current.c) && settings[current.c]) {
+	if (settings.ContainsKey(current.c + "start") && settings[current.c]) {
 		if (current.in_c == 0 && current.in_c != old.in_c && current.in_m == 1) {
 			startFlag = true;
 		}
 	}
 
 	// exception for countryside
-	if (settings["countryside"]) {
+	if (settings["countrysidestart"]) {
 		if (current.c == "trevor_1_int" && current.in_m == 1 && current.in_c == 0 && current.loading == 0 && current.loading != old.loading && current.noControl == 0) {
 			startFlag = true;
 		}
 	}
 
 	// exception for paleto score
-	if (settings["paleto_score"]) {
+	if (settings["paleto_scorestart"]) {
 		if (current.sc == "exile1" && current.loading == 0 && current.loading != old.loading && current.in_m == 1) {
 			startFlag = true;
 		}
