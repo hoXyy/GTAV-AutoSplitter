@@ -281,7 +281,7 @@ startup
 	vars.michaelEpsilonMissions = new Dictionary<string,string> {
 		{"donated500", "Seeking the Truth (donated 500$)"},
 		{"donated5k", "Accepting the Truth (donated 5000$)"},
-		{"carsdelivered", "Assuming the Truth (all cars collected)"},
+		{"carsdelivered", "Assuming the Truth (all cars collected)"},//Doesn't work
 		{"donated10k", "Chasing the Truth (donated 10000$)"},
 		{"robe10days", "Bearing the Truth (10 days with robe passed)"},
 		{"desertdone", "Exercising the Truth (after pilgrimage done)"},
@@ -328,7 +328,7 @@ startup
 		{"family_2_mcs_2", "DLG: Finish Bike Ride"},
 		{"family_2_mcs_3", "DLG: Finish Swimming"},
 		{"jh_1_ig_3", "Inside Jewel Store Casing"},
-		{"jh2_fina_mcs4_a1a2", "Exit Store (heist)"},
+		//{"jh2_fina_mcs4_a1a2", "Exit Store (heist)"}, //Doesn't work
 		{"lam_1_mcs_1_concat", "Long Stretch: Meet D"},
 		{"trv_1_mcs_1_p1", "Mr. Phillips: Finish First Drive"},
 		{"trv_1_mcs_3_concat", "Mr. Phillips: Smash Trailer"},
@@ -467,6 +467,7 @@ startup
 	foreach (var cutscene in vars.cutsceneNames) {
 		settings.Add(cutscene.Key, false, cutscene.Value, "cutscene");
 	};
+	settings.SetToolTip("exl_1_mcs_1_p3_b", "For some reason this likes to split twice. If you enable this make sure to have 2 splits for it.");
 
 	// Prologue timer start
 	settings.Add("prologuetimer", true, "Start the timer on the Prologue start", "starters");
