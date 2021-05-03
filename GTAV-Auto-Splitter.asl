@@ -502,7 +502,6 @@ startup
 	// Add segment ends to settings list
 	foreach(var Segment in vars.segmentsEnd) {
 		settings.Add(Segment.Key + "start", true, Segment.Value, "segments_end");
-		settings.Add(Segment.Key + "split", false, Segment.Value, "segments_split");
 	};
 }
 
