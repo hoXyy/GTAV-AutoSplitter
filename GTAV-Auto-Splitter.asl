@@ -392,7 +392,7 @@ startup
 	settings.Add("misc", false, "Miscellaneous");
 	settings.Add("starters", true, "Auto Starters");
 	settings.Add("timerend", true, "Auto Finishers");
-/* 	settings.Add("cutscene", false, "Cutscenes"); */
+ 	settings.Add("cutscene", false, "Cutscenes");
 
 
 	// Add missions to setting list
@@ -458,10 +458,12 @@ startup
 	// Add segments to autostart
 	settings.Add("segments_start", false, "Segments", "starters");
 	settings.SetToolTip("segments_start", "For Trevor% segment, use the Start the timer on the Prologue start option.");
+	settings.Add("segments_split", false, "Split at the beginning of segments", "cutscene");
 
 	// Add actual segments
 	foreach(var Segment in vars.segmentsStart) {
-		settings.Add(Segment.Key, true, Segment.Value, "segments_start");
+		settings.Add(Segment.Key + "start", true, Segment.Value, "segments_start");
+		settings.Add(Segment.Key + "split", false, Segment.Value, "segments_split");
 	};
 
 	// Prologue timer start
@@ -499,7 +501,8 @@ startup
 
 	// Add segment ends to settings list
 	foreach(var Segment in vars.segmentsEnd) {
-		settings.Add(Segment.Key, true, Segment.Value, "segments_end");
+		settings.Add(Segment.Key + "start", true, Segment.Value, "segments_end");
+		settings.Add(Segment.Key + "split", false, Segment.Value, "segments_split");
 	};
 }
 
@@ -579,21 +582,21 @@ start
 
 
 	// generic segment timer start
-	if (settings.ContainsKey(current.c) && settings[current.c]) {
+	if (settings.ContainsKey(current.c + "start") && settings[current.c + "start"]) {
 		if (current.in_c == 0 && current.in_c != old.in_c && current.in_m == 1) {
 			startFlag = true;
 		}
 	}
 
 	// exception for countryside
-	if (settings["countryside"]) {
+	if (settings["countrysidestart"]) {
 		if (current.c == "trevor_1_int" && current.in_m == 1 && current.in_c == 0 && current.loading == 0 && current.loading != old.loading && current.noControl == 0) {
 			startFlag = true;
 		}
 	}
 
 	// exception for paleto score
-	if (settings["paleto_score"]) {
+	if (settings["paleto_scorestart"]) {
 		if (current.sc == "exile1" && current.loading == 0 && current.loading != old.loading && current.in_m == 1) {
 			startFlag = true;
 		}
@@ -637,6 +640,27 @@ split
 		if (settings["fin_a_ext"] && current.c == "fin_a_ext" && current.noControl == 1 && current.noControl != old.noControl && current.in_m == 1) {
 			vars.justSplit = true;
 		};
+
+		// generic segment timer split
+		if (settings.ContainsKey(current.c + "split") && settings[current.c + "split"]) {
+			if (current.in_c == 0 && current.in_c != old.in_c && current.in_m == 1) {
+				vars.justSplit = true;
+			}
+		}
+
+		// exception for countryside
+		if (settings["countrysidesplit"]) {
+			if (current.c == "trevor_1_int" && current.in_m == 1 && current.in_c == 0 && current.loading == 0 && current.loading != old.loading && current.noControl == 0) {
+				vars.justSplit = true;
+			}
+		}
+
+		// exception for paleto score
+		if (settings["paleto_scoresplit"]) {
+			if (current.sc == "exile1" && current.loading == 0 && current.loading != old.loading && current.in_m == 1) {
+				vars.justSplit = true;
+			}
+		}
 
 		// Golf hole split. Checks > 1 so we don't split on golf start.
 		if (current.gh > 1 && current.gh != old.gh && vars.shouldSplit("golf", current.gh - vars.currentHole)) {
