@@ -354,7 +354,7 @@ startup
 		{"family_5_mcs_5", "Yoga: Greet Drug Dealer"},
 		{"fam_5_mcs_6", "Yoga: Hallucination Sequence"},
 		{"fbi_2_int", "Three's Company: Meet Dave"},
-		{"fbi_2_mcs_1", "Three's Company: Enter Trevor"},
+		{"fbi_2_mcs_1", "Three's Company: Arrive at El Burro"},
 		{"fbi_2_mcs_2", "Three's Company: Start Rapelling"},
 		{"fbi_2_mcs_3_p1a", "Three's Company: Break Glass"},
 		{"fbi_2_mcs_3b", "Three's Company: Finish Building Shootout"},
@@ -412,14 +412,99 @@ startup
 	vars.cutsceneParents = new Dictionary<string,string> {
 		{"pro_mcs_5", "Trevor%"},
 		{"pro_mcs_6", "Trevor%"},
+		{"armenian_2_int", "Trevor%"},
 		{"arm_2_mcs_4", "Trevor%"},
+		{"tonya_mcs_1", "Trevor%"},
+		{"fra_0_int", "Trevor%"},
 		{"fra_0_mcs_1", "Trevor%"},
+		{"fra_0_mcs_4_p2_t3", "Trevor%"},
+		{"armenian_3_int", "Trevor%"},
+		{"armenian_3_mcs_8", "Trevor%"},
 		{"fam_1_mcs_2", "Trevor%"},
-		{"fam_3_mcs_1", "Marriage Counseling"},
-		{"lester_1_int", "Friend Request"},
-		{"les_1a_mcs_0", "Friend Request"},
-		{"les_1a_mcs_1", "Friend Request"},
-		{"les_1a_mcs_3", "Friend Request"}
+		{"family_3_int", "Trevor%"},
+		{"fam_3_mcs_1", "Trevor%"},
+		{"lester_1_int", "Trevor%"},
+		{"les_1a_mcs_0", "Trevor%"},
+		{"les_1a_mcs_1", "Trevor%"},
+		{"les_1a_mcs_3", "Trevor%"},
+		{"family_2_mcs_2", "Trevor%"},
+		{"family_2_mcs_3", "Trevor%"},
+		{"jh_1_ig_3", "Trevor%"},
+		{"jh2_fina_mcs4_a1a2", "Trevor%"},
+		{"lamar_1_int", "Misc"},
+		{"lam_1_mcs_1_concat", "Misc"},
+		{"trv_1_mcs_1_p1", "Countryside"},
+		{"trv_1_mcs_3_concat", "Countryside"},
+		{"chinese_1_int", "Countryside"},
+		{"trevor_2_int", "Countryside"},
+		{"trv_2_mcs_4_concat", "Countryside"},
+		{"trv_2_mcs_6", "Countryside"},
+		{"chinese_2_int", "Countryside"},
+		{"chi_2_mcs_5", "Countryside"},
+		{"trevor_drive_int", "Countryside"},
+		{"trv_dri_mcs_concat", "Countryside"},
+		{"family_4_mcs_2", "Blitz Play"},
+		{"fbi_1_int", "Blitz Play"},
+		{"family_5_mcs_1", "Blitz Play"},
+		{"family_5_mcs_2", "Blitz Play"},
+		{"family_5_mcs_3", "Blitz Play"},
+		{"family_5_mcs_4", "Blitz Play"},
+		{"family_5_mcs_5", "Blitz Play"},
+		{"fam_5_mcs_6", "Blitz Play"},
+		{"fbi_2_int", "Blitz Play"},
+		{"fbi_2_mcs_1", "Blitz Play"},
+		{"fbi_2_mcs_2", "Blitz Play"},
+		{"fbi_2_mcs_3_p1a", "Blitz Play"},
+		{"fbi_2_mcs_3b", "Blitz Play"},
+		{"lsdh_int", "Blitz Play"},
+		{"lsdh_mcs_2", "Blitz Play"},
+		{"franklin_1_int", "Blitz Play"},
+		{"fra_1_mcs_1", "Blitz Play"},
+		{"dhp1_mcs_1", "Blitz Play"},
+		{"fbi_3_int", "Blitz Play"},
+		{"fbi_3_mcs_1", "Blitz Play"},
+		{"fbi_3_mcs_2", "Blitz Play"},
+		{"fbi_3_mcs_7", "Blitz Play"},
+		{"ass_int_2_alt1", "Blitz Play"},
+		{"lsdh_2a_int", "Blitz Play"},
+		//{"", "I Fought the Law: Start Race"},//?
+		//{"", "I Fought the Law: Start Bike Chase"},//?
+		//{"", "I Fought the Law: End Bike Chase"},
+		{"sol_1_mcs_2", "Deep Inside"},
+		{"sol_1_mcs_3", "Deep Inside"},
+		{"martin_1_mcs_1", "Deep Inside"},
+		{"exl_1_mcs_1_p3_b", "Paleto Score"},
+		{"rbhs_mcs_1", "Paleto Score"},
+		{"rbh_2a_mcs_2_p7", "Paleto Score"},
+		{"rbh_2ab_mcs_6", "Paleto Score"},
+		{"rbh_2a_mcs_4", "Paleto Score"},
+		{"fbi_5_int", "Fresh Meat"},
+		{"fbi_5a_mcs_1", "Fresh Meat"},
+		{"fbi_5b_mcs_1", "Fresh Meat"},
+		{"fbi_5a_mcs_10", "Fresh Meat"},
+		{"trv_5_int", "Fresh Meat"},
+		{"mic_1_int", "Fresh Meat"},
+		{"car_5_mcs_1", "Fresh Meat"},
+		{"fam_6_mcs_1", "Bureau Raid"},
+		{"fam_6_mcs_2_concat", "Bureau Raid"},
+		{"fam_6_mcs_3", "Bureau Raid"},
+		{"fam_6_mcs_4", "Bureau Raid"},
+		{"fam_6_mcs_5", "Bureau Raid"},
+		{"fam_6_mcs_6", "Bureau Raid"},
+		{"ah_3b_mcs_1", "Bureau Raid"},
+		{"ah_3b_mcs_3", "Bureau Raid"},
+		{"ah_3b_mcs_4", "Bureau Raid"},
+		{"ah_3b_mcs_5", "Bureau Raid"},
+		{"ah_3b_mcs_6_p1", "Bureau Raid"},
+		{"ah_3b_mcs_7", "Bureau Raid"},
+		{"mic_3_int", "Third Way"},
+		{"bs_2a_mcs_1", "Third Way"},
+		{"bs_2a_mcs_8_p3", "Third Way"},
+		{"bs_2a_mcs_11", "Third Way"},
+		{"fin_c_int", "Third Way"},
+		{"fin_c_mcs_1", "Third Way"},
+		{"fin_c_ext", "Third Way"}, // noControl indicates character switch after this?
+		{"fin_c2_mcs_5", "Third Way"}
 	};
 
 	vars.collectibleIDs = new Dictionary<int, string> {
@@ -513,8 +598,17 @@ startup
 	};
 
 	// Add cutscenes to setting list
+	settings.Add("Trevor%_c", false, "Trevor%", "cutscene");
+	settings.Add("Countryside_c", false, "Countryside", "cutscene");
+	settings.Add("Blitz Play_c", false, "Blitz Play", "cutscene");
+	settings.Add("Deep Inside_c", false, "Deep Inside", "cutscene");
+	settings.Add("Paleto Score_c", false, "Paleto Score", "cutscene");
+	settings.Add("Fresh Meat_c", false, "Fresh Meat", "cutscene");
+	settings.Add("Bureau Raid_c", false, "Bureau Raid", "cutscene");
+	settings.Add("Third Way_c", false, "Third Way", "cutscene");
+	settings.Add("Misc_c", false, "Other", "cutscene");
 	foreach (var cutscene in vars.cutsceneNames) {
-		settings.Add(cutscene.Key, false, cutscene.Value, "cutscene");
+		settings.Add(cutscene.Key, false, cutscene.Value, vars.cutsceneParents[cutscene.Key] + "_c");
 	};
 	settings.SetToolTip("exl_1_mcs_1_p3_b", "For some reason this likes to split twice. If you enable this make sure to have 2 splits for it.");
 
