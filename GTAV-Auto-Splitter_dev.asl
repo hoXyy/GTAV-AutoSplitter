@@ -671,6 +671,8 @@ init
 	vars.phase = timer.CurrentPhase;
 	vars.loadHistory = new HashSet<string>();
 	vars.currentHole = 1;
+	vars.alreadySplitCountrysideInit = false;
+	vars.alreadySplitPaletoInit = false;
 
 	vars.splits = new List<string>();
 }
@@ -727,7 +729,7 @@ start
 
 
 	// generic segment timer start
-	if (settings.ContainsKey(current.c + "start") && settings[current.c]) {
+	if (settings.ContainsKey(current.c + "start") && settings[current.c + "start"]) {
 		if (current.in_c == 0 && current.in_c != old.in_c && current.in_m == 1) {
 			startFlag = true;
 		}
@@ -795,16 +797,17 @@ split
 		}
 
 		// exception for countryside
-		if (settings["countrysidesplit"]) {
+		if (settings["countrysidesplit"] && !vars.alreadySplitCountrysideInit) {
 			if (current.c == "trevor_1_int" && current.in_m == 1 && current.in_c == 0 && current.loading == 0 && current.loading != old.loading && current.noControl == 0) {
 				vars.justSplit = true;
 			}
 		}
 
 		// exception for paleto score
-		if (settings["paleto_scoresplit"]) {
+		if (settings["paleto_scoresplit"] && !vars.alreadySplitPaletoInit) {
 			if (current.sc == "exile1" && current.loading == 0 && current.loading != old.loading && current.in_m == 1) {
 				vars.justSplit = true;
+				vars.alreadySplitPaletoInit = true;
 			}
 		}
 
