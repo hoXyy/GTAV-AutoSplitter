@@ -308,7 +308,6 @@ startup
 	};
 
 	// used to add to settings, second string is the cutscene's name
-	// TODO: Add mission name to beginning of each name
 	vars.cutsceneNames = new Dictionary<string,string> {
 		{"pro_mcs_5", "Prologue: Getting in getaway vehicle"},
 		{"pro_mcs_6", "Prologue: The Train"},
@@ -408,7 +407,7 @@ startup
 		{"fin_c_ext", "The Third Way: Finish Foundry Shootout"}, // noControl indicates character switch after this?
 		{"fin_c2_mcs_5", "The Third Way: Kidnap Devin"}
 	};
-	// second string is cutscene's parent in settings, currently unused
+	// second string is cutscene's parent in settings
 	vars.cutsceneParents = new Dictionary<string,string> {
 		{"pro_mcs_5", "Trevor%"},
 		{"pro_mcs_6", "Trevor%"},
@@ -504,7 +503,8 @@ startup
 		{"fin_c_int", "Third Way"},
 		{"fin_c_mcs_1", "Third Way"},
 		{"fin_c_ext", "Third Way"}, // noControl indicates character switch after this?
-		{"fin_c2_mcs_5", "Third Way"}
+		{"fin_c2_mcs_5", "Third Way"}, // Entries after this come from noControl
+		{"franklin0_3", "Trevor%"}
 	};
 
 	vars.collectibleIDs = new Dictionary<int, string> {
@@ -649,6 +649,14 @@ startup
 	foreach(var Segment in vars.segmentsEnd) {
 		settings.Add(Segment.Key, true, Segment.Value, "segments_end");
 	};
+
+	vars.noControlSplits = new Dictionary<string,string> { //(Script name + nocontrol counter, "Cutscene" name)
+		{"franklin0_3", "Chop: Begin Chase on Foot"}
+	};
+
+	foreach(var split in vars.noControlSplits) { //This is probably wrong, redo it later
+		settings.Add(split.Key, false, split.Value, vars.cutsceneParents[split.Key] + "_c");
+	};
 }
 
 
@@ -673,6 +681,8 @@ init
 	vars.currentHole = 1;
 	vars.alreadySplitCountrysideInit = false;
 	vars.alreadySplitPaletoInit = false;
+	vars.currentNoControlCounter = 0;
+	vars.oldNoControlCounter = 0;
 
 	vars.splits = new List<string>();
 }
@@ -713,6 +723,17 @@ update
 	}
 	else {
     	refreshRate = 60;
+	}
+
+	vars.oldNoControlCounter = vars.currentNoControlCounter;
+
+	if (current.noControl == 1 && old.noControl == 0) {
+		vars.currentNoControlCounter++;
+	}
+
+	if (current.sc != old.sc) {
+		vars.currentNoControlCounter = 0;
+		vars.oldNoControlCounter = 0;
 	}
 	
 
@@ -809,6 +830,11 @@ split
 				vars.justSplit = true;
 				vars.alreadySplitPaletoInit = true;
 			}
+		}
+
+		// check if we should split on this noControl value (currently untested)
+		if (settings.ContainsKey(current.sc + "_" + vars.currentNoControlCounter) && settings[current.sc + "_" + vars.currentNoControlCounter] && vars.currentNoControlCounter != vars.oldNoControlCounter) {
+			vars.justSplit = true;
 		}
 
 		// Golf hole split. Checks > 1 so we don't split on golf start.
