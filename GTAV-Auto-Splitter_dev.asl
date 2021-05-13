@@ -1,3 +1,4 @@
+//Beta Version #1
 // GTA V Autosplitter for version 1.27
 // Contributors: hoxi, TheStonedTurtle, Parik, Crab1k, Gogsi123, FriendlyBaron, burhac, Rake Jyals and other community members
 // For any questions, ask in the GTA V Speedrunning Discord: https://discord.gg/3qjGGBM
