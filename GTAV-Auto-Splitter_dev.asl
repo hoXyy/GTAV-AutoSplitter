@@ -404,7 +404,12 @@ startup
 		{"fin_c_int", "Start The Third Way"},
 		{"fin_c_mcs_1", "The Third Way: Start Foundry Shootout"},
 		{"fin_c_ext", "The Third Way: Finish Foundry Shootout"}, // noControl indicates character switch after this?
-		{"fin_c2_mcs_5", "The Third Way: Kidnap Devin"}
+		{"fin_c2_mcs_5", "The Third Way: Kidnap Devin"},
+		{"bar_5__rcm_p2", "Grass Roots: Franklin"},
+		{"pap_2_rcm_p2", "Start Paparazzo: The Sex Tape"},
+		{"pap_3_rcm", "Paparazzo: The Proposal"},
+		{"es_3_rcm", "Start Targeted Risk"}
+		
 	};
 	// second string is cutscene's parent in settings
 	vars.cutsceneParents = new Dictionary<string,string> {
@@ -438,7 +443,6 @@ startup
 		{"trv_2_mcs_4_concat", "Countryside"},
 		{"trv_2_mcs_6", "Countryside"},
 		{"chinese_2_int", "Countryside"},
-		{"chi_2_mcs_5", "Countryside"},
 		{"trevor_drive_int", "Countryside"},
 		{"trv_dri_mcs_concat", "Countryside"},
 		{"family_4_mcs_2", "Blitz Play"},
@@ -458,7 +462,6 @@ startup
 		{"lsdh_mcs_2", "Blitz Play"},
 		{"franklin_1_int", "Blitz Play"},
 		{"fra_1_mcs_1", "Blitz Play"},
-		{"dhp1_mcs_1", "Blitz Play"},
 		{"fbi_3_int", "Blitz Play"},
 		{"fbi_3_mcs_1", "Blitz Play"},
 		{"fbi_3_mcs_2", "Blitz Play"},
@@ -607,7 +610,9 @@ startup
 	settings.Add("Third Way_c", false, "Third Way", "cutscene");
 	settings.Add("Misc_c", false, "Other", "cutscene");
 	foreach (var cutscene in vars.cutsceneNames) {
-		settings.Add(cutscene.Key, false, cutscene.Value, vars.cutsceneParents[cutscene.Key] + "_c");
+		if (vars.cutsceneParents.ContainsKey(cutscene.Key)) { //Temporary fix
+			settings.Add(cutscene.Key, false, cutscene.Value, vars.cutsceneParents[cutscene.Key] + "_c");
+		}
 	};
 	settings.SetToolTip("exl_1_mcs_1_p3_b", "For some reason this likes to split twice. If you enable this make sure to have 2 splits for it.");
 
