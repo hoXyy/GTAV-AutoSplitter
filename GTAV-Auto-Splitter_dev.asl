@@ -52,7 +52,7 @@ state("GTA5")
 startup
 {
 	vars.missionList = new Dictionary<int, string> {};
-	vars.freaksList = new List<string>();
+	vars.freaksList = new List<string> ();
 
 	vars.memoryWatchers = new MemoryWatcherList();
 	vars.freaksWatchers = new MemoryWatcherList(); // needed to not eat up CPU
@@ -641,52 +641,7 @@ update
 		vars.oldNoControlCounter = 0;
 	}
 	
-
-}
-
-start
-{
-	bool startFlag = false;
-	if (settings["misctimer"]) {
-		if (current.c == "armenian_1_int" && current.in_c == 1 && current.in_c != old.in_c) {
-			startFlag = true;
-		}	
-	}
-
-
-	// generic segment timer start
-	if (settings.ContainsKey(current.c + "start") && settings[current.c + "start"]) {
-		if (current.in_c == 0 && current.in_c != old.in_c && current.in_m == 1) {
-			startFlag = true;
-		}
-	}
-
-	// exception for countryside
-	if (settings["countrysidestart"]) {
-		if (current.c == "trevor_1_int" && current.in_m == 1 && current.in_c == 0 && current.loading == 0 && current.loading != old.loading && current.noControl == 0) {
-			startFlag = true;
-		}
-	}
-
-	// exception for paleto score
-	if (settings["paleto_scorestart"]) {
-		if (current.sc == "exile1" && current.loading == 0 && current.loading != old.loading && current.in_m == 1) {
-			startFlag = true;
-		}
-	}
-
-	bool golfFlag = settings["golftimer"] && current.gh == 1 && current.gh != old.gh;
-	
-	bool prologueFlag = settings["prologuetimer"] && current.debug_string == "PRO_SETTING" && current.debug_string != old.debug_string;
-
-	vars.justStarted = startFlag || golfFlag || prologueFlag;
-
-	return vars.justStarted;
-}
-
-split
-{
-	// Don't split if a load is going on
+		// Don't split if a load is going on
 	if (vars.memoryWatchers["LoadState"].Current == 0) {
 		// splitting stuff
 		// check if stunt jumps counter increased
@@ -837,5 +792,49 @@ split
 		}
 	}
 
+}
+
+start
+{
+	bool startFlag = false;
+	if (settings["misctimer"]) {
+		if (current.c == "armenian_1_int" && current.in_c == 1 && current.in_c != old.in_c) {
+			startFlag = true;
+		}	
+	}
+
+
+	// generic segment timer start
+	if (settings.ContainsKey(current.c + "start") && settings[current.c + "start"]) {
+		if (current.in_c == 0 && current.in_c != old.in_c && current.in_m == 1) {
+			startFlag = true;
+		}
+	}
+
+	// exception for countryside
+	if (settings["countrysidestart"]) {
+		if (current.c == "trevor_1_int" && current.in_m == 1 && current.in_c == 0 && current.loading == 0 && current.loading != old.loading && current.noControl == 0) {
+			startFlag = true;
+		}
+	}
+
+	// exception for paleto score
+	if (settings["paleto_scorestart"]) {
+		if (current.sc == "exile1" && current.loading == 0 && current.loading != old.loading && current.in_m == 1) {
+			startFlag = true;
+		}
+	}
+
+	bool golfFlag = settings["golftimer"] && current.gh == 1 && current.gh != old.gh;
+	
+	bool prologueFlag = settings["prologuetimer"] && current.debug_string == "PRO_SETTING" && current.debug_string != old.debug_string;
+
+	vars.justStarted = startFlag || golfFlag || prologueFlag;
+
+	return vars.justStarted;
+}
+
+split
+{
 	return vars.justSplit;
 }
