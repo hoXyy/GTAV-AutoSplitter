@@ -308,68 +308,104 @@ startup
 	};
 
 	// used to add to settings, second string is the cutscene's name
-	vars.cutsceneNames = new Dictionary<string,string> {
-		{"pro_mcs_5", "Getting in getaway vehicle"},
-		{"pro_mcs_6", "The Train"},
+	vars.cutsceneNames = new Dictionary<string,List<string>> {
+		{"pro_mcs_5", new List<string> {"Prologue: Getting in getaway vehicle", "Trevor%"}},
+		{"pro_mcs_6", new List<string> {"Prologue: The Train", "Trevor%"}},
 		// no cutscene id for post drive in F&L, can be circumvented by checking for cutscene = armenian_1_int and counting the number of times player loses control
-		{"armenian_2_int", "Repo: Greet Simeon"},
-		{"arm_2_mcs_4", "Repo: Confronted by Vagos"},
-		{"fra_0_mcs_1", "Confront D in Alley"},
-		{"armenian_3_mcs_8", "Start Simeon Fight"},
+		{"armenian_2_int", new List<string> {"Start Reposession", "Trevor%"}},
+		{"arm_2_mcs_4", new List<string> {"Reposession: Confronted by Vagos", "Trevor%"}},
+		{"tonya_mcs_1", new List<string> {"Start Pulling Favors", "Trevor%"}},
+		{"fra_0_int", new List<string> {"Start Chop", "Trevor%"}},
+		{"fra_0_mcs_1", new List<string> {"Chop: Confront D in Alley", "Trevor%"}},
+		{"fra_0_mcs_4_p2_t3", new List<string> {"Chop: Put D in Van", "Trevor%"}},
+		{"armenian_3_int", new List<string> {"Start Complications", "Trevor%"}},
+		{"armenian_3_mcs_8", new List<string> {"Complications: Start Simeon Fight", "Trevor%"}},
 		// fatherson: getting franklin on boat sets noControl to 1
-		{"fam_1_mcs_2", "Arrive at LSC"},
-		{"family_3_int", "Start Marriage Counseling"},
-		{"fam_3_mcs_1", "Pull down house"},
-		{"lester_1_int", "Arrive at Lester's house"},
-		{"les_1a_mcs_0", "Clothes Store"},
-		{"les_1a_mcs_1", "Enter Lifeinvader"},
-		{"les_1a_mcs_3", "Finish popups"},
-		{"family_2_mcs_2", "DLG: Finish Bike Ride"},
-		{"family_2_mcs_3", "DLG: Finish Swimming"},
-		{"jh_1_ig_3", "Inside Jewel Store Casing"},
-		{"jh_2b_mcs_1", "Arrive at Store (heist)"},
-		{"lam_1_mcs_1_concat", "Meet D (Long Stretch)"},
-		{"trv_1_mcs_1_p1", "Mr. Phillips: Finish First Drive"},
-		{"trv_1_mcs_3_concat", "Mr. Phillips: Smash Trailer"},
-		{"trv_2_mcs_4_concat", "Nervous Ron: Shoot Down Chopper"},
-		{"trv_2_mcs_6", "Nervous Ron: Board Plane"},
-		{"family_4_mcs_2", "Fame or Shame: Enter Arena"},
-		{"fbi_1_int", "Start Dead Man Walking"},
-		{"family_5_mcs_3", "Finish Yoga"},
-		//{"", "I Fought the Law: Start Race"},//?
-		//{"", "I Fought the Law: Start Bike Chase"},//?
-		{"", "I Fought the Law: End Bike Chase"},
-		{"sol_1_mcs_2", "Mr. Richards: Confront Rocco"},
-		{"sol_1_mcs_3", "Mr. Richards: Finish Rocco Fight"},
-		{"exl_1_mcs_1_p3_b", "Minor Turbulence: Enter Cargo Jet"},
-		{"rbhs_mcs_1", "Paleto Score Setup: Enter Paleto Bay"},
-		{"ah_3b_mcs_1", "Bureau Raid: Jump out of Heli"},
-		{"ah_3b_mcs_3", "Bureau Raid: Start Hack"},
-		{"ah_3b_mcs_4", "Bureau Raid: Finish Hack"},
-		{"ah_3b_mcs_5", "Bureau Raid: Finish Shootout"},
-		{"ah_3b_mcs_6_p1", "Bureau Raid: Pass Crashed Helicopter"},
-		{"ah_3b_mcs_7", "Bureau Raid: Start Repelling"},
-		{"mic_3_int", "Meet Dave (Wrap Up)"},
-		{"bs_2a_mcs_1", "Hijack security trucks"},
-		{"bs_2a_mcs_8_p3", "Finish shootout"},
-		{"bs_2a_mcs_11", "Finish Drive Sequence"},
-		{"fin_c_int", "Visit Lester"},
-		{"fin_c_mcs_1", "Start Foundry Shootout"},
-		{"fin_c_ext", "Finish Foundry Shootout"}, // noControl indicates character switch after this?
-		{"fin_c2_mcs_5", "Kidnap Devin"}
-	};
-	// second string is cutscene's parent in settings, currently unused
-	vars.cutsceneParents = new Dictionary<string,string> {
-		{"pro_mcs_5", "Prologue"},
-		{"pro_mcs_6", "Prologue"},
-		{"arm_2_mcs_4", "Reposession"},
-		{"fra_0_mcs_1", "Chop"},
-		{"fam_1_mcs_2", "Father/Son"},
-		{"fam_3_mcs_1", "Marriage Counseling"},
-		{"lester_1_int", "Friend Request"},
-		{"les_1a_mcs_0", "Friend Request"},
-		{"les_1a_mcs_1", "Friend Request"},
-		{"les_1a_mcs_3", "Friend Request"}
+		{"fam_1_mcs_2", new List<string> {"Father/Son: Arrive at LSC", "Trevor%"}},
+		{"family_3_int", new List<string> {"Start Marriage Counseling", "Trevor%"}},
+		{"fam_3_mcs_1", new List<string> {"Marriage Counseling: Pull down house", "Trevor%"}},
+		{"lester_1_int", new List<string> {"Start Friend Request", "Trevor%"}},
+		{"les_1a_mcs_0", new List<string> {"Friend Request: Clothes Store", "Trevor%"}},
+		{"les_1a_mcs_1", new List<string> {"Friend Request: Enter Lifeinvader", "Trevor%"}},
+		{"les_1a_mcs_3", new List<string> {"Friend Request: Finish popups", "Trevor%"}},
+		{"family_2_mcs_2", new List<string> {"DLG: Finish Bike Ride", "Trevor%"}},
+		{"family_2_mcs_3", new List<string> {"DLG: Finish Swimming", "Trevor%"}},
+		{"jh_1_ig_3", new List<string> {"Casing the Jewel Store: Greet Employee", "Trevor%"}},
+		{"jh2_fina_mcs4_a1a2", new List<string> {"Jewel Store Job: Leave Jewel Store", "Trevor%"}},
+		{"lamar_1_int", new List<string> {"Start The Long Stretch", "Misc"}},
+		{"lam_1_mcs_1_concat", new List<string> {"The Long Stretch: Meet D", "Misc"}},
+		{"trv_1_mcs_1_p1", new List<string> {"Mr. Phillips: Finish First Drive", "Countryside"}},
+		{"trv_1_mcs_3_concat", new List<string> {"Mr. Phillips: Smash Trailer", "Countryside"}},
+		{"chinese_1_int", new List<string> {"Start TPI", "Countryside"}},
+		{"trevor_2_int", new List<string> {"Start Nervous Ron", "Countryside"}},
+		{"trv_2_mcs_4_concat", new List<string> {"Nervous Ron: Shoot Down Chopper", "Countryside"}},
+		{"trv_2_mcs_6", new List<string> {"Nervous Ron: Board Plane", "Countryside"}},
+		{"chinese_2_int", new List<string> {"Start Crystal Maze", "Countryside"}},
+		{"trevor_drive_int", new List<string> {"Start Friends Reunited", "Countryside"}},
+		{"trv_dri_mcs_concat", new List<string> {"Friends Reunited: Look over Los Santos", "Countryside"}},
+		{"family_4_mcs_2", new List<string> {"Fame or Shame: Enter Arena", "Blitz Play"}},
+		{"fbi_1_int", new List<string> {"Start Dead Man Walking", "Blitz Play"}},
+		{"family_5_mcs_1", new List<string> {"Yoga: Finish 1st Pose", "Blitz Play"}},
+		{"family_5_mcs_2", new List<string> {"Yoga: Finish 2nd Pose", "Blitz Play"}},
+		{"family_5_mcs_3", new List<string> {"Yoga: Finish 3rd Pose", "Blitz Play"}},
+		{"family_5_mcs_4", new List<string> {"Yoga: Meet Jimmy", "Blitz Play"}},
+		{"family_5_mcs_5", new List<string> {"Yoga: Greet Drug Dealer", "Blitz Play"}},
+		{"fam_5_mcs_6", new List<string> {"Yoga: Hallucination Sequence", "Blitz Play"}},
+		{"fbi_2_int", new List<string> {"Three's Company: Meet Dave", "Blitz Play"}},
+		{"fbi_2_mcs_1", new List<string> {"Three's Company: Arrive at El Burro", "Blitz Play"}},
+		{"fbi_2_mcs_2", new List<string> {"Three's Company: Start Rapelling", "Blitz Play"}},
+		{"fbi_2_mcs_3_p1a", new List<string> {"Three's Company: Break Glass", "Blitz Play"}},
+		{"fbi_2_mcs_3b", new List<string> {"Three's Company: Finish Building Shootout", "Blitz Play"}},
+		{"lsdh_int", new List<string> {"Start Scouting the Port", "Blitz Play"}},
+		{"lsdhs_mcs_2", new List<string> {"Scouting the Port: Arrive at Security Gate", "Blitz Play"}},
+		{"franklin_1_int", new List<string> {"Start Hood Safari", "Blitz Play"}},
+		{"fra_1_mcs_1", new List<string> {"Hood Safari: The Deal", "Blitz Play"}},
+		{"fbi_3_int", new List<string> {"Start By the Book", "Blitz Play"}},
+		{"fbi_3_mcs_1", new List<string> {"By the Book: Finish Interrogation 1", "Blitz Play"}},
+		{"fbi_3_mcs_2", new List<string> {"By the Book: Arrive at house", "Blitz Play"}},
+		{"fbi_3_mcs_7", new List<string> {"By the Book: Finish the Assassination", "Blitz Play"}},
+		{"ass_int_2_alt1", new List<string> {"Start Hotel Assassination", "Misc"}},
+		{"lsdh_2a_int", new List<string> {"Start Merryweather Heist", "Blitz Play"}},
+		{"sol_1_mcs_2", new List<string> {"Mr. Richards: Confront Rocco", "Deep Inside"}},
+		{"sol_1_mcs_3", new List<string> {"Mr. Richards: Finish Rocco Fight", "Deep Inside"}},
+		{"martin_1_mcs_1", new List<string> {"Caida Libre: Get Files", "Deep Inside"}},
+		{"exl_1_mcs_1_p3_b", new List<string> {"Minor Turbulence: Enter Cargo Jet", "Paleto Score"}},
+		{"rbhs_mcs_1", new List<string> {"Paleto Score Setup: Enter Paleto Bay", "Paleto Score"}},
+		{"rbh_2a_mcs_2_p7", new List<string> {"Paleto Score: Confront Cops", "Paleto Score"}},
+		{"rbh_2ab_mcs_6", new List<string> {"Paleto Score: Forced into Alley", "Paleto Score"}},
+		{"rbh_2a_mcs_4", new List<string> {"Paleto Score: Franklin Meets Michael", "Paleto Score"}},
+		{"fbi_5_int", new List<string> {"Start Monkey Business", "Fresh Meat"}},
+		{"fbi_5a_mcs_1", new List<string> {"Monkey Business: Leave Water", "Fresh Meat"}},
+		{"fbi_5b_mcs_1", new List<string> {"Monkey Business: Pick up Container", "Fresh Meat"}},
+		{"fbi_5a_mcs_10", new List<string> {"Monkey Business: Leave Helicopter", "Fresh Meat"}},
+		{"trv_5_int", new List<string> {"Start Hang Ten", "Fresh Meat"}},
+		{"mic_1_int", new List<string> {"Start Bury the Hatchet", "Fresh Meat"}},
+		{"car_5_mcs_1", new List<string> {"Pack Man: Start Packer Drive", "Fresh Meat"}},
+		{"fam_6_mcs_1", new List<string> {"Reuniting the Family: Confront Amanda", "Bureau Raid"}},
+		{"fam_6_mcs_2_concat", new List<string> {"Reuniting the Family: Enter Tatoo Shop", "Bureau Raid"}},
+		{"fam_6_mcs_3", new List<string> {"Reuniting the Family: Finish Piercings", "Bureau Raid"}},
+		{"fam_6_mcs_4", new List<string> {"Reuniting the Family: Finish Tattoo", "Bureau Raid"}},
+		{"fam_6_mcs_5", new List<string> {"Reuniting the Family: Cut Hair", "Bureau Raid"}},
+		{"fam_6_mcs_6", new List<string> {"Reuniting the Family: Arrive at Therapy", "Bureau Raid"}},
+		{"ah_3b_mcs_1", new List<string> {"Bureau Raid: Jump out of Heli", "Bureau Raid"}},
+		{"ah_3b_mcs_3", new List<string> {"Bureau Raid: Start Hack", "Bureau Raid"}},
+		{"ah_3b_mcs_4", new List<string> {"Bureau Raid: Finish Hack", "Bureau Raid"}},
+		{"ah_3b_mcs_5", new List<string> {"Bureau Raid: Finish Shootout", "Bureau Raid"}},
+		{"ah_3b_mcs_6_p1", new List<string> {"Bureau Raid: Pass Crashed Helicopter", "Bureau Raid"}},
+		{"ah_3b_mcs_7", new List<string> {"Bureau Raid: Start Repelling", "Bureau Raid"}},
+		{"mic_3_int", new List<string> {"The Wrap Up: Meet Dave", "Third Way"}},
+		{"bs_2a_mcs_1", new List<string> {"Big Score Subtle: Hijack security trucks", "Third Way"}},
+		{"bs_2a_mcs_8_p3", new List<string> {"Big Score Subtle: Finish shootout", "Third Way"}},
+		{"bs_2a_mcs_11", new List<string> {"Big Score Subtle: Finish Drive Sequence", "Third Way"}},
+		{"fin_c_int", new List<string> {"Start The Third Way", "Third Way"}},
+		{"fin_c_mcs_1", new List<string> {"The Third Way: Start Foundry Shootout", "Third Way"}},
+		{"fin_c_ext", new List<string> {"The Third Way: Finish Foundry Shootout", "Third Way"}}, // noControl indicates character switch after this?
+		{"fin_c2_mcs_5", new List<string> {"The Third Way: Kidnap Devin", "Third Way"}},
+		{"bar_5__rcm_p2", new List<string> {"Grass Roots: Franklin", "Misc"}},
+		{"pap_2_rcm_p2", new List<string> {"Start Paparazzo: The Sex Tape", "Misc"}},
+		{"pap_3_rcm", new List<string> {"Paparazzo: The Proposal", "Misc"}},
+		{"es_3_rcm", new List<string> {"Start Targeted Risk", "Misc"}}
+		
 	};
 
 	vars.collectibleIDs = new Dictionary<int, string> {
@@ -408,10 +444,6 @@ startup
 	addMissionHeader("Third Way", true, "Third Way");
 	addMissionHeader("Lester's Assassinations", true, "Lester's Assassinations");
 
-/* 	// Add cutscenes to setting list
-	foreach (var cutscene in vars.cutsceneNames) {
-		settings.Add(cutscene.Key, false, cutscene.Value, "cutscene");
-	}; */
 
 	// Add strangers and freaks to setting list
 	settings.Add("sf", true, "Strangers and Freaks", "main");
@@ -460,10 +492,25 @@ startup
 	settings.SetToolTip("segments_start", "For Trevor% segment, use the Start the timer on the Prologue start option.");
 	settings.Add("segments_split", false, "Split at the beginning of segments", "cutscene");
 
-	// Add actual segments
+	// Add actual segments to starter, cutscene splits
 	foreach(var Segment in vars.segmentsStart) {
 		settings.Add(Segment.Key + "start", true, Segment.Value, "segments_start");
 		settings.Add(Segment.Key + "split", false, Segment.Value, "segments_split");
+	};
+
+	// Add cutscenes to setting list
+	settings.Add("Trevor%_c", false, "Trevor%", "cutscene");
+	settings.Add("Countryside_c", false, "Countryside", "cutscene");
+	settings.Add("Blitz Play_c", false, "Blitz Play", "cutscene");
+	settings.Add("Deep Inside_c", false, "Deep Inside", "cutscene");
+	settings.Add("Paleto Score_c", false, "Paleto Score", "cutscene");
+	settings.Add("Fresh Meat_c", false, "Fresh Meat", "cutscene");
+	settings.Add("Bureau Raid_c", false, "Bureau Raid", "cutscene");
+	settings.Add("Third Way_c", false, "Third Way", "cutscene");
+	settings.Add("Misc_c", false, "Other", "cutscene");
+	
+	foreach (var cutscene in vars.cutsceneNames) {
+		settings.Add(cutscene.Key, false, cutscene.Value[0], cutscene.Value[1] + "_c");
 	};
 
 	// Prologue timer start

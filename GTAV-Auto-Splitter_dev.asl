@@ -52,7 +52,7 @@ state("GTA5")
 startup
 {
 	vars.missionList = new Dictionary<int, string> {};
-	vars.freaksList = new List<string> ();
+	vars.freaksList = new List<string>();
 
 	vars.memoryWatchers = new MemoryWatcherList();
 	vars.freaksWatchers = new MemoryWatcherList(); // needed to not eat up CPU
@@ -282,7 +282,7 @@ startup
 	vars.michaelEpsilonMissions = new Dictionary<string,string> {
 		{"donated500", "Seeking the Truth (donated 500$)"},
 		{"donated5k", "Accepting the Truth (donated 5000$)"},
-		{"carsdelivered", "Assuming the Truth (all cars collected)"},//Doesn't work
+		{"carsdelivered", "Assuming the Truth (all cars collected)"},
 		{"donated10k", "Chasing the Truth (donated 10000$)"},
 		{"robe10days", "Bearing the Truth (10 days with robe passed)"},
 		{"desertdone", "Exercising the Truth (after pilgrimage done)"},
@@ -367,9 +367,6 @@ startup
 		{"fbi_3_mcs_7", new List<string> {"By the Book: Finish the Assassination", "Blitz Play"}},
 		{"ass_int_2_alt1", new List<string> {"Start Hotel Assassination", "Misc"}},
 		{"lsdh_2a_int", new List<string> {"Start Merryweather Heist", "Blitz Play"}},
-		//{"", "I Fought the Law: Start Race"},//?
-		//{"", "I Fought the Law: Start Bike Chase"},//?
-		//{"", "I Fought the Law: End Bike Chase"},
 		{"sol_1_mcs_2", new List<string> {"Mr. Richards: Confront Rocco", "Deep Inside"}},
 		{"sol_1_mcs_3", new List<string> {"Mr. Richards: Finish Rocco Fight", "Deep Inside"}},
 		{"martin_1_mcs_1", new List<string> {"Caida Libre: Get Files", "Deep Inside"}},
@@ -512,10 +509,10 @@ startup
 	settings.Add("Bureau Raid_c", false, "Bureau Raid", "cutscene");
 	settings.Add("Third Way_c", false, "Third Way", "cutscene");
 	settings.Add("Misc_c", false, "Other", "cutscene");
+	
 	foreach (var cutscene in vars.cutsceneNames) {
 		settings.Add(cutscene.Key, false, cutscene.Value[0], cutscene.Value[1] + "_c");
 	};
-	settings.SetToolTip("exl_1_mcs_1_p3_b", "For some reason this likes to split twice. If you enable this make sure to have 2 splits for it.");
 
 	// Prologue timer start
 	settings.Add("prologuetimer", true, "Start the timer on the Prologue start", "starters");
