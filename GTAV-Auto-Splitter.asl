@@ -576,6 +576,15 @@ init
 	vars.loadHistory = new HashSet<string>();
 	vars.currentHole = 1;
 
+	vars.freaksUpdateThread = new Thread(() => {
+		while(true) {
+			Thread.Sleep(2000);
+			vars.freaksWatchers.UpdateAll(game);
+		}
+	});
+
+	vars.freaksUpdateThread.Start();
+
 	vars.splits = new List<string>();
 }
 
@@ -586,6 +595,9 @@ update
 	bool hasChangedPhase = oldPhase != vars.phase;
 
 	vars.memoryWatchers.UpdateAll(game);
+
+
+
 	if (vars.memoryWatchers["GXTLabel"].Current != vars.memoryWatchers["GXTLabel"].Old)
 	{
 		vars.freaksWatchers.UpdateAll(game);
@@ -609,7 +621,7 @@ update
 
 	if (settings["highRefreshRate"]) {
     	refreshRate = 120;
-	}
+	} 
 	if (settings["lowRefreshRate"]) {
     	refreshRate = 30;
 	}

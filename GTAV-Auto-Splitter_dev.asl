@@ -586,6 +586,15 @@ init
 	vars.currentNoControlCounter = 0;
 	vars.oldNoControlCounter = 0;
 
+	vars.freaksUpdateThread = new Thread(() => {
+		while(true) {
+			Thread.Sleep(2000);
+			vars.freaksWatchers.UpdateAll(game);
+		}
+	});
+
+	vars.freaksUpdateThread.Start();
+
 	vars.splits = new List<string>();
 }
 
