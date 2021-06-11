@@ -475,10 +475,12 @@ startup
 
 	// Option to increase refresh rate
 	settings.Add("refreshRate", false, "Refresh Rate Settings", "misc");
-	settings.Add("highRefreshRate", false, "Increase script refresh rate (higher cpu load)", "refreshRate");
+	settings.Add("highRefreshRate", false, "Increase script refresh rate (higher CPU load)", "refreshRate");
 	settings.SetToolTip("highRefreshRate", "Checks to determine whether to increase splitting accuracy. Enabling this setting will use more processing power because code is running more often.");
-	settings.Add("lowRefreshRate", false, "Decrease script refresh rate (lower cpu load)", "refreshRate");
+	settings.Add("lowRefreshRate", false, "Decrease script refresh rate (lower CPU load)", "refreshRate");
 	settings.SetToolTip("lowRefreshRate", "Checks to determine whether to decrease splitting accuracy. Enabling this setting will make LiveSplit use a bit less CPU.");
+	settings.Add("updateFreaksWatchers", false, "Segment start double split fix (Increases CPU load)", "misc");
+	settings.SetToolTip("updateFreaksWatchers", "This setting updates the S&F watchers every update cycle (default 60 times a second, dependant on the refresh rate settings). \nThis semi-heavily increases LiveSplit's CPU usage. Test if your in-game FPS is good enough if you enable this setting.");
 
 	vars.segmentsStart = new Dictionary<string,string> {
 		{"countryside", "Countryside"},
@@ -595,8 +597,10 @@ update
 	bool hasChangedPhase = oldPhase != vars.phase;
 
 	vars.memoryWatchers.UpdateAll(game);
-
-
+	if (settings["updateFreaksWatchers"])
+	{
+		vars.freaksWatchers.UpdateAll(game);
+	}
 
 	if (vars.memoryWatchers["GXTLabel"].Current != vars.memoryWatchers["GXTLabel"].Old)
 	{
