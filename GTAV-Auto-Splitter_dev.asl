@@ -605,6 +605,7 @@ init
 	vars.alreadySplitPaletoInit = false;
 	vars.currentNoControlCounter = 0;
 	vars.oldNoControlCounter = 0;
+	vars.lastExecutedCutscene = "null";
 
 /* 	vars.freaksUpdateThread = new Thread(() => {
 		while(true) {
@@ -671,8 +672,13 @@ update
 		vars.currentNoControlCounter = 0;
 		vars.oldNoControlCounter = 0;
 	}
+
+	if (current.in_c == 1) {
+		vars.lastExecutedCutscene = current.sc;
+	};
+
 	
-		// Don't split if a load is going on
+	// Don't split if a load is going on
 	if (vars.memoryWatchers["LoadState"].Current == 0) {
 		// splitting stuff
 		// check if stunt jumps counter increased
@@ -783,7 +789,7 @@ update
 			vars.justSplit = true;
 		};
 
-		if (current.in_m_2 == 0 || !((settings.ContainsKey(current.sc + "_noc") && settings[current.sc + "_noc"]) || (settings.ContainsKey(current.c + "_noc") && settings[current.c + "_noc"]))) { //todo: optimize for quicker execution, logical sense, logic passes when it should fail
+		if (current.in_m_2 == 0 || !((settings.ContainsKey(vars.lastExecutedCutscene + "_noc") && settings[vars.lastExecutedCutscene + "_noc"]) || (settings.ContainsKey(vars.lastExecutedCutscene + "_noc") && settings[vars.lastExecutedCutscene + "_noc"]))) { //todo: optimize for quicker execution
 			foreach (var collectible in vars.collectibleIDs) {
 				vars.currentValue = (vars.memoryWatchers[collectible.Value + " address"].Current + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Current;
 				vars.oldValue = (vars.memoryWatchers[collectible.Value + " address"].Old + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Old;
