@@ -404,7 +404,7 @@ startup
 		{"fin_c_mcs_1", new List<string> {"The Third Way: Start Foundry Shootout", "Third Way"}},
 		{"fin_c_ext", new List<string> {"The Third Way: Finish Foundry Shootout", "Third Way"}}, // noControl indicates character switch after this?
 		{"fin_c2_mcs_5", new List<string> {"The Third Way: Kidnap Devin", "Third Way"}},
-		{"bar_5__rcm_p2", new List<string> {"Grass Roots: Franklin", "Misc"}},
+		{"bar_5_rcm_p2", new List<string> {"Grass Roots: Franklin", "Misc"}},
 		{"pap_2_rcm_p2", new List<string> {"Start Paparazzo: The Sex Tape", "Misc"}},
 		{"pap_3_rcm", new List<string> {"Paparazzo: The Proposal", "Misc"}},
 		{"es_3_rcm", new List<string> {"Start Targeted Risk", "Misc"}}
