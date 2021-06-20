@@ -36,6 +36,9 @@ state("GTA5")
 	// in mission
 	byte in_m: 0x1DD6CB9;
 
+	// alt in mission
+	byte in_m_2: 0x22959C3;
+
 	// no player control? - used in ending A splitting and countryside
 	byte noControl: 0x1DD034D;
 
@@ -780,7 +783,7 @@ update
 			vars.justSplit = true;
 		};
 
-		if (current.in_m == 0 || !((settings.ContainsKey(current.sc + "_noc") && settings[current.sc + "_noc"]) || (settings.ContainsKey(current.c + "_noc") && settings[current.c + "_noc"]))) { //todo: optimize for quicker execution, logical sense, logic passes when it should fail
+		if (current.in_m_2 == 0 || !((settings.ContainsKey(current.sc + "_noc") && settings[current.sc + "_noc"]) || (settings.ContainsKey(current.c + "_noc") && settings[current.c + "_noc"]))) { //todo: optimize for quicker execution, logical sense, logic passes when it should fail
 			foreach (var collectible in vars.collectibleIDs) {
 				vars.currentValue = (vars.memoryWatchers[collectible.Value + " address"].Current + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Current;
 				vars.oldValue = (vars.memoryWatchers[collectible.Value + " address"].Old + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Old;
@@ -790,6 +793,11 @@ update
 				}
 			}
 		};
+		//Testing
+		//print("Script Active: " + (settings.ContainsKey(current.sc + "_noc") && settings[current.sc + "_noc"]).ToString());
+		//print("Cutscene Active: " + (settings.ContainsKey(current.c + "_noc") && settings[current.c + "_noc"]).ToString());
+		//print("Script or cutscene active: " + (current.in_m_2 == 0 || (!((settings.ContainsKey(current.sc + "_noc") && settings[current.sc + "_noc"]) || (settings.ContainsKey(current.c + "_noc") && settings[current.c + "_noc"])))).ToString());
+		//print("In_mission: " + current.in_m_2);
 
 
 		foreach (var flag in vars.epsilonFlags) {
