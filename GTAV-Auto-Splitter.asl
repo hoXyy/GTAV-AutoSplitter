@@ -380,6 +380,8 @@ startup
 		{"fbi_5b_mcs_1", new List<string> {"Monkey Business: Pick up Container", "Fresh Meat"}},
 		{"fbi_5a_mcs_10", new List<string> {"Monkey Business: Leave Helicopter", "Fresh Meat"}},
 		{"trv_5_int", new List<string> {"Start Hang Ten", "Fresh Meat"}},
+		{"bss_1_mcs_2", new List<string> {"Survey the Score: Franklin and Michael Case the Back Enterance", "Fresh Meat"}},
+		{"bss_1_mcs_3", new List<string> {"Survey the Score: Security Trucks Enter Depository", "Fresh Meat"}},
 		{"mic_1_int", new List<string> {"Start Bury the Hatchet", "Fresh Meat"}},
 		{"mic_1_mcs_1", new List<string> {"Bury the Hatchet: Arrive at Airport", "Fresh Meat"}},
 		{"mic_1_mcs_2", new List<string> {"Bury the Hatchet: Confront Trevor", "Fresh Meat"}},
