@@ -34,6 +34,7 @@ state("GTA5")
 
 	// in mission
 	byte in_m: 0x1DD6CB9;
+	byte in_m_2: 0x22959C3;
 
 	// no player control? - used in ending A splitting and countryside
 	byte noControl: 0x1DD034D;
@@ -417,6 +418,15 @@ startup
 		{0x1A1, "Spaceship Parts"},
 		{0x4B59, "Nuclear Waste"}
 	};
+	
+	vars.noCollectibleStates = new Dictionary<string,string> {
+		{"franklin1", "Hood Safari"},
+		{"bss_1_mcs_2", "Surveying the Score: Finding/Tracking Security Vans"},
+		{"assassin_valet", "The Hotel Assassination"},
+		{"assassin_hooker", "The Vice Assassination"},
+		{"pilot_school", "Flight School"},
+		{"golf", "Golf"}
+	};
 
 	foreach(var collectible in vars.collectibleIDs) {
 		vars.memoryWatchers.Add(new MemoryWatcher<ulong>(new DeepPointer("GTA5.exe", 0x22B54E0 + 8, collectible.Key * 16 + 8)) { Name = collectible.Value + " address" });
@@ -465,9 +475,15 @@ startup
 	settings.Add("randomevent", false, "Random Event", "collectibles");
 	// split on Hobbies and Pasttimes
 	settings.Add("hobbies", false, "Hobbies and Pasttimes", "collectibles");
+	// don't split on these during specific missions/parts of missions
+	settings.Add("no_collect", false, "Don't split during:", "collectibles");
 
 	foreach(var collectible in vars.collectibleIDs) {
 		settings.Add(collectible.Value, false, collectible.Value, "collectibles");
+	}
+
+	foreach(var state in vars.noCollectibleStates) {
+		settings.Add(state.Key + "_noc", false, state.Value, "no_collect");
 	}
 	
 	// Golf autosplitter
@@ -633,6 +649,10 @@ update
     	refreshRate = 60;
 	}
 	
+	if (current.in_c == 1) {
+		vars.lastExecutedCutscene = current.c;
+	};
+	
 	// Don't split if a load is going on
 	if (vars.memoryWatchers["LoadState"].Current == 0) {
 		// splitting stuff
@@ -737,12 +757,14 @@ update
 			vars.justSplit = true;
 		};
 
-		foreach (var collectible in vars.collectibleIDs) {
-			vars.currentValue = (vars.memoryWatchers[collectible.Value + " address"].Current + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Current;
-			vars.oldValue = (vars.memoryWatchers[collectible.Value + " address"].Old + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Old;
-			if ((vars.currentValue > vars.oldValue) && settings[collectible.Value])
-			{
-				vars.justSplit = true;
+		if (current.in_m_2 == 0 || !((settings.ContainsKey(vars.lastExecutedCutscene + "_noc") && settings[vars.lastExecutedCutscene + "_noc"]) || (settings.ContainsKey(current.sc + "_noc") && settings[current.sc + "_noc"]))) { //todo: optimize for quicker execution
+			foreach (var collectible in vars.collectibleIDs) {
+				vars.currentValue = (vars.memoryWatchers[collectible.Value + " address"].Current + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Current;
+				vars.oldValue = (vars.memoryWatchers[collectible.Value + " address"].Old + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Old;
+				if ((vars.currentValue > vars.oldValue) && settings[collectible.Value])
+				{
+					vars.justSplit = true;
+				}
 			}
 		};
 
