@@ -595,6 +595,7 @@ init
 	vars.phase = timer.CurrentPhase;
 	vars.loadHistory = new HashSet<string>();
 	vars.currentHole = 1;
+	vars.lastExecutedCutscene = "null";
 
 /* 	vars.freaksUpdateThread = new Thread(() => {
 		while(true) {
