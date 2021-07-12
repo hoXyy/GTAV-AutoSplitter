@@ -312,6 +312,7 @@ startup
 	vars.cutsceneNames = new Dictionary<string,List<string>> {
 		{"pro_mcs_5", new List<string> {"Prologue: Getting in getaway vehicle", "Trevor%"}},
 		{"pro_mcs_6", new List<string> {"Prologue: The Train", "Trevor%"}},
+		{"pro_mcs_7_concat", new List<string> {"Prologue: Trevor Flees", "Trevor%"}},
 		// no cutscene id for post drive in F&L, can be circumvented by checking for cutscene = armenian_1_int and counting the number of times player loses control
 		{"armenian_2_int", new List<string> {"Start Reposession", "Trevor%"}},
 		{"arm_2_mcs_4", new List<string> {"Reposession: Confronted by Vagos", "Trevor%"}},
