@@ -332,6 +332,7 @@ startup
 		{"les_1a_mcs_3", new List<string> {"Friend Request: Finish popups", "Trevor%"}},
 		{"family_2_mcs_2", new List<string> {"DLG: Finish Bike Ride", "Trevor%"}},
 		{"family_2_mcs_3", new List<string> {"DLG: Finish Swimming", "Trevor%"}},
+		{"jh_1_int", new List<string> {"Start Casing the Jewel Store", "Trevor%"}},
 		{"jh_1_ig_3", new List<string> {"Casing the Jewel Store: Greet Employee", "Trevor%"}},
 		{"jh2_fina_mcs4_a1a2", new List<string> {"Jewel Store Job: Leave Jewel Store", "Trevor%"}},
 		{"lamar_1_int", new List<string> {"Start The Long Stretch", "Misc"}},
@@ -339,6 +340,7 @@ startup
 		{"trv_1_mcs_1_p1", new List<string> {"Mr. Phillips: Finish First Drive", "Countryside"}},
 		{"trv_1_mcs_3_concat", new List<string> {"Mr. Phillips: Smash Trailer", "Countryside"}},
 		{"chinese_1_int", new List<string> {"Start TPI", "Countryside"}},
+		{"chi_1_mcs_1", new List<string> {"TPI: Arrive at Meth Lab", "Countryside"}},
 		{"trevor_2_int", new List<string> {"Start Nervous Ron", "Countryside"}},
 		{"trv_2_mcs_4_concat", new List<string> {"Nervous Ron: Shoot Down Chopper", "Countryside"}},
 		{"trv_2_mcs_6", new List<string> {"Nervous Ron: Board Plane", "Countryside"}},
@@ -411,7 +413,8 @@ startup
 		{"bar_5_rcm_p2", new List<string> {"Grass Roots: Franklin", "Misc"}},
 		{"pap_2_rcm_p2", new List<string> {"Start Paparazzo: The Sex Tape", "Misc"}},
 		{"pap_3_rcm", new List<string> {"Paparazzo: The Proposal", "Misc"}},
-		{"es_3_rcm", new List<string> {"Start Targeted Risk", "Misc"}}
+		{"es_3_rcm", new List<string> {"Start Targeted Risk", "Misc"}},
+		{"paper_1_rcm_alt1", new List<string> {"Start A Starlet in Vinewood", "Misc"}}
 		
 	};
 
