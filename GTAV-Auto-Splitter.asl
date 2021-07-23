@@ -481,13 +481,13 @@ startup
 	settings.Add("randomevent", false, "Random Event", "collectibles");
 	// split on Hobbies and Pasttimes
 	settings.Add("hobbies", false, "Hobbies and Pasttimes", "collectibles");
-	// don't split on these during specific missions/parts of missions
-	settings.Add("no_collect", false, "Don't split during:", "collectibles");
 
 	foreach(var collectible in vars.collectibleIDs) {
 		settings.Add(collectible.Value, false, collectible.Value, "collectibles");
 	}
 
+	// don't split on these during specific missions/parts of missions
+	settings.Add("no_collect", false, "Don't split during:", "collectibles");
 	foreach(var state in vars.noCollectibleStates) {
 		settings.Add(state.Key + "_noc", false, state.Value, "no_collect");
 	}
