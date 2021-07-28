@@ -315,6 +315,7 @@ startup
 	vars.cutsceneNames = new Dictionary<string,List<string>> {
 		{"pro_mcs_5", new List<string> {"Prologue: Getting in getaway vehicle", "Trevor%"}},
 		{"pro_mcs_6", new List<string> {"Prologue: The Train", "Trevor%"}},
+		{"armenian_1_mcs_1", new List<string> {"Franklin & Lamar: Speak to Simeon"}},
 		// no cutscene id for post drive in F&L, can be circumvented by checking for cutscene = armenian_1_int and counting the number of times player loses control
 		{"armenian_2_int", new List<string> {"Start Reposession", "Trevor%"}},
 		{"arm_2_mcs_4", new List<string> {"Reposession: Confronted by Vagos", "Trevor%"}},
@@ -385,6 +386,7 @@ startup
 		{"trv_5_int", new List<string> {"Start Hang Ten", "Fresh Meat"}},
 		{"mic_1_int", new List<string> {"Start Bury the Hatchet", "Fresh Meat"}},
 		{"car_5_mcs_1", new List<string> {"Pack Man: Start Packer Drive", "Fresh Meat"}},
+		{"ah_1_mcs_1", new List<string> {"Cleaning the Bureau: Confront Janitor", "Bureau Raid"}},
 		{"fam_6_mcs_1", new List<string> {"Reuniting the Family: Confront Amanda", "Bureau Raid"}},
 		{"fam_6_mcs_2_concat", new List<string> {"Reuniting the Family: Enter Tatoo Shop", "Bureau Raid"}},
 		{"fam_6_mcs_3", new List<string> {"Reuniting the Family: Finish Piercings", "Bureau Raid"}},
@@ -398,6 +400,8 @@ startup
 		{"ah_3b_mcs_6_p1", new List<string> {"Bureau Raid: Pass Crashed Helicopter", "Bureau Raid"}},
 		{"ah_3b_mcs_7", new List<string> {"Bureau Raid: Start Repelling", "Bureau Raid"}},
 		{"mic_3_int", new List<string> {"The Wrap Up: Meet Dave", "Third Way"}},
+		{"mic_4_int", new List<string> {"Meltdown: Lazlow Cutscene", "Third Way"}},
+		{"sol_5_mcs_1", new List<string> {"Meltdown: Save Tracey", "Third Way"}},
 		{"bs_2a_mcs_1", new List<string> {"Big Score Subtle: Hijack security trucks", "Third Way"}},
 		{"bs_2a_mcs_8_p3", new List<string> {"Big Score Subtle: Finish shootout", "Third Way"}},
 		{"bs_2a_mcs_11", new List<string> {"Big Score Subtle: Finish Drive Sequence", "Third Way"}},
@@ -573,7 +577,12 @@ startup
 	};
 
 	vars.noControlSplits = new Dictionary<string,List<string>> { //(Script name + nocontrol counter, "Cutscene" name, Segment)
-		{"franklin0_3", new List<string> {"Chop: Begin Chase on Foot", "Trevor%"}}
+		{"armenian1_3", new List<string> {"Franklin and Lamar: Finish Race", "Trevor%"}},
+		{"franklin0_3", new List<string> {"Chop: Begin Chase on Foot", "Trevor%"}},
+		{"family1_4", new List<string> {"Father/Son: Franklin Climbs onto Boat"}, "Trevor%"},
+		{"family1_5", new List<string> {"Father/Son: Franklin Jumps Off of Boat"}, "Trevor%"},
+		{"todo", new List<string> {"Jewel Store Job: Enter The Store", "Trevor%"}},
+		{"todo", new List<string> {"Cutscene Name", "Segment Name"}},
 	};
 
 	foreach(var split in vars.noControlSplits) { //This is probably wrong, redo it later
@@ -666,11 +675,13 @@ update
 
 	if (current.noControl == 1 && old.noControl == 0) {
 		vars.currentNoControlCounter++;
+		print("No Control Counter = " + vars.currentNoControlCounter.ToString());
 	}
 
 	if (current.sc != old.sc) {
 		vars.currentNoControlCounter = 0;
 		vars.oldNoControlCounter = 0;
+		print("No Control Counter = " + vars.currentNoControlCounter.ToString());
 	}
 
 	if (current.in_c == 1) {
