@@ -313,7 +313,7 @@ startup
 		{"pro_mcs_5", new List<string> {"Prologue: Getting in getaway vehicle", "Trevor%"}},
 		{"pro_mcs_6", new List<string> {"Prologue: The Train", "Trevor%"}},
 		{"pro_mcs_7_concat", new List<string> {"Prologue: Trevor Flees", "Trevor%"}},
-		{"armenian_1_mcs_1", new List<string> {"Franklin & Lamar: Speak to Simeon"}},
+		{"armenian_1_mcs_1", new List<string> {"Franklin & Lamar: Speak to Simeon", "Trevor%"}},
 		{"armenian_2_int", new List<string> {"Start Reposession", "Trevor%"}},
 		{"arm_2_mcs_4", new List<string> {"Reposession: Confronted by Vagos", "Trevor%"}},
 		{"tonya_mcs_1", new List<string> {"Start Pulling Favors", "Trevor%"}},
