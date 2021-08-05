@@ -506,6 +506,8 @@ startup
 	settings.SetToolTip("lowRefreshRate", "Checks to determine whether to decrease splitting accuracy. Enabling this setting will make LiveSplit use a bit less CPU.");
 	settings.Add("updateFreaksWatchers", false, "Segment start double split fix (Increases CPU load)", "misc");
 	settings.SetToolTip("updateFreaksWatchers", "This setting updates the S&F watchers every update cycle (default 60 times a second, dependant on the refresh rate settings). \nThis semi-heavily increases LiveSplit's CPU usage. Test if your in-game FPS is good enough if you enable this setting.");
+	settings.Add("IL", false, "IL Timer Mode", "misc");
+	settings.SetToolTip("IL", "When enabled, autosplitter will start at the beginning of any cutscene and split on the first frame of any mission passed screen");
 
 	vars.segmentsStart = new Dictionary<string,string> {
 		{"countryside", "Countryside"},
@@ -767,6 +769,11 @@ update
 			vars.justSplit = true;
 		};
 
+		//IL Mode
+		if (settings["IL"] && current.mpassed == 1 && current.mpassed != old.mpassed) {
+			vars.justSplit = true;
+		};
+
 		if (current.in_m_2 == 0 || !((settings.ContainsKey(vars.lastExecutedCutscene + "_noc") && settings[vars.lastExecutedCutscene + "_noc"]) || (settings.ContainsKey(current.sc + "_noc") && settings[current.sc + "_noc"]))) { //todo: optimize for quicker execution
 			foreach (var collectible in vars.collectibleIDs) {
 				vars.currentValue = (vars.memoryWatchers[collectible.Value + " address"].Current + 0x10 & 0xFFFFFFFF) ^ vars.memoryWatchers[collectible.Value + " value"].Current;
@@ -846,7 +853,9 @@ start
 	
 	bool prologueFlag = settings["prologuetimer"] && current.debug_string == "PRO_SETTING" && current.debug_string != old.debug_string;
 
-	vars.justStarted = startFlag || golfFlag || prologueFlag;
+	bool ilFlag = settings["IL"] && current.in_c == 1 && current..in_c != old.in_c;
+
+	vars.justStarted = startFlag || golfFlag || prologueFlag || ilFlag;
 
 	return vars.justStarted;
 }
