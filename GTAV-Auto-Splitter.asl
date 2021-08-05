@@ -853,7 +853,7 @@ start
 	
 	bool prologueFlag = settings["prologuetimer"] && current.debug_string == "PRO_SETTING" && current.debug_string != old.debug_string;
 
-	bool ilFlag = settings["IL"] && current.in_c == 1 && current..in_c != old.in_c;
+	bool ilFlag = settings["IL"] && current.in_c == 1 && current.in_c != old.in_c;
 
 	vars.justStarted = startFlag || golfFlag || prologueFlag || ilFlag;
 
