@@ -606,15 +606,6 @@ init
 	vars.currentHole = 1;
 	vars.lastExecutedCutscene = "null";
 
-/* 	vars.freaksUpdateThread = new Thread(() => {
-		while(true) {
-			Thread.Sleep(2000);
-			vars.freaksWatchers.UpdateAll(game);
-		}
-	});
-
-	vars.freaksUpdateThread.Start(); */
-
 	vars.splits = new List<string>();
 }
 
@@ -710,7 +701,10 @@ update
 		// exception for paleto score
 		if (settings["paleto_scoresplit"]) {
 			if (current.sc == "exile1" && current.loading == 0 && current.loading != old.loading && current.in_m == 1) {
-				vars.justSplit = true;
+				if (!vars.splits.Contains("paleto_scoresplit")) {
+					vars.splits.Add("paleto_scoresplit");
+					vars.justSplit = true;
+				}
 			}
 		}
 
