@@ -434,7 +434,9 @@ startup
 		{"assassin_valet", "The Hotel Assassination"},
 		{"assassin_hooker", "The Vice Assassination"},
 		{"pilot_school", "Flight School"},
-		{"golf", "Golf"}
+		{"golf", "Golf"},
+		{"trvram_3", "Rampage 2"},
+		{"trvram_4", "Rampage 3"}
 	};
 
 	foreach(var collectible in vars.collectibleIDs) {
