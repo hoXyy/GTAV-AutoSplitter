@@ -156,6 +156,57 @@ startup
 		}},
 	};
 
+	vars.defaultEnabledSplits = new List<string> {
+		"Prologue",
+		"Franklin & Lamar",
+		"Reposession",
+		"Chop",
+		"Complications",
+		"Father/Son",
+		"Marriage Counseling",
+		"Friend Request",
+		"Daddy's Little Girl",
+		"Casing the Jewel Store",
+		"Carbine Rifles",
+		"The Long Stretch",
+		"Mr. Phillips",
+		"Trevor Phillips Industries",
+		"Nervous Ron",
+		"Crystal Maze",
+		"Fame or Shame",
+		"Dead Man Walking",
+		"Three's Company",
+		"Hood Safari",
+		"Scouting the Port",
+		"Did Somebody Say Yoga?",
+		"By The Book",
+		"Minisub",
+		"I Fought The Law",
+		"Eye in the Sky",
+		"Mr. Richards",
+		"Caida Libre",
+		"Minor Turbulence",
+		"Paleto Score Setup",
+		"Military Hardware",
+		"Derailed",
+		"Monkey Business",
+		"Hang Ten",
+		"Surveying the Score",
+		"Bury the Hatchet",
+		"Pack Man",
+		"Cleaning out the Bureau",
+		"Ballad of Rocco",
+		"Reuniting the Family",
+		"Architect's Plans",
+		"Legal Trouble",
+		"The Wrap Up",
+		"Lamar Down",
+		"Meltdown",
+		"Stingers",
+		"Big Score (Subtle)",
+		"Pulling Favours"
+	}
+
 	// Add last passed mission memory watcher
 	vars.memoryWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x2A07E70, 0x85CE8)) { Name = "lastMission" });
 
@@ -172,7 +223,7 @@ startup
 	Action<string, bool> addMissionChain = (missions, defaultValue) => {
 		var parent = missions;
 		foreach (var address in vars.missions[missions]) {
-			settings.Add(address.Value, defaultValue, address.Value, parent + " segment");
+			settings.Add(address.Value, vars.defaultEnabledSplits.Contains(address.Value), address.Value, parent + " segment");
 			vars.missionList[address.Key] = address.Value;
 		}
 	};
@@ -188,7 +239,7 @@ startup
 	Action<string, bool> addFreaksChain = (missions, defaultValue) => {
 		var parent = missions;
 		foreach (var address in vars.freaks[missions]) {
-			settings.Add(address.Value, defaultValue, address.Value, parent + " segment");
+			settings.Add(address.Value, vars.defaultEnabledSplits.Contains(address.Value), address.Value, parent + " segment");
 			vars.freaksList.Add(address.Value);
 		}
 	};
@@ -473,8 +524,8 @@ startup
 	settings.Add("sf", true, "Strangers and Freaks", "main");
 	settings.CurrentDefaultParent = "sf";
 	addFreaksHeader("Franklin", true, "Franklin");
-	addFreaksHeader("Michael", true, "Michael");
-	addFreaksHeader("Trevor", true, "Trevor");
+	addFreaksHeader("Michael", false, "Michael");
+	addFreaksHeader("Trevor", false, "Trevor");
 
 	foreach (var mission in vars.michaelEpsilonMissions) {
 		settings.Add(mission.Key, true, mission.Value, "Michael segment");
@@ -524,12 +575,12 @@ startup
 	// Add segments to autostart
 	settings.Add("segments_start", false, "Segments", "starters");
 	settings.SetToolTip("segments_start", "For Trevor% segment, use the Start the timer on the Prologue start option.");
-	settings.Add("segments_split", false, "Split at the beginning of segments", "cutscene");
+	settings.Add("segments_split", true, "Split at the beginning of segments", "cutscene");
 
 	// Add actual segments to starter, cutscene splits
 	foreach(var Segment in vars.segmentsStart) {
 		settings.Add(Segment.Key + "start", true, Segment.Value, "segments_start");
-		settings.Add(Segment.Key + "split", false, Segment.Value, "segments_split");
+		settings.Add(Segment.Key + "split", true, Segment.Value, "segments_split");
 	};
 
 	// Add cutscenes to setting list
@@ -564,7 +615,7 @@ startup
 		settings.Add(Ending.Key, true, Ending.Value, "endings");
 	};
 
-	settings.Add("segments_end", false, "Segments", "timerend");
+	settings.Add("segments_end", true, "Segments", "timerend");
 	settings.SetToolTip("segments_end", "For Third Way segment, use the Ending C auto finisher.");
 
 	// used only for settings, will need to check for them manually
@@ -577,7 +628,7 @@ startup
 		{"fresh_meat_end", "Fresh Meat"},
 		{"bureau_end", "Bureau Raid"},
 		{"epsilon_end", "Epsilon Program"},
-		{"asf_end", "All Strangers and Freaks"}
+		{"asf_end", "All Missions (Exercising Demons Route)"}
 	};
 
 	// Add segment ends to settings list
