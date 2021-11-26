@@ -205,7 +205,7 @@ startup
 		"Stingers",
 		"Big Score (Subtle)",
 		"Pulling Favours"
-	}
+	};
 
 	// Add last passed mission memory watcher
 	vars.memoryWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x2A07E70, 0x85CE8)) { Name = "lastMission" });
