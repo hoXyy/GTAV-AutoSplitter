@@ -481,10 +481,12 @@ startup
 	
 	vars.noCollectibleStates = new Dictionary<string,string> {
 		{"franklin1", "Hood Safari"},
+		{"bs_1_int", "Begin Surveying the Score"},
 		{"bss_1_mcs_2", "Surveying the Score: Finding/Tracking Security Vans"},
 		{"assassin_valet", "The Hotel Assassination"},
 		{"assassin_hooker", "The Vice Assassination"},
 		{"pilot_school", "Flight School"},
+		{"martin1", "Caida Libre"},
 		{"golf", "Golf"},
 		{"trvram_3", "Rampage 2"},
 		{"trvram_4", "Rampage 3"}
