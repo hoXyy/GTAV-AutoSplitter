@@ -630,7 +630,8 @@ startup
 		{"fresh_meat_end", "Fresh Meat"},
 		{"bureau_end", "Bureau Raid"},
 		{"epsilon_end", "Epsilon Program"},
-		{"asf_end", "All Missions (Exercising Demons Route)"}
+		{"asf_end", "All Missions (Exercising Demons Route)"},
+		{"asf_end2", "All Missions (The Last Act Route)"}
 	};
 
 	// Add segment ends to settings list
@@ -813,10 +814,15 @@ update
 			vars.justSplit = true;
 		};
 
-		// All Strangers and Freaks
+		// All Strangers and Freaks 1
 		if (settings["asf_end"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "fanatic1") {
 			vars.justSplit = true;
 		};
+
+		// All Missions 2
+		if (settings["asf_end2"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "nigel3") {
+			vars.justSplit = true;
+		}
 
 		//IL Mode
 		if (settings["IL"] && current.mpassed == 1 && current.mpassed != old.mpassed) {
