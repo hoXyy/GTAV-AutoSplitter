@@ -631,7 +631,7 @@ startup
 		{"bureau_end", "Bureau Raid"},
 		{"epsilon_end", "Epsilon Program"},
 		{"asf_end", "All Missions (Exercising Demons Route)"},
-		{"asf_end2", "All Missions (The Last Act Route)"}
+		{"asf_end2", "All Missions (The Breah of Contract Route)"}
 	};
 
 	// Add segment ends to settings list
@@ -820,7 +820,7 @@ update
 		};
 
 		// All Missions 2
-		if (settings["asf_end2"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "nigel3") {
+		if (settings["asf_end2"] && current.mpassed == 1 && current.mpassed != old.mpassed && current.sc == "josh4") {
 			vars.justSplit = true;
 		}
 
