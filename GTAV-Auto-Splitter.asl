@@ -210,14 +210,14 @@ startup
 	// Add last passed mission memory watcher
 	vars.memoryWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x2A07E70, 0x85CE8)) { Name = "lastMission" });
 
+	// Loading state
+	vars.memoryWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x1E59F4 + 0x01bea3b0 + 0xc)) { Name = "LoadState"});
+
 	// GXT label
 	vars.memoryWatchers.Add(new StringWatcher(new DeepPointer("GTA5.exe", 0x2A07E70, 0xAAC68), 64) { Name = "GXTLabel"});
 
 	// Game state
 	vars.memoryWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x14167 + 0x1ca0317 + 0xA)) { Name = "GameState"});
-
-	// Loading state
-	vars.memoryWatchers.Add(new MemoryWatcher<int>(new DeepPointer("GTA5.exe", 0x1E59F4 + 0x01bea3b0 + 0xc)) { Name = "LoadState"});
 
 	// Inserts split into settings and adds the mission to our separate list.
 	Action<string, bool> addMissionChain = (missions, defaultValue) => {
@@ -559,8 +559,6 @@ startup
 	settings.SetToolTip("highRefreshRate", "Checks to determine whether to increase splitting accuracy. Enabling this setting will use more processing power because code is running more often.");
 	settings.Add("lowRefreshRate", false, "Decrease script refresh rate (lower CPU load)", "refreshRate");
 	settings.SetToolTip("lowRefreshRate", "Checks to determine whether to decrease splitting accuracy. Enabling this setting will make LiveSplit use a bit less CPU.");
-	settings.Add("updateFreaksWatchers", false, "Segment start double split fix (Increases CPU load)", "misc");
-	settings.SetToolTip("updateFreaksWatchers", "This setting updates the S&F watchers every update cycle (default 60 times a second, dependant on the refresh rate settings). \nThis semi-heavily increases LiveSplit's CPU usage. Test if your in-game FPS is good enough if you enable this setting.");
 	settings.Add("IL", false, "IL Timer Mode", "misc");
 	settings.SetToolTip("IL", "When enabled, autosplitter will start at the beginning of any cutscene and split on the first frame of any mission passed screen");
 
@@ -672,19 +670,18 @@ update
 	bool hasChangedPhase = oldPhase != vars.phase;
 
 	vars.memoryWatchers.UpdateAll(game);
-	if (settings["updateFreaksWatchers"])
-	{
-		vars.freaksWatchers.UpdateAll(game);
-	}
 
-	if (vars.memoryWatchers["GXTLabel"].Current != vars.memoryWatchers["GXTLabel"].Old)
-	{
-		vars.freaksWatchers.UpdateAll(game);
-	}
+	foreach (var freaks in vars.freaksList) {
+		if (settings[freaks]) {
+			if (vars.memoryWatchers["GXTLabel"].Current != vars.memoryWatchers["GXTLabel"].Old)	{
+				vars.freaksWatchers[freaks].Update(game);
+			}
 
-	if (vars.memoryWatchers["GameState"].Current != vars.memoryWatchers["GameState"].Old)
-	{
-		vars.freaksWatchers.UpdateAll(game);
+			if (vars.memoryWatchers["GameState"].Current != vars.memoryWatchers["GameState"].Old)
+			{
+				vars.freaksWatchers[freaks].Update(game);
+			}
+		}
 	}
 
 	if (vars.justStarted || vars.justSplit || hasChangedPhase) {
