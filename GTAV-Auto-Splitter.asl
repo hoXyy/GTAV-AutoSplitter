@@ -629,7 +629,7 @@ startup
 		{"bureau_end", "Bureau Raid"},
 		{"epsilon_end", "Epsilon Program"},
 		{"asf_end", "All Missions (Exercising Demons Route)"},
-		{"asf_end2", "All Missions (The Breah of Contract Route)"}
+		{"asf_end2", "All Missions (Breach of Contract Route)"}
 	};
 
 	// Add segment ends to settings list
