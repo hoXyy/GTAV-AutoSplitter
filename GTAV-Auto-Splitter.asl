@@ -124,7 +124,6 @@ startup
 			{47, "Fresh Meat"}
 		}},
 		{"Bureau Raid", new Dictionary<int, string> {
-			{60, "Ballad of Rocco"},
 			{66, "Cleaning out the Bureau"},
 			{22, "Reuniting the Family"},
 			{67, "Architect's Plans"},
@@ -133,6 +132,7 @@ startup
 			{70, "Bureau Raid (Roof)"}
 		}},
 		{"Third Way", new Dictionary<int, string> {
+			{60, "Ballad of Rocco"},
 			{61, "Legal Trouble"},
 			{48, "The Wrap Up"},
 			{42, "Lamar Down"},
