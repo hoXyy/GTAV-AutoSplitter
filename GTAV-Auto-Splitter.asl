@@ -468,7 +468,10 @@ startup
 		{"pap_2_rcm_p2", new List<string> {"Start Paparazzo: The Sex Tape", "Misc"}},
 		{"pap_3_rcm", new List<string> {"Paparazzo: The Proposal", "Misc"}},
 		{"es_3_rcm", new List<string> {"Start Targeted Risk", "Misc"}},
-		{"paper_1_rcm_alt1", new List<string> {"Start A Starlet in Vinewood", "Misc"}}
+		{"paper_1_rcm_alt1", new List<string> {"Start A Starlet in Vinewood", "Misc"}},
+		{"josh_2_intp1_t4", new List<string> {"Start Closing the Deal", "Misc"}},
+		{"josh_3_intp1", new List<string> {"Start Surreal Estate", "Misc"}}
+
 		
 	};
 
