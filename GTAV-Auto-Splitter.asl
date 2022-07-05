@@ -492,7 +492,8 @@ startup
 		{"martin1", "Caida Libre"},
 		{"golf", "Golf"},
 		{"trvram_3", "Rampage 2"},
-		{"trvram_4", "Rampage 3"}
+		{"trvram_4", "Rampage 3"},
+		{"trvram_5", "Rampage 4"}
 	};
 
 	foreach(var collectible in vars.collectibleIDs) {
