@@ -35,5 +35,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.1
         with:
-          name: gtav-load-remover
-          path: ./target/wasm32-unknown-unknown/release/gtav-load-remover.wasm
+          name: gtav_autosplitter
+          path: ./target/wasm32-unknown-unknown/release/gtav_autosplitter.wasm
