@@ -33,7 +33,7 @@ impl<T: bytemuck::Pod + std::fmt::Debug> Variable<T> {
     pub fn update(&mut self, process: &Process) -> Option<&Pair<T>> {
         self.var.update(
             process
-                .read_pointer_path64(self.base_address.0.try_into().unwrap(), &self.address_path)
+                .read_pointer_path32(self.base_address.0.try_into().unwrap(), &self.address_path)
                 .ok(),
         )
     }
@@ -147,7 +147,7 @@ impl State {
             in_mission: self.in_mission.update(process)?,
             in_mission2: self.in_mission2.update(process)?,
             no_control: self.no_control.update(process)?,
-            debug_text: self.current_script.update(process),
+            debug_text: self.debug_text.update(process),
             mpassed_screen: self.mpassed_screen.update(process)?,
             collectible_screen: self.collectible_screen.update(process)?,
         })
