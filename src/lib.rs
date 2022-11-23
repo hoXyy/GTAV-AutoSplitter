@@ -31,9 +31,7 @@ pub extern "C" fn update() {
             }
         };
 
-        let splits = game.splits;
-
-        handle_split(&vars, &splits);
+        handle_split(&vars, &game.splits);
         handle_start(&vars);
     }
 }
@@ -69,6 +67,19 @@ fn handle_split(vars: &Variables, splits: HashSet<String>) {
         timer::split();
         asr::print_message("[Split] Ending A split");
         splits.insert("Ending A Split".to_owned());
+    }
+
+    // Golf split
+    if (vars.golf_hole.current > 1
+        && vars.golf_hole.current != vars.golf_hole.old
+        && vars.golf_hole.current == current_golf_hole + 1)
+    {
+        timer::split();
+        asr::print_message("[Split] Golf split");
+    }
+
+    if (vars.golf_hole.current > 0) {
+        current_golf_hole = vars.golf_hole.current;
     }
 }
 
