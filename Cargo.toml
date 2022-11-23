@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 asr = { git = "https://github.com/CryZe/asr", features = ["integer-vars"] }
 bytemuck = "1.12.3"
-phf = "0.11.1"
+phf = { version = "0.11", features = ["macros"] }
 
 [lib]
 crate-type = ["cdylib"]

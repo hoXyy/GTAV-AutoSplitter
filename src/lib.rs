@@ -1,10 +1,13 @@
 #![allow(unused_assignments)]
 
-use asr::timer;
+use asr::timer::{self, TimerState};
 use std::{collections::HashSet, sync::Mutex};
 
 pub mod game;
 use game::{GameProcess, Variables};
+
+pub mod data;
+use data::missions::{FREAKS, MISSIONS};
 
 static GAME_PROCESS: Mutex<Option<GameProcess>> = Mutex::new(None);
 
@@ -34,8 +37,13 @@ pub extern "C" fn update() {
 
         let splits = &mut game.splits;
 
-        handle_split(&vars, splits);
-        handle_start(&vars);
+        if timer::state() == TimerState::Running {
+            handle_split(&vars, splits);
+        }
+
+        if timer::state() == TimerState::NotRunning {
+            handle_start(&vars);
+        }
     }
 }
 
@@ -87,9 +95,29 @@ fn handle_split(vars: &Variables, splits: &mut HashSet<String>) {
         current_golf_hole = vars.golf_hole.current;
     }
 
+    // Mission passed split
     if vars.last_passed_mission.current != vars.last_passed_mission.old {
-        timer::split();
-        asr::print_message("[Split] Mission Passed");
+        let mission = MISSIONS.get(&vars.last_passed_mission.current).unwrap();
+        if !splits.contains(mission.name) {
+            timer::split();
+            asr::print_message(&format!("[Split] Mission Passed: {}", mission.name));
+            splits.insert(mission.name.to_owned());
+        }
+    }
+
+    // Freaks passed split
+    let freak_ids = FREAKS.keys();
+
+    for id in freak_ids {
+        let freak = FREAKS.get(id).unwrap();
+        let freak_variable = Variables::get_freak(&vars, freak.script);
+        if get_bit_at(&freak_variable.current, 3) != get_bit_at(&freak_variable.old, 3) {
+            if !splits.contains(freak.name) {
+                timer::split();
+                asr::print_message(&format!("[Split] Freaks Split: {}", &freak.name));
+                splits.insert(freak.name.to_string());
+            }
+        }
     }
 }
 
@@ -104,7 +132,7 @@ fn handle_start(vars: &Variables) {
     }
 }
 
-fn get_bit_at(input: u8, n: u8) -> bool {
+fn get_bit_at(input: &i8, n: u8) -> bool {
     if n < 8 {
         input & (1 << n) != 0
     } else {
