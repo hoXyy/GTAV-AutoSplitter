@@ -1,3 +1,5 @@
+#![allow(unused_assignments)]
+
 use asr::timer;
 use std::{collections::HashSet, sync::Mutex};
 
@@ -16,7 +18,7 @@ pub extern "C" fn update() {
     } else {
         let game = mutex.as_mut().unwrap();
 
-        // Make sure we're still connected to the game, pause game time if not
+        // Make sure we're still connected to the game
         if !game.process.is_open() {
             *mutex = None;
             return;
@@ -59,15 +61,17 @@ fn handle_split(vars: &Variables, splits: &mut HashSet<String>) {
     }
 
     // Ending A split
-    if !splits.contains("Ending A Split")
-        && vars.no_control.current == 1
-        && vars.no_control.current != vars.no_control.old
-        && vars.in_mission.current == 1
-        && Variables::get_as_string(&vars.current_cutscene.unwrap().current).unwrap() == "fin_a_ext"
-    {
-        timer::split();
-        asr::print_message("[Split] Ending A split");
-        splits.insert("Ending A Split".to_owned());
+    if let Some(current_cutscene) = vars.current_cutscene {
+        if !splits.contains("Ending A Split")
+            && vars.no_control.current == 1
+            && vars.no_control.current != vars.no_control.old
+            && vars.in_mission.current == 1
+            && Variables::get_as_string(&current_cutscene.current).unwrap() == "fin_a_ext"
+        {
+            timer::split();
+            asr::print_message("[Split] Ending A split");
+            splits.insert("Ending A Split".to_owned());
+        }
     }
 
     // Golf split
@@ -97,5 +101,13 @@ fn handle_start(vars: &Variables) {
             asr::print_message("[Start] Starting timer due to Prologue start");
             timer::start();
         }
+    }
+}
+
+fn get_bit_at(input: u8, n: u8) -> bool {
+    if n < 8 {
+        input & (1 << n) != 0
+    } else {
+        false
     }
 }
