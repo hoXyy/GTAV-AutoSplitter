@@ -3,14 +3,6 @@
 version = 3
 
 [[package]]
-name = "GTAV-AutoSplitter"
-version = "0.1.0"
-dependencies = [
- "asr",
- "bytemuck",
-]
-
-[[package]]
 name = "asr"
 version = "0.1.0"
 source = "git+https://github.com/CryZe/asr#121aa66e1c9e9e781e7e5cf38d246d3eed8f2c4f"
@@ -38,6 +30,14 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "gtav-autosplitter"
+version = "0.1.0"
+dependencies = [
+ "asr",
+ "bytemuck",
 ]
 
 [[package]]

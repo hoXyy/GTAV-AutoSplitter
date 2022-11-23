@@ -82,6 +82,11 @@ fn handle_split(vars: &Variables, splits: &mut HashSet<String>) {
     if vars.golf_hole.current > 0 {
         current_golf_hole = vars.golf_hole.current;
     }
+
+    if vars.last_passed_mission.current != vars.last_passed_mission.old {
+        timer::split();
+        asr::print_message("[Split] Mission Passed");
+    }
 }
 
 fn handle_start(vars: &Variables) {

@@ -1,8 +1,8 @@
-use std::collections::HashSet;
 use asr::{
     watcher::{Pair, Watcher},
     Address, Process,
 };
+use std::collections::HashSet;
 
 pub struct GameProcess {
     pub process: Process,
@@ -26,14 +26,14 @@ impl GameProcess {
 pub struct Variable<T> {
     var: Watcher<T>,
     base_address: Address,
-    address_path: Vec<u32>,
+    address_path: Vec<u64>,
 }
 
 impl<T: bytemuck::Pod + std::fmt::Debug> Variable<T> {
     pub fn update(&mut self, process: &Process) -> Option<&Pair<T>> {
         self.var.update(
             process
-                .read_pointer_path32(self.base_address.0.try_into().unwrap(), &self.address_path)
+                .read_pointer_path64(self.base_address.0.try_into().unwrap(), &self.address_path)
                 .ok(),
         )
     }
@@ -54,6 +54,7 @@ pub struct State {
     pub debug_text: Variable<[u8; 100]>,
     pub mpassed_screen: Variable<i32>,
     pub collectible_screen: Variable<i32>,
+    pub last_passed_mission: Variable<i32>,
 }
 
 impl State {
@@ -129,6 +130,11 @@ impl State {
                 base_address,
                 address_path: vec![0x2AC7BA0, 0xD97A8],
             },
+            last_passed_mission: Variable {
+                var: Watcher::new(),
+                base_address,
+                address_path: vec![0x2A07E70, 0x85CE8],
+            },
         }
     }
 }
@@ -150,6 +156,7 @@ impl State {
             debug_text: self.debug_text.update(process),
             mpassed_screen: self.mpassed_screen.update(process)?,
             collectible_screen: self.collectible_screen.update(process)?,
+            last_passed_mission: self.last_passed_mission.update(process)?,
         })
     }
 }
@@ -169,6 +176,7 @@ pub struct Variables<'a> {
     pub debug_text: Option<&'a Pair<[u8; 100]>>,
     pub mpassed_screen: &'a Pair<i32>,
     pub collectible_screen: &'a Pair<i32>,
+    pub last_passed_mission: &'a Pair<i32>,
 }
 
 impl<'a> Variables<'a> {
