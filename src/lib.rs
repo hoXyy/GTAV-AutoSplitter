@@ -106,9 +106,7 @@ fn handle_split(vars: &Variables, splits: &mut HashSet<String>) {
     }
 
     // Freaks passed split
-    let freak_ids = FREAKS.keys();
-
-    for id in freak_ids {
+    for id in FREAKS.keys() {
         let freak = FREAKS.get(id).unwrap();
         let freak_variable = Variables::get_freak(&vars, freak.script);
         if get_bit_at(&freak_variable.current, 3) != get_bit_at(&freak_variable.old, 3) {
