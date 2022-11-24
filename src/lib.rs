@@ -7,6 +7,7 @@ pub mod game;
 use game::{GameProcess, Variables};
 
 pub mod data;
+use data::flags::FLAGS;
 use data::missions::{FREAKS, MISSIONS};
 
 static GAME_PROCESS: Mutex<Option<GameProcess>> = Mutex::new(None);
@@ -109,11 +110,22 @@ fn handle_split(vars: &Variables, splits: &mut HashSet<String>) {
     for id in FREAKS.keys() {
         let freak = FREAKS.get(id).unwrap();
         let freak_variable = Variables::get_freak(&vars, freak.script);
-        if get_bit_at(&freak_variable.current, 3) != get_bit_at(&freak_variable.old, 3) {
-            if !splits.contains(freak.name) {
+        if !splits.contains(freak.name) {
+            if get_bit_at(&freak_variable.current, 3) != get_bit_at(&freak_variable.old, 3) {
                 timer::split();
                 asr::print_message(&format!("[Split] Freaks Split: {}", &freak.name));
                 splits.insert(freak.name.to_string());
+            }
+        }
+    }
+
+    for flag in FLAGS {
+        let flag_variable = Variables::get_flag(&vars, flag);
+        if !splits.contains(flag) {
+            if &flag_variable.current > &flag_variable.old  {
+                timer::split();
+                asr::print_message(&format!("[Split] Flag Split: {}", &flag));
+                splits.insert(flag.to_string());
             }
         }
     }

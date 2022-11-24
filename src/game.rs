@@ -121,6 +121,12 @@ pub struct State {
     pub josh4: Variable<i8>,
     pub mrsphilips1: Variable<i8>,
     pub mrsphilips2: Variable<i8>,
+    // Epsilon flags
+    pub epsilon_donated500: Variable<i32>,
+    pub epsilon_donated5k: Variable<i32>,
+    pub epsilon_donated10k: Variable<i32>,
+    pub epsilon_robe10days: Variable<i32>,
+    pub epsilon_desertdone: Variable<i32>,
 }
 
 impl State {
@@ -511,6 +517,31 @@ impl State {
                 base_address,
                 address_path: vec![0x2A07E70, 0xDF6F0],
             },
+            epsilon_donated500: Variable {
+                var: Watcher::new(),
+                base_address,
+                address_path: vec![0x2A07E70, 0xCCF58],
+            },
+            epsilon_donated5k: Variable {
+                var: Watcher::new(),
+                base_address,
+                address_path: vec![0x2A07E70, 0xCCF60],
+            },
+            epsilon_donated10k: Variable {
+                var: Watcher::new(),
+                base_address,
+                address_path: vec![0x2A07E70, 0xCCF68],
+            },
+            epsilon_robe10days: Variable {
+                var: Watcher::new(),
+                base_address,
+                address_path: vec![0x2A07E70, 0xCCF80],
+            },
+            epsilon_desertdone: Variable {
+                var: Watcher::new(),
+                base_address,
+                address_path: vec![0x2A07E70, 0xCCF90],
+            },
         }
     }
 }
@@ -595,6 +626,11 @@ impl State {
             josh4: self.josh4.update(process)?,
             mrsphilips1: self.mrsphilips1.update(process)?,
             mrsphilips2: self.mrsphilips2.update(process)?,
+            epsilon_donated500: self.epsilon_donated500.update(process)?,
+            epsilon_donated5k: self.epsilon_donated5k.update(process)?,
+            epsilon_donated10k: self.epsilon_donated10k.update(process)?,
+            epsilon_robe10days: self.epsilon_robe10days.update(process)?,
+            epsilon_desertdone: self.epsilon_desertdone.update(process)?,
         })
     }
 }
@@ -677,6 +713,11 @@ pub struct Variables<'a> {
     pub josh4: &'a Pair<i8>,
     pub mrsphilips1: &'a Pair<i8>,
     pub mrsphilips2: &'a Pair<i8>,
+    pub epsilon_donated500: &'a Pair<i32>,
+    pub epsilon_donated5k: &'a Pair<i32>,
+    pub epsilon_donated10k: &'a Pair<i32>,
+    pub epsilon_robe10days: &'a Pair<i32>,
+    pub epsilon_desertdone: &'a Pair<i32>,
 }
 
 impl<'a> Variables<'a> {
@@ -750,6 +791,17 @@ impl<'a> Variables<'a> {
             "mrsphilips1" => self.mrsphilips1,
             "mrsphilips2" => self.mrsphilips2,
             _ => self.tonya1,
+        }
+    }
+
+    pub fn get_flag(&self, flag: &str) -> &'a Pair<i32> {
+        match flag {
+            "donated500" => self.epsilon_donated500,
+            "donated5k" => self.epsilon_donated5k,
+            "donated10k" => self.epsilon_donated10k,
+            "robe10days" => self.epsilon_robe10days,
+            "desertdone" => self.epsilon_desertdone,
+            _ => self.epsilon_donated500,
         }
     }
 }
