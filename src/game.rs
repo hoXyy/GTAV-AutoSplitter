@@ -127,6 +127,15 @@ pub struct State {
     pub epsilon_donated10k: Variable<i32>,
     pub epsilon_robe10days: Variable<i32>,
     pub epsilon_desertdone: Variable<i32>,
+    // Collectibles
+    pub bridges_address: Variable<u64>,
+    pub bridges_value: Variable<u64>,
+    pub letters_address: Variable<u64>,
+    pub letters_value: Variable<u64>,
+    pub spaceships_address: Variable<u64>,
+    pub spaceships_value: Variable<u64>,
+    pub nuclear_address: Variable<u64>,
+    pub nuclear_value: Variable<u64>,
 }
 
 impl State {
@@ -542,6 +551,46 @@ impl State {
                 base_address,
                 address_path: vec![0x2A07E70, 0xCCF90],
             },
+            bridges_address: Variable {
+                var: Watcher::new(),
+                base_address,
+                address_path: vec![0x22B54E8, 0x4FD48],
+            },
+            bridges_value: Variable {
+                var: Watcher::new(),
+                base_address,
+                address_path: vec![0x22B54E8, 0x4FD48, 0x10],
+            },
+            letters_address: Variable {
+                var: Watcher::new(),
+                base_address,
+                address_path: vec![0x22B54E8, 0x2B6C8],
+            },
+            letters_value: Variable {
+                var: Watcher::new(),
+                base_address,
+                address_path: vec![0x22B54E8, 0x2B6C8, 0x10],
+            },
+            spaceships_address: Variable {
+                var: Watcher::new(),
+                base_address,
+                address_path: vec![0x22B54E8, 0x1A18],
+            },
+            spaceships_value: Variable {
+                var: Watcher::new(),
+                base_address,
+                address_path: vec![0x22B54E8, 0x1A18, 0x10],
+            },
+            nuclear_address: Variable {
+                var: Watcher::new(),
+                base_address,
+                address_path: vec![0x22B54E8, 0x4B598],
+            },
+            nuclear_value: Variable {
+                var: Watcher::new(),
+                base_address,
+                address_path: vec![0x22B54E8, 0x4B598, 0x10],
+            },
         }
     }
 }
@@ -631,6 +680,14 @@ impl State {
             epsilon_donated10k: self.epsilon_donated10k.update(process)?,
             epsilon_robe10days: self.epsilon_robe10days.update(process)?,
             epsilon_desertdone: self.epsilon_desertdone.update(process)?,
+            bridges_address: self.bridges_address.update(process)?,
+            bridges_value: self.bridges_value.update(process)?,
+            letters_address: self.letters_address.update(process)?,
+            letters_value: self.letters_value.update(process)?,
+            spaceships_address: self.spaceships_address.update(process)?,
+            spaceships_value: self.spaceships_value.update(process)?,
+            nuclear_address: self.nuclear_address.update(process)?,
+            nuclear_value: self.nuclear_value.update(process)?,
         })
     }
 }
@@ -718,6 +775,14 @@ pub struct Variables<'a> {
     pub epsilon_donated10k: &'a Pair<i32>,
     pub epsilon_robe10days: &'a Pair<i32>,
     pub epsilon_desertdone: &'a Pair<i32>,
+    pub bridges_address: &'a Pair<u64>,
+    pub bridges_value: &'a Pair<u64>,
+    pub letters_address: &'a Pair<u64>,
+    pub letters_value: &'a Pair<u64>,
+    pub spaceships_address: &'a Pair<u64>,
+    pub spaceships_value: &'a Pair<u64>,
+    pub nuclear_address: &'a Pair<u64>,
+    pub nuclear_value: &'a Pair<u64>,
 }
 
 impl<'a> Variables<'a> {
@@ -802,6 +867,16 @@ impl<'a> Variables<'a> {
             "robe10days" => self.epsilon_robe10days,
             "desertdone" => self.epsilon_desertdone,
             _ => self.epsilon_donated500,
+        }
+    }
+    
+    pub fn get_collectible(&self, collectible: &str) -> (&'a Pair<u64>, &'a Pair<u64>) {
+        match collectible {
+            "bridges" => (self.bridges_address, self.bridges_value),
+            "letters" => (self.letters_address, self.letters_value),
+            "spaceships" => (self.spaceships_address, self.spaceships_value),
+            "nuclear" => (self.nuclear_address, self.nuclear_value),
+            _ => (self.bridges_address, self.bridges_value)
         }
     }
 }

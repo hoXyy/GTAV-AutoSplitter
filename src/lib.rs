@@ -7,6 +7,7 @@ pub mod game;
 use game::{GameProcess, Variables};
 
 pub mod data;
+use data::collectibles::COLLECTIBLES;
 use data::flags::FLAGS;
 use data::missions::{FREAKS, MISSIONS};
 
@@ -122,11 +123,25 @@ fn handle_split(vars: &Variables, splits: &mut HashSet<String>) {
     for flag in FLAGS {
         let flag_variable = Variables::get_flag(&vars, flag);
         if !splits.contains(flag) {
-            if &flag_variable.current > &flag_variable.old  {
+            if &flag_variable.current > &flag_variable.old {
                 timer::split();
                 asr::print_message(&format!("[Split] Flag Split: {}", &flag));
                 splits.insert(flag.to_string());
             }
+        }
+    }
+
+    for collectible in COLLECTIBLES {
+        let (collectible_address, collectible_value) =
+            Variables::get_collectible(&vars, collectible);
+        if get_collectible_value(collectible_address.current, collectible_value.current)
+            == get_collectible_value(collectible_address.old, collectible_value.old) + 1
+        {
+            timer::split();
+            asr::print_message(&format!(
+                "[Split] Collectible Split: {}",
+                collectible.to_string()
+            ));
         }
     }
 }
@@ -148,4 +163,8 @@ fn get_bit_at(input: &i8, n: u8) -> bool {
     } else {
         false
     }
+}
+
+fn get_collectible_value(address: u64, value: u64) -> u64 {
+    address + 0x10 & 0xFFFFFFFF ^ value
 }
