@@ -1,6 +1,8 @@
 #![allow(unused_assignments)]
 
 use asr::timer::{self, TimerState};
+use once_cell::sync::Lazy;
+use std::collections::HashMap;
 use std::{collections::HashSet, sync::Mutex};
 
 pub mod game;
@@ -14,10 +16,12 @@ use data::missions::{FREAKS, MISSIONS};
 pub mod settings;
 
 static GAME_PROCESS: Mutex<Option<GameProcess>> = Mutex::new(None);
+static SETTINGS: Lazy<HashMap<&str, bool>> = Lazy::new(|| settings::get_settings());
 
 #[no_mangle]
 pub extern "C" fn update() {
     let mut mutex = GAME_PROCESS.lock().unwrap();
+    let settings = &SETTINGS;
 
     if mutex.is_none() {
         // (Re)connect to the game
@@ -42,16 +46,24 @@ pub extern "C" fn update() {
         let splits = &mut game.splits;
 
         if timer::state() == TimerState::Running {
-            handle_split(&vars, splits);
+            if *settings.get("auto_split").unwrap() {
+                handle_split(&vars, splits, settings);
+            }
         }
 
         if timer::state() == TimerState::NotRunning {
-            handle_start(&vars);
+            if *settings.get("auto_start").unwrap() {
+                handle_start(&vars);
+            }
         }
     }
 }
 
-fn handle_split(vars: &Variables, splits: &mut HashSet<String>) {
+fn handle_split(
+    vars: &Variables,
+    splits: &mut HashSet<String>,
+    settings: &Lazy<HashMap<&'static str, bool>>,
+) {
     let mut current_golf_hole = 0;
 
     // Stunt Jumps split
@@ -103,9 +115,11 @@ fn handle_split(vars: &Variables, splits: &mut HashSet<String>) {
     if vars.last_passed_mission.current != vars.last_passed_mission.old {
         let mission = MISSIONS.get(&vars.last_passed_mission.current).unwrap();
         if !splits.contains(mission.name) {
-            timer::split();
-            asr::print_message(&format!("[Split] Mission Passed: {}", mission.name));
-            splits.insert(mission.name.to_owned());
+            if get_setting(&settings, mission.script) {
+                timer::split();
+                asr::print_message(&format!("[Split] Mission Passed: {}", mission.name));
+                splits.insert(mission.name.to_owned());
+            }
         }
     }
 
@@ -114,10 +128,12 @@ fn handle_split(vars: &Variables, splits: &mut HashSet<String>) {
         let freak = FREAKS.get(id).unwrap();
         let freak_variable = Variables::get_freak(&vars, freak.script);
         if !splits.contains(freak.name) {
-            if get_bit_at(&freak_variable.current, 3) != get_bit_at(&freak_variable.old, 3) {
-                timer::split();
-                asr::print_message(&format!("[Split] Freaks Split: {}", &freak.name));
-                splits.insert(freak.name.to_string());
+            if get_setting(&settings, freak.script) {
+                if get_bit_at(&freak_variable.current, 3) != get_bit_at(&freak_variable.old, 3) {
+                    timer::split();
+                    asr::print_message(&format!("[Split] Freaks Split: {}", &freak.name));
+                    splits.insert(freak.name.to_string());
+                }
             }
         }
     }
@@ -169,4 +185,8 @@ fn get_bit_at(input: &i8, n: u8) -> bool {
 
 fn get_collectible_value(address: u64, value: u64) -> u64 {
     address + 0x10 & 0xFFFFFFFF ^ value
+}
+
+fn get_setting(settings: &Lazy<HashMap<&'static str, bool>>, name: &str) -> bool {
+    *settings.get(name).unwrap()
 }

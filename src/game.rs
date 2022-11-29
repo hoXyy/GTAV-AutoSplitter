@@ -2,14 +2,15 @@ use asr::{
     watcher::{Pair, Watcher},
     Address, Process,
 };
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
-use crate::settings::SplitterSettings;
+use crate::settings;
 
 pub struct GameProcess {
     pub process: Process,
     pub state: State,
     pub splits: HashSet<String>,
+    pub settings: HashMap<&'static str, bool>,
 }
 
 impl GameProcess {
@@ -22,6 +23,7 @@ impl GameProcess {
             process,
             state: State::setup(base_address),
             splits: HashSet::new(),
+            settings: settings::get_settings(),
         })
     }
 }

@@ -1,19 +1,47 @@
-use std::{collections::HashMap};
+use asr::Setting;
+use std::collections::HashMap;
 
-#[derive(asr::Settings)]
-pub struct SplitterSettings {
-    #[default = true]
-    auto_split: bool,
-    #[default = true]
-    auto_start: bool,
-}
+use crate::data::collectibles::COLLECTIBLES;
+use crate::data::missions::{FREAKS, MISSIONS};
+use itertools::Itertools;
 
-impl SplitterSettings {
-    pub fn get_settings(&mut self) -> HashMap<&str, bool> {
-        HashMap::from([
-            ("auto_split", self.auto_split),
-            ("auto_start", self.auto_start),
-        ])
+pub fn get_settings() -> HashMap<&'static str, bool> {
+    let mut settings: HashMap<&'static str, bool> = HashMap::from([
+        (
+            "auto_split",
+            Setting::register("auto_split", "Split automatically", true),
+        ),
+        (
+            "auto_start",
+            Setting::register("auto_start", "Start automatically", true),
+        ),
+    ]);
+
+    for mission in MISSIONS.entries().sorted() {
+        settings.insert(
+            mission.1.script,
+            Setting::register(mission.1.script, mission.1.name, true),
+        );
     }
-}
 
+    for freak in FREAKS.entries().sorted() {
+        settings.insert(
+            freak.1.script,
+            Setting::register(freak.1.script, freak.1.name, true),
+        );
+    }
+
+    for collectible in COLLECTIBLES {
+        settings.insert(
+            collectible.name,
+            Setting::register(collectible.name, collectible.full_name, false),
+        );
+    }
+
+    settings.insert(
+        "golf_split",
+        Setting::register("golf_split", "Split on golf hole change", false),
+    );
+
+    settings
+}

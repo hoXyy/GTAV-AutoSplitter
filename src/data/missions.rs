@@ -1,5 +1,6 @@
 use phf::phf_map;
 
+#[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
 pub struct Mission {
     pub name: &'static str,
     pub script: &'static str,
@@ -85,6 +86,7 @@ pub static MISSIONS: phf::Map<i32, Mission> = phf_map! {
     7_i32 => Mission{name: "The Construction Assassination", script: "assassin_construction"},
 };
 
+#[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
 pub struct Freak {
     pub name: &'static str,
     pub script: &'static str,
