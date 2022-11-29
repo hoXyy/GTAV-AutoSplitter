@@ -11,6 +11,8 @@ use data::collectibles::COLLECTIBLES;
 use data::flags::FLAGS;
 use data::missions::{FREAKS, MISSIONS};
 
+pub mod settings;
+
 static GAME_PROCESS: Mutex<Option<GameProcess>> = Mutex::new(None);
 
 #[no_mangle]
@@ -131,16 +133,16 @@ fn handle_split(vars: &Variables, splits: &mut HashSet<String>) {
         }
     }
 
-    for collectible in COLLECTIBLES {
+    for collectible in &COLLECTIBLES {
         let (collectible_address, collectible_value) =
-            Variables::get_collectible(&vars, collectible);
+            Variables::get_collectible(&vars, collectible.name);
         if get_collectible_value(collectible_address.current, collectible_value.current)
             == get_collectible_value(collectible_address.old, collectible_value.old) + 1
         {
             timer::split();
             asr::print_message(&format!(
                 "[Split] Collectible Split: {}",
-                collectible.to_string()
+                collectible.name.to_string()
             ));
         }
     }

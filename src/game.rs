@@ -4,6 +4,8 @@ use asr::{
 };
 use std::collections::HashSet;
 
+use crate::settings::SplitterSettings;
+
 pub struct GameProcess {
     pub process: Process,
     pub state: State,
@@ -869,14 +871,14 @@ impl<'a> Variables<'a> {
             _ => self.epsilon_donated500,
         }
     }
-    
+
     pub fn get_collectible(&self, collectible: &str) -> (&'a Pair<u64>, &'a Pair<u64>) {
         match collectible {
             "bridges" => (self.bridges_address, self.bridges_value),
             "letters" => (self.letters_address, self.letters_value),
             "spaceships" => (self.spaceships_address, self.spaceships_value),
             "nuclear" => (self.nuclear_address, self.nuclear_value),
-            _ => (self.bridges_address, self.bridges_value)
+            _ => (self.bridges_address, self.bridges_value),
         }
     }
 }

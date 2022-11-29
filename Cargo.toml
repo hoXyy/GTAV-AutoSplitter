@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-asr = { git = "https://github.com/CryZe/asr", features = ["integer-vars"] }
+asr = { git = "https://github.com/CryZe/asr", features = ["integer-vars", "derive"] }
 bytemuck = "1.12.3"
 phf = { version = "0.11", features = ["macros"] }
 
