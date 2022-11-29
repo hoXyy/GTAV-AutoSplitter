@@ -1,7 +1,6 @@
 #![allow(unused_assignments)]
 
 use asr::timer::{self, TimerState};
-use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::{collections::HashSet, sync::Mutex};
 
@@ -16,12 +15,10 @@ use data::missions::{FREAKS, MISSIONS};
 pub mod settings;
 
 static GAME_PROCESS: Mutex<Option<GameProcess>> = Mutex::new(None);
-static SETTINGS: Lazy<HashMap<&str, bool>> = Lazy::new(|| settings::get_settings());
 
 #[no_mangle]
 pub extern "C" fn update() {
     let mut mutex = GAME_PROCESS.lock().unwrap();
-    let settings = &SETTINGS;
 
     if mutex.is_none() {
         // (Re)connect to the game
@@ -44,10 +41,11 @@ pub extern "C" fn update() {
         };
 
         let splits = &mut game.splits;
+        let settings = &mut game.settings;
 
         if timer::state() == TimerState::Running {
             if *settings.get("auto_split").unwrap() {
-                handle_split(&vars, splits, settings);
+                handle_split(&vars, splits, &settings);
             }
         }
 
@@ -62,7 +60,7 @@ pub extern "C" fn update() {
 fn handle_split(
     vars: &Variables,
     splits: &mut HashSet<String>,
-    settings: &Lazy<HashMap<&'static str, bool>>,
+    settings: &HashMap<&'static str, bool>,
 ) {
     let mut current_golf_hole = 0;
 
@@ -187,6 +185,6 @@ fn get_collectible_value(address: u64, value: u64) -> u64 {
     address + 0x10 & 0xFFFFFFFF ^ value
 }
 
-fn get_setting(settings: &Lazy<HashMap<&'static str, bool>>, name: &str) -> bool {
+fn get_setting(settings: &HashMap<&'static str, bool>, name: &str) -> bool {
     *settings.get(name).unwrap()
 }
