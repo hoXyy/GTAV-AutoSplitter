@@ -17,14 +17,20 @@ pub fn get_settings() -> HashMap<&'static str, bool> {
         ),
     ]);
 
-    for mission in MISSIONS.entries().sorted() {
+    for mission in MISSIONS
+        .entries()
+        .sorted_by(|a, b| Ord::cmp(&a.1.order, &b.1.order))
+    {
         settings.insert(
             mission.1.script,
             Setting::register(mission.1.script, mission.1.name, true),
         );
     }
 
-    for freak in FREAKS.entries().sorted() {
+    for freak in FREAKS
+        .entries()
+        .sorted_by(|a, b| Ord::cmp(&a.1.order, &b.1.order))
+    {
         settings.insert(
             freak.1.script,
             Setting::register(freak.1.script, freak.1.name, true),
