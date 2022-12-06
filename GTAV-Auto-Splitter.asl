@@ -479,6 +479,11 @@ startup
 		{0x4FD4, "Under the Bridges"},
 		{0x2B6C, "Letter Scraps"},
 		{0x1A1, "Spaceship Parts"},
+		{0x132A, "Submarine Pieces"},
+		{0x8F8, "For Sale Signs"},
+		{0x381D, "Peyote Plants"},
+		{0x1C32, "Monkey Mosaics"},
+		{0x50D0, "Epsilon Tracts"},
 		{0x4B59, "Nuclear Waste"}
 	};
 	
