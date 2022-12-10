@@ -1,8 +1,7 @@
 use asr::Setting;
 use std::collections::HashMap;
 
-use crate::data::collectibles::COLLECTIBLES;
-use crate::data::missions::{FREAKS, MISSIONS};
+use crate::{COLLECTIBLES, FLAGS, FREAKS, MISSIONS};
 use itertools::Itertools;
 
 pub fn get_settings() -> HashMap<&'static str, bool> {
@@ -37,12 +36,38 @@ pub fn get_settings() -> HashMap<&'static str, bool> {
         );
     }
 
+    for flag in FLAGS.iter() {
+        settings.insert(
+            &flag.name[..],
+            Setting::register(&flag.name[..], &flag.full_name[..], false),
+        );
+    }
+
+    settings.insert(
+        "stunt_jumps",
+        Setting::register("stunt_jumps", "Stunt Jumps", false),
+    );
+    settings.insert(
+        "random_events",
+        Setting::register("random_events", "Random Events", false),
+    );
+
+    settings.insert(
+        "hobbies",
+        Setting::register("hobbies", "Hobbies & Pasttimes", false),
+    );
+
     for collectible in COLLECTIBLES {
         settings.insert(
             collectible.name,
             Setting::register(collectible.name, collectible.full_name, false),
         );
     }
+
+    settings.insert(
+        "ending_a",
+        Setting::register("ending_a", "Ending A Split", false),
+    );
 
     settings.insert(
         "golf_split",

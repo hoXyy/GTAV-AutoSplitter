@@ -32,7 +32,10 @@ pub extern "C" fn update() {
             return;
         }
 
-        let vars = match game.state.update(&mut game.process) {
+        let splits = &mut game.splits;
+        let settings = &mut game.settings;
+
+        let vars = match game.state.update(&mut game.process, &settings) {
             Some(v) => v,
             None => {
                 asr::print_message("Error updating state!");
@@ -40,17 +43,14 @@ pub extern "C" fn update() {
             }
         };
 
-        let splits = &mut game.splits;
-        let settings = &mut game.settings;
-
         if timer::state() == TimerState::Running {
-            if *settings.get("auto_split").unwrap() {
+            if get_setting(&settings, "auto_split") {
                 handle_split(&vars, splits, &settings);
             }
         }
 
         if timer::state() == TimerState::NotRunning {
-            if *settings.get("auto_start").unwrap() {
+            if get_setting(&settings, "auto_start") {
                 handle_start(&vars);
             }
         }
@@ -62,33 +62,43 @@ fn handle_split(
     splits: &mut HashSet<String>,
     settings: &HashMap<&'static str, bool>,
 ) {
-    let mut current_golf_hole = 0;
-
     // Stunt Jumps split
-    if vars.stunt_jumps.current == vars.stunt_jumps.old + 1 {
-        timer::split();
-        asr::print_message("[Split] Stunt Jump");
+    if get_setting(&settings, "stunt_jumps") {
+        let jumps = vars.int_variables.get("stunt_jumps").unwrap();
+        if jumps.current == jumps.old + 1 {
+            timer::split();
+            asr::print_message("[Split] Stunt Jump");
+        }
     }
 
     // Random Event split
-    if vars.random_events.current == vars.random_events.old + 1 {
-        timer::split();
-        asr::print_message("[Split] Random Event");
+    if get_setting(&settings, "random_events") {
+        let variable = vars.int_variables.get("random_events").unwrap();
+        if variable.current == variable.old + 1 {
+            timer::split();
+            asr::print_message("[Split] Random Event");
+        }
     }
 
     // Hobbies and Pastttimes split
-    if vars.hobbies.current == vars.hobbies.old + 1 {
-        timer::split();
-        asr::print_message("[Split] Hobbies and Pasttimes");
+    if get_setting(&settings, "hobbies") {
+        let variable = vars.int_variables.get("hobbies").unwrap();
+        if variable.current == variable.old + 1 {
+            timer::split();
+            asr::print_message("[Split] Hobbies and Pasttimes");
+        }
     }
 
     // Ending A split
-    if let Some(current_cutscene) = vars.current_cutscene {
+    if get_setting(&settings, "ending_a") {
+        let cutscene = vars.string_variables.get("current_cutscene").unwrap();
+        let no_control = vars.short_variables.get("no_control").unwrap();
+        let in_mission = vars.short_variables.get("in_mission").unwrap();
         if !splits.contains("Ending A Split")
-            && vars.no_control.current == 1
-            && vars.no_control.current != vars.no_control.old
-            && vars.in_mission.current == 1
-            && Variables::get_as_string(&current_cutscene.current).unwrap() == "fin_a_ext"
+            && no_control.current == 1
+            && no_control.current != no_control.old
+            && in_mission.current == 1
+            && Variables::get_as_string(&cutscene.current).unwrap() == "fin_a_ext"
         {
             timer::split();
             asr::print_message("[Split] Ending A split");
@@ -97,21 +107,26 @@ fn handle_split(
     }
 
     // Golf split
-    if vars.golf_hole.current > 1
-        && vars.golf_hole.current != vars.golf_hole.old
-        && vars.golf_hole.current == current_golf_hole + 1
-    {
-        timer::split();
-        asr::print_message("[Split] Golf split");
-    }
+    if get_setting(&settings, "golf_split") {
+        let mut current_golf_hole = 0;
+        let variable = vars.int_variables.get("golf_hole").unwrap();
+        if variable.current > 1
+            && variable.current != variable.old
+            && variable.current == current_golf_hole + 1
+        {
+            timer::split();
+            asr::print_message("[Split] Golf split");
+        }
 
-    if vars.golf_hole.current > 0 {
-        current_golf_hole = vars.golf_hole.current;
+        if variable.current > 0 {
+            current_golf_hole = variable.current;
+        }
     }
 
     // Mission passed split
-    if vars.last_passed_mission.current != vars.last_passed_mission.old {
-        let mission = MISSIONS.get(&vars.last_passed_mission.current).unwrap();
+    let last_mission = vars.int_variables.get("last_passed_mission").unwrap();
+    if last_mission.current != last_mission.old {
+        let mission = MISSIONS.get(&last_mission.current).unwrap();
         if !splits.contains(mission.name) {
             if get_setting(&settings, mission.script) {
                 timer::split();
@@ -124,7 +139,7 @@ fn handle_split(
     // Freaks passed split
     for id in FREAKS.keys() {
         let freak = FREAKS.get(id).unwrap();
-        let freak_variable = Variables::get_freak(&vars, freak.script);
+        let freak_variable = vars.short_variables.get(freak.script).unwrap();
         if !splits.contains(freak.name) {
             if get_setting(&settings, freak.script) {
                 if get_bit_at(&freak_variable.current, 3) != get_bit_at(&freak_variable.old, 3) {
@@ -136,36 +151,44 @@ fn handle_split(
         }
     }
 
-    for flag in FLAGS {
-        let flag_variable = Variables::get_flag(&vars, flag);
-        if !splits.contains(flag) {
-            if &flag_variable.current > &flag_variable.old {
-                timer::split();
-                asr::print_message(&format!("[Split] Flag Split: {}", &flag));
-                splits.insert(flag.to_string());
+    for flag in FLAGS.iter() {
+        if get_setting(settings, flag.name) {
+            let flag_variable = vars.int_variables.get(flag.name).unwrap();
+            if !splits.contains(flag.name) {
+                if &flag_variable.current > &flag_variable.old {
+                    timer::split();
+                    asr::print_message(&format!("[Split] Flag Split: {}", &flag.name));
+                    splits.insert(flag.name.to_string());
+                }
             }
         }
     }
 
     for collectible in &COLLECTIBLES {
-        let (collectible_address, collectible_value) =
-            Variables::get_collectible(&vars, collectible.name);
-        if get_collectible_value(collectible_address.current, collectible_value.current)
-            == get_collectible_value(collectible_address.old, collectible_value.old) + 1
-        {
-            timer::split();
-            asr::print_message(&format!(
-                "[Split] Collectible Split: {}",
-                collectible.name.to_string()
-            ));
+        if get_setting(settings, collectible.name) {
+            let (collectible_address, collectible_value) =
+                Variables::get_collectible(&vars, collectible.name);
+            if get_collectible_value(collectible_address.current, collectible_value.current)
+                == get_collectible_value(collectible_address.old, collectible_value.old) + 1
+            {
+                timer::split();
+                asr::print_message(&format!(
+                    "[Split] Collectible Split: {}",
+                    collectible.name.to_string()
+                ));
+            }
         }
     }
 }
 
 fn handle_start(vars: &Variables) {
-    if let Some(debug_text) = vars.debug_text {
+    if vars.string_variables.contains_key("debug_text") {
+        let debug_text = match vars.string_variables.get("debug_text") {
+            Some(v) => v,
+            None => todo!(),
+        };
         if Variables::get_as_string(&debug_text.current).unwrap() == "PRO_SETTING"
-            && vars.debug_text.unwrap().current != vars.debug_text.unwrap().old
+            && debug_text.current != debug_text.old
         {
             asr::print_message("[Start] Starting timer due to Prologue start");
             timer::start();
