@@ -707,7 +707,7 @@ update
 	if (settings["highRefreshRate"]) {
     	refreshRate = 120;
 	} 
-	if (settings["lowRefreshRate"]) {
+	else if (settings["lowRefreshRate"]) {
     	refreshRate = 30;
 	}
 	else {
