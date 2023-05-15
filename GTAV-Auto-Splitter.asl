@@ -498,7 +498,8 @@ startup
 		{"golf", "Golf"},
 		{"trvram_3", "Rampage 2"},
 		{"trvram_4", "Rampage 3"},
-		{"trvram_5", "Rampage 4"}
+		{"trvram_5", "Rampage 4"},
+		{"nigel1d","Vinewood Souvenirs - Mark"}
 	};
 
 	foreach(var collectible in vars.collectibleIDs) {
