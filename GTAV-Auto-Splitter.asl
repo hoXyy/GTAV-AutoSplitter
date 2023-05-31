@@ -441,7 +441,7 @@ startup
 		{"mic_1_mcs_2", new List<string> {"Bury the Hatchet: Confront Trevor", "Fresh Meat"}},
 		{"mic_1_mcs_3", new List<string> {"Bury the Hatchet: Attempt to Drive Away", "Fresh Meat"}},
 		{"car_5_mcs_1", new List<string> {"Pack Man: Start Packer Drive", "Fresh Meat"}},
-		{"mic_2_int", new List<string> {"Start Fresh Meat", "Fresh Meat"}}
+		{"mic_2_int", new List<string> {"Start Fresh Meat", "Fresh Meat"}},
 		{"ah_1_mcs_1", new List<string> {"Cleaning the Bureau: Confront Janitor", "Bureau Raid"}},
 		{"fam_6_mcs_1", new List<string> {"Reuniting the Family: Confront Amanda", "Bureau Raid"}},
 		{"fam_6_mcs_2_concat", new List<string> {"Reuniting the Family: Enter Tatoo Shop", "Bureau Raid"}},
