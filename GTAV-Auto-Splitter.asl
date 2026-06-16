@@ -577,6 +577,7 @@ startup
 		{"countryside", "Countryside"},
 		{"fam_4_int_alt1", "Blitz Play"},
 		{"car_1_int_concat", "Deep Inside"},
+		{"sol_1_int_alt", "Deep Inside (om0)"},
 		{"paleto_score" , "Paleto Score"},
 		{"exile_3_int", "Fresh Meat"},
 		{"ah_1_int", "Bureau Raid"},
